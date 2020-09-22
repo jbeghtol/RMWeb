@@ -45,6 +45,12 @@ div.rmgmaction {
 div.activeheader {
   color: #FFFFFF;
   background-color: #444444;
+  padding-bottom: 2px;
+  padding-bottom: 2px;
+}
+
+span.rmround {
+    padding-right:10px;
 }
 
 div.rmsection {
@@ -68,6 +74,14 @@ div.rmbottom {
 }
 
 
+.table-dense > thead > tr > th,
+.table-dense > tbody > tr > th,
+.table-dense > tfoot > tr > th,
+.table-dense > thead > tr > td,
+.table-dense > tbody > tr > td,
+.table-dense > tfoot > tr > td {
+  padding: 2px;
+}
 
 .white {
   color: #FFFFFF;

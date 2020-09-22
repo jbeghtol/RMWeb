@@ -1,5 +1,5 @@
-<div class="activeheader" id="activeheader">
-</div>
+<div class="activeheader">
+<span class="pull-left rmround">
 <#if rm.permit gte 2>
 <!-- GM Code be here! -->
 
@@ -16,5 +16,9 @@
   </ul>
 </div>
 </#if>
+</span>
+<span class="activeheader" id="activeheader">
+</span>
+</div>
 <div id="divactive">
 </div>

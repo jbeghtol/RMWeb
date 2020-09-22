@@ -3,7 +3,7 @@
 <#include "PageBegin.ftl">
 
 <script id="tmplActive" type="text/html">
-<table id="activetable" class="table table-condensed table-striped">
+<table id="activetable" class="table table-dense table-striped">
 <thead><tr><th class="rmexecute">Init</th><th>Name</th><th class="rmdeclare">Phase</th><th id="activeskillresult">Result</th><th></th></tr></thead>
 <tbody id="activerows"></tbody></table>
 </script>
@@ -25,12 +25,11 @@
     <li><a data-template-bind='[{"attribute": "entity", "value": "uid"}]' href="#" onclick="playerSkillCheck('_', this)">[Custom]</a></li>
   </ul>
 </td>
-<td></td>
 </tr>
 </script>
 
 <script id="tmplAllEntities" type="text/html">
-<table id="alltable" class="table table-condensed table-striped">
+<table id="alltable" class="table table-dense table-striped">
 <thead><tr><th>Auto</th><th>Name</th><th>Activation</th></tr></thead>
 <tbody id="allrows"></tbody></table>
 </script>
@@ -39,8 +38,8 @@
 <tr>
 <td data-content="public" /><td data-content="name" />
 <td>
-<button data-template-bind='[{"attribute": "entity", "value": "_id"}]' onclick="changeActivation(this, true)">Load</button>
-<button data-template-bind='[{"attribute": "entity", "value": "_id"}]' onclick="changeActivation(this, false)">Remove</button>
+<button class="btn btn-xs btn-success" data-template-bind='[{"attribute": "entity", "value": "_id"}]' onclick="changeActivation(this, true)">Load</button>
+<button class="btn btn-xs btn-warning" data-template-bind='[{"attribute": "entity", "value": "_id"}]' onclick="changeActivation(this, false)">Remove</button>
 </td>
 </tr>
 </script>

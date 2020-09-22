@@ -23,7 +23,7 @@ public class CombatHandler {
 	
 	CombatEngineSQLite mEngine = null;
 
-	private CombatEngineSQLite getEngine() throws Exception
+	public CombatEngineSQLite getEngine() throws Exception
 	{
 		if (mEngine == null)
 		{

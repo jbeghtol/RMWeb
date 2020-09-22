@@ -8,18 +8,40 @@
 <tbody id="activerows"></tbody></table>
 </script>
 
-<!--
-<span data-content="report.robot_uuid" />
-<button onclick="copyNextElement(this)">Copy</button><span style="display:none;" data-content="report.robot_uuid" />
--->
-
 <script id="tmplActiveRow" type="text/html">
 <tr>
 <td class="rmexecute" data-content="phaseicon" />
 <td data-content="name" />
 <td class="rmdeclare" data-content="stageselect" title="Snap, Normal, Deliberate" />
 <td data-content="result" />
-<td data-content="actionpopup" />
+<td class="dropdown">
+  <a class="btn btn-xs" data-toggle="dropdown" href="#"><i class="glyphicon glyphicon-tasks"></i></a>
+  <ul class="dropdown-menu pull-right" role="menu" data-content-prepend="actionpopup">
+    <li><a data-template-bind='[{"attribute": "entity", "value": "uid"}]' href="#" onclick="playerLoadDefense(this)">Load as Defender</a></li>
+    <li class="divider"></li>
+    <li><a data-template-bind='[{"attribute": "entity", "value": "uid"}]' href="#" onclick="playerSkillCheck('alertness', this)">Alertness</a></li>
+    <li><a data-template-bind='[{"attribute": "entity", "value": "uid"}]' href="#" onclick="playerSkillCheck('combatawareness', this)">Combat Awareness</a></li>
+    <li><a data-template-bind='[{"attribute": "entity", "value": "uid"}]' href="#" onclick="playerSkillCheck('observation', this)">Observation</a></li>
+    <li><a data-template-bind='[{"attribute": "entity", "value": "uid"}]' href="#" onclick="playerSkillCheck('_', this)">[Custom]</a></li>
+  </ul>
+</td>
+<td></td>
+</tr>
+</script>
+
+<script id="tmplAllEntities" type="text/html">
+<table id="alltable" class="table table-condensed table-striped">
+<thead><tr><th>Auto</th><th>Name</th><th>Activation</th></tr></thead>
+<tbody id="allrows"></tbody></table>
+</script>
+
+<script id="tmplAllEntitiesRow" type="text/html">
+<tr>
+<td data-content="public" /><td data-content="name" />
+<td>
+<button data-template-bind='[{"attribute": "entity", "value": "_id"}]' onclick="changeActivation(this, true)">Load</button>
+<button data-template-bind='[{"attribute": "entity", "value": "_id"}]' onclick="changeActivation(this, false)">Remove</button>
+</td>
 </tr>
 </script>
 
@@ -30,6 +52,7 @@ var playerts="0";
 var logts="0";
 var activets="0";
 var onlinePlayers = new Array();
+var allActives = new Array();
 
 function getInitiativeTitle(round, stage)
 {
@@ -73,6 +96,15 @@ function phaseOptions(uid, optdisable, currval)
     return output; 
 }
 
+function makeActionPopup(entity, optdisable)
+{
+    var all="";
+    for (var i=0;i<entity.weapons.length; i++)
+    {
+        all = all + '<li><a entity="' + entity.uid + '" href="#" onclick="playerLoadAttack(this, ' + i + ')">Att: ' + entity.weapons[i].name + '</a></li>'
+    }
+    return all;
+}
 
 function refreshView()
 {
@@ -81,8 +113,13 @@ function refreshView()
 	$.ajax({
            type: "POST",
            url: syncuri,
-           success: function(data)
-           {
+           success: function(data, textStatus, xhr) {
+                if (xhr.status == 204) {
+                    // nothing changed in the model, ask again!
+                    console.log("Server model is not dirty!");
+                    window.setTimeout("refreshView()", 1);
+                    return;
+                }
                console.log(JSON.stringify(data));
                // player model
                playerts=data.players.mod_ts;
@@ -134,7 +171,7 @@ function refreshView()
                                 break;
                         }
                         // button to get a popup of actions
-                        data.active.records[i].actionpopup = '';
+                        data.active.records[i].actionpopup = makeActionPopup(data.active.records[i], optdisable);
                     }
                
                     // apply our pref sort - alphabet for pre, init order after
@@ -149,15 +186,16 @@ function refreshView()
                     setElementHtml("activeheader", getInitiativeTitle(data.active.round, data.active.stage));
                     $(".rmdeclare").toggle(data.active.stage == 0);
                     $(".rmexecute").toggle(data.active.stage != 0);
+                    allActives = data.active.records;
                }
-
+               window.setTimeout("refreshView()", 1);
            },
            error: function(XMLHttpRequest, textStatus, errorThrown) 
            {
            		console.log('Failed to get section data for id ');
+                window.setTimeout("refreshView()", 2000);
            }
          });
-   window.setTimeout("refreshView()", 2000);
 }
 
 var allEntities = new Array();
@@ -174,17 +212,23 @@ function updateEntities()
                allEntities = data.entities;
                console.log('Loaded entities total=' + allEntities.length);
                
-                    var inner = "";
-                    for (var i=0;i<allEntities.length;i++) {
-                        inner += "<li>" + allEntities[i].name + "</li>\n";
-                    }
-                    setElementHtml("ulall", inner);
+                $('#rmall').loadTemplate( $('#tmplAllEntities'), {} );
+                $('#allrows').loadTemplate( $('#tmplAllEntitiesRow'), allEntities );
            },
            error: function(XMLHttpRequest, textStatus, errorThrown) 
            {
                 console.log('Failed to get entity data');
            }
     });
+}
+
+function findActiveEntity(uid) {
+    for (var i=0; i<allActives.length; i++) {
+        if (allActives[i].uid == uid) {
+            return allActives[i];
+        }
+    }
+    return null;
 }
 
 function rollInitiative()
@@ -205,6 +249,49 @@ function updateInitiativePhase(uid, phase)
 function requestSkillCheck(skillname)
 {
     $.ajax({type: "POST", url: "gui?action=skillcheck&skill=" + skillname});
+}
+
+function playerSkillCheck(skillname, element)
+{
+    if (skillname == "_") {
+        // custom skill request, ask for the name and value
+    } else {
+        // canned skill
+    }
+}
+
+function changeActivation(element, toLoad)
+{
+    var uid = element.getAttribute('entity');
+    if (toLoad)
+        $.ajax({type: "POST", url: "gui?action=activate&uid=" + uid});
+    else
+        $.ajax({type: "POST", url: "gui?action=deactivate&uid=" + uid});
+}
+
+function playerLoadAttack(element, weaponindex)
+{
+    var uid = element.getAttribute('entity');
+    var ent = findActiveEntity(uid);
+    if (ent) {
+        setInputValueById("attacker", ent.name);
+        setInputValueById("ob", ent.weapons[weaponindex].ob);
+        setSelectOptionById("weaponselect", ent.weapons[weaponindex].uid);
+        console.log("Loading attack for: " + ent.name + ", weapon: " + ent.weapons[weaponindex].name);
+    }
+}
+
+function playerLoadDefense(element)
+{
+    var uid = element.getAttribute('entity');
+    var ent = findActiveEntity(uid);
+    if (ent) {
+        setInputValueById("defender", ent.name);
+        setInputValueById("db", ent.db);
+        setSelectOptionById("armorselect", ent.at);
+        console.log("Loading defense for uid: " + uid);
+        $('#combatview').click();
+    }
 }
 
 function copyInnerContents(self)
@@ -231,6 +318,9 @@ function callbackInit() {
         RoundPhaseFormatter: function (value, template) {
             var ht = '<input type="radio" name="initphase" value="-1"><input type="radio" name="initphase" value="0"><input type="radio" name="initphase" value="1">';
             return value;
+        },
+        PlayerMenuIDFormatter: function (value, template) {
+            return "PlayerMenu_" + value;
         }
     });
     doRMInit();
@@ -250,7 +340,7 @@ $(document).ready(callbackInit);
   <li><a data-toggle="tab" href="#rmall">All</a></li>
 </#if>
   <li><a data-toggle="tab" href="#rmonline">Online</a></li>
-  <li><a data-toggle="tab" href="#rmcombat">Combat</a></li>
+  <li><a data-toggle="tab" href="#rmcombat" id="combatview">Combat</a></li>
 </ul>
 <div class="tab-content bgwhite rmheader">
   <div id="rmactive" class="tab-pane in active">
@@ -258,7 +348,6 @@ $(document).ready(callbackInit);
   </div>
 <#if rm.permit gte 2>
   <div id="rmall" class="tab-pane">
-    <ul id="ulall" />
   </div>
 </#if>
   <div id="rmonline" class="tab-pane">

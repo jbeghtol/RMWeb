@@ -26,6 +26,7 @@ import com.ilsian.tomcat.ActionHandler;
 import com.ilsian.tomcat.AppServlet;
 import com.ilsian.tomcat.UserInfo;
 import com.ilsian.tomcat.UserSecurity;
+import com.ilsian.tomcat.WebLib;
 
 public class RMServlet extends AppServlet {
 
@@ -98,7 +99,7 @@ public class RMServlet extends AppServlet {
 		public ActiveEntities() {
 			// when loading, we start with all 'public' entities, which are 'players'
 			try {
-				EntityEngineSQLite.getInstance().queryToMap(null, this);
+				EntityEngineSQLite.getInstance().queryToMap(null, this, mMasterWeaponList);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -106,27 +107,42 @@ public class RMServlet extends AppServlet {
 		}
 		
 		public synchronized void setActive(String name, boolean active) {
-			if (!active) {
-				ActiveEntity ent = this.get(name);
-				if (ent != null) {
-					this.remove(name);
-					changedTime = System.currentTimeMillis();
-				}
-			} else {
-				ActiveEntity ent = this.get(name);
-				if (ent == null) {
-					try {
-						EntityEngineSQLite.getInstance().queryToMap(name, this);
-						changedTime = System.currentTimeMillis();
-					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+			ModelSync.modelUpdate(ModelSync.Model.ENTITIES, () -> {
+				if (!active) {
+					ActiveEntity ent = this.get(name);
+					if (ent != null) {
+						this.remove(name);
+						return true;
+					}
+				} else {
+					ActiveEntity ent = this.get(name);
+					if (ent == null) {
+						try {
+							EntityEngineSQLite.getInstance().queryToMap(name, this, mMasterWeaponList);
+							return true;
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 					}
 				}
-			}
+				return false;
+			});
 		}
 		
 		public synchronized void rollInitiative() {
+			ModelSync.modelUpdate(ModelSync.Model.ENTITIES, () -> {
+				currentStage = 1;
+				for (ActiveEntity entry:this.values()) {
+					entry.mLastInit = entry.mFirstStrike + Dice.roll(10) + Dice.roll(10);
+					// for sort, snap phases before normal before delib
+					entry.mLastInitSort = (entry.mLastInitPhase - 1) * -100 + entry.mLastInit;
+				}
+				return true;
+			});
+		}
+		
+		public synchronized void rollInitiativeOld() {
 			currentStage = 1;
 			for (ActiveEntity entry:this.values()) {
 				entry.mLastInit = entry.mFirstStrike + Dice.roll(10) + Dice.roll(10);
@@ -137,6 +153,34 @@ public class RMServlet extends AppServlet {
 		}
 		
 		public synchronized void groupSkillCheck(String skillName) {
+			ModelSync.modelUpdate(ModelSync.Model.ENTITIES, () -> {
+				for (ActiveEntity entry:this.values()) {
+					int baseSkill = 0;
+					switch (skillName) {
+						case "observation":
+							lastSkillCheck = "Observation";
+							baseSkill = 50;
+							break;
+						case "alertness":
+							lastSkillCheck = "Alertness";
+							baseSkill = 50;
+							break;
+						case "combatawareness":
+							lastSkillCheck = "Combat Aware";
+							baseSkill = 50;
+							break;
+					}
+					if (baseSkill == 0) {
+						entry.mLastResult = 0;
+					} else {
+						entry.mLastResult = baseSkill + Dice.rollOpenPercent();
+					}
+				}
+				return true;
+			});
+		}
+		
+		public synchronized void groupSkillCheckOld(String skillName) {
 			for (ActiveEntity entry:this.values()) {
 				int baseSkill = 0;
 				switch (skillName) {
@@ -162,7 +206,18 @@ public class RMServlet extends AppServlet {
 			changedTime = System.currentTimeMillis();
 		}
 		
-		public synchronized void advanceRound() {
+		public void advanceRound() {
+			ModelSync.modelUpdate(ModelSync.Model.ENTITIES, () -> {
+				currentStage = 0;
+				currentRound++;
+				for (ActiveEntity entry:this.values()) {
+					entry.mLastInit = -1;
+				}
+				return true;
+			});
+		}
+		
+		public synchronized void advanceRoundOld() {
 			currentStage = 0;
 			currentRound++;
 			for (ActiveEntity entry:this.values()) {
@@ -171,7 +226,7 @@ public class RMServlet extends AppServlet {
 			changedTime = System.currentTimeMillis();
 		}
 		
-		public synchronized void setInitPhase(int uid, int phase) {
+		public synchronized void setInitPhaseOld(int uid, int phase) {
 			for (ActiveEntity entry:this.values()) {
 				if (entry.mUid == uid) {
 					entry.mLastInitPhase = phase;
@@ -181,7 +236,37 @@ public class RMServlet extends AppServlet {
 			changedTime = System.currentTimeMillis();
 		}
 		
-		public synchronized JSONObject reportIfNeeded(long lastKnown) throws JSONException {
+		public void setInitPhase(int uid, int phase) {
+			ModelSync.modelUpdate(ModelSync.Model.ENTITIES, () -> {
+				for (ActiveEntity entry:this.values()) {
+					if (entry.mUid == uid) {
+						entry.mLastInitPhase = phase;
+						return true;
+					}
+				}
+				return false;
+			});
+		}
+		public JSONObject reportIfNeeded(long lastKnown) throws JSONException {
+			return ModelSync.extractModel(ModelSync.Model.ENTITIES, new ModelSync.DataModel() {
+				@Override
+				public void extractModelData(JSONObject outData, long modelTime) throws JSONException {
+					if (modelTime != lastKnown) {
+						JSONArray list = new JSONArray();
+						for (String val:keySet()) {
+							ActiveEntity actor = get(val);
+							list.put(actor.toJSON());
+						}
+						outData.put("records", list);
+						outData.put("round", currentRound);
+						outData.put("stage", currentStage);
+						outData.put("lastskill", lastSkillCheck);
+					}
+				}
+			});
+		}
+		
+		public synchronized JSONObject reportIfNeededOld(long lastKnown) throws JSONException {
 			JSONObject outData = new JSONObject();
 			outData.put("mod_ts", changedTime);
 			if (changedTime != lastKnown) {
@@ -215,16 +300,33 @@ public class RMServlet extends AppServlet {
 				setInitPhase(Integer.parseInt(request.getParameter("uid")), Integer.parseInt(request.getParameter("phase")));
 			} else if (action.equals("skillcheck") && user.mLevel >= RMUserSecurity.kLoginGM) {
 				groupSkillCheck(request.getParameter("skill"));
+			} else if (action.equals("activate") && user.mLevel >= RMUserSecurity.kLoginGM) {
+				try {
+					String name = EntityEngineSQLite.getInstance().queryName(WebLib.getIntParam(request, "uid", -1));
+					setActive(name, true);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			} else if (action.equals("deactivate") && user.mLevel >= RMUserSecurity.kLoginGM) {
+				try {
+					String name = EntityEngineSQLite.getInstance().queryName(WebLib.getIntParam(request, "uid", -1));
+					setActive(name, false);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		}
 	};
 	
-	ActiveEntities mActiveList = new ActiveEntities();
+	ActiveEntities mActiveList = null;
 	
 	class PlayerList extends HashMap<String, Long>
 	{
 		long changedTime = System.currentTimeMillis();
-		public synchronized void ping(String username) {
+		
+		public synchronized void pingOld(String username) {
 			final long now = System.currentTimeMillis();
 			final long expires = now - 30000; // offline if no ping in 30s
 			if (!this.containsKey(username))
@@ -236,7 +338,38 @@ public class RMServlet extends AppServlet {
 			}
 		}
 		
-		public synchronized JSONObject reportIfNeeded(long lastKnown) throws JSONException {
+		public void ping(final String username) {
+			ModelSync.modelUpdate(ModelSync.Model.PLAYERS, () -> {
+				boolean changed = false;
+				final long now = System.currentTimeMillis();
+				final long expires = now - 30000; // offline if no ping in 30s
+				if (!this.containsKey(username))
+					changed = true;
+				this.put(username, now);
+				// remove any oldies
+				if (this.entrySet().removeIf( entry -> (entry.getValue() < expires))) {
+					changed = true;
+				}				
+			    return changed;
+			});
+		}
+
+		public JSONObject reportIfNeeded(long lastKnown) throws JSONException {
+			return ModelSync.extractModel(ModelSync.Model.PLAYERS, new ModelSync.DataModel() {
+				@Override
+				public void extractModelData(JSONObject outData, long modelTime) throws JSONException {
+					if (modelTime != lastKnown) {
+						JSONArray list = new JSONArray();
+						for (String val:keySet()) {
+							list.put(val);
+						}
+						outData.put("online", list);
+					}					
+				}
+			});
+		}
+		
+		public synchronized JSONObject reportIfNeededOld(long lastKnown) throws JSONException {
 			JSONObject outData = new JSONObject();
 			outData.put("mod_ts", changedTime);
 			if (changedTime != lastKnown) {
@@ -248,32 +381,49 @@ public class RMServlet extends AppServlet {
 			}
 			return outData;
 		}
+
 	};
 	PlayerList mPlayerList = new PlayerList();
+	
+	Object modelSyncSignal = new Object();
 	
 	ActionHandler modelSyncHandler = new ActionHandler() {
 		@Override
 		public void handleAction(String action, UserInfo user, HttpServletRequest request, HttpServletResponse response)
 				throws ServletException, IOException {
 				logger.info("Got Model Sync Request");
+				
 				// Any data updates
 				mPlayerList.ping(user.mUsername);
 				
+				long player_ts = Long.parseLong(WebLib.getStringParam(request, "player_ts", "0"));
+				long log_ts = Long.parseLong(WebLib.getStringParam(request, "log_ts", "0"));
+				long ent_ts = Long.parseLong(WebLib.getStringParam(request, "ent_ts", "0"));
+
+				// new mode - wait on ANY model change here
+				try {
+					if (!ModelSync.waitChange(player_ts, log_ts, ent_ts)) {
+						// no changes,
+						response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+						return;
+					}
+				} catch (InterruptedException ie) {
+					response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+					return;
+				}
+
 				// Serialize output based on request
 				try {
 					JSONObject outData = new JSONObject();
 
 					// sync online players
-					String player_ts = request.getParameter("player_ts");
-					outData.put("players", mPlayerList.reportIfNeeded(player_ts != null?Long.parseLong(player_ts):0));
+					outData.put("players", mPlayerList.reportIfNeeded(player_ts));
 
 					// sync log 
-					String log_ts = request.getParameter("log_ts");
-					outData.put("log", SimpleEventList.getInstance().reportIfNeeded(log_ts != null?Long.parseLong(log_ts):0));
+					outData.put("log", SimpleEventList.getInstance().reportIfNeeded(log_ts));
 					
 					// sync active entity model
-					String ent_ts = request.getParameter("ent_ts");
-					outData.put("active", mActiveList.reportIfNeeded(ent_ts != null?Long.parseLong(ent_ts):0));
+					outData.put("active", mActiveList.reportIfNeeded(ent_ts));
 					
 		            response.setContentType("application/json");
 		            response.setStatus(HttpServletResponse.SC_OK);
@@ -307,10 +457,19 @@ public class RMServlet extends AppServlet {
 	};
 	
 	CombatHandler mCombatHandler = new CombatHandler();
+	String [] mMasterWeaponList = null;
 	
 	public void init() throws ServletException {
 		super.init();
 	
+		try {
+			mMasterWeaponList = mCombatHandler.getEngine().getWeaponList();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		mActiveList = new ActiveEntities();
+		
 		SimpleEventList.getInstance().postEvent(new SimpleEvent("System startup", "Notice", "rmsystem", "system"));
 		
 		// setup HTTP-GET handlers
@@ -326,6 +485,8 @@ public class RMServlet extends AppServlet {
 		addPostHandler("nextround", mActiveList);
 		addPostHandler("setphase", mActiveList);
 		addPostHandler("skillcheck", mActiveList);
+		addPostHandler("activate", mActiveList);
+		addPostHandler("deactivate", mActiveList);
 		
 		addPostHandler("lookupTables", mCombatHandler.makeHandlerTable());
 		addPostHandler("lookupAttack", mCombatHandler.makeHandlerAttack());

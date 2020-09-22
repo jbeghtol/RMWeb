@@ -27,6 +27,12 @@ public class EntityEngineSQLite {
 		return instance_;
 	}
 	
+	public static class Weapon {
+		public int mWeaponId;
+		public String mWeaponName;
+		public int mSkill;
+	}
+	
 	public static class ActiveEntity {
 		public int mUid;
 		public String mName;
@@ -36,6 +42,9 @@ public class EntityEngineSQLite {
 		public int mLastInit;
 		public int mLastInitSort;
 		public int mLastResult;
+		public int mAt;
+		public int mDb;
+		public Weapon [] mWeapons = new Weapon[4];
 		
 		JSONObject toJSON() throws JSONException {
 			JSONObject jact = new JSONObject();
@@ -47,6 +56,20 @@ public class EntityEngineSQLite {
 			jact.put("initiative", mLastInit);
 			jact.put("sort", mLastInitSort);
 			jact.put("uid", mUid);
+			jact.put("at", mAt);
+			jact.put("db", mDb);
+			
+			JSONArray wlist = new JSONArray();
+			for (int i=0;i<mWeapons.length; i++) {
+				if (mWeapons[i] != null) {
+					JSONObject jw = new JSONObject();
+					jw.put("name", mWeapons[i].mWeaponName);
+					jw.put("uid", mWeapons[i].mWeaponId);
+					jw.put("ob", mWeapons[i].mSkill);
+					wlist.put(jw);
+				}
+			}
+			jact.put("weapons", wlist);
 			return jact;
 		}
 	};
@@ -152,9 +175,11 @@ public class EntityEngineSQLite {
 		sbuild.append(" from entities");
 		if (pubOnly) {
 			sbuild.append(" where public=1");
-		}
-		if (name != null) {
-			sbuild.append(" and name=?");
+			if (name != null) {
+				sbuild.append(" and name=?");
+			}
+		} else if (name != null) {
+			sbuild.append(" where name=?");
 		}
 		sbuild.append(" order by name asc");
 		System.err.println("QUERY -> " + sbuild.toString());
@@ -250,6 +275,16 @@ public class EntityEngineSQLite {
 		ps_update.close();
 	}
 
+	String queryName(int uid) throws SQLException {
+		PreparedStatement p = iConnection.prepareStatement("SELECT name FROM entities where _id=?");
+		p.setInt(1, uid);
+		ResultSet rs = p.executeQuery();
+		if (rs.next()) {
+			return rs.getString(1);
+		}
+		return null;
+	}
+	
 	JSONObject queryEntities(boolean publicOnly) throws SQLException, JSONException {
 		JSONObject robj = new JSONObject();
 		JSONArray ents = new JSONArray();
@@ -275,7 +310,15 @@ public class EntityEngineSQLite {
 		return robj;
 	}
 	
-	void queryToMap(String name, Map<String, ActiveEntity> map) throws SQLException {
+	static String weaponLookupName(String name) {
+		return name.toLowerCase().replaceAll("[^a-zA-Z0-9]", "");
+	}
+	
+	void queryToMap(String name, Map<String, ActiveEntity> map, String [] weaponNames) throws SQLException {
+		HashMap<String, Integer> weaponMap = new HashMap();
+		for (int i=0;i<weaponNames.length; i++) {
+			weaponMap.put(weaponLookupName(weaponNames[i]), i);
+		}
 		PreparedStatement p = iConnection.prepareStatement(createQueryStatement(name==null?true:false, name));
 		if (name != null)
 			p.setString(1, name);
@@ -290,6 +333,10 @@ public class EntityEngineSQLite {
 					actor.mName = rs.getString(valIndex++);
 				} else if (strkey.equals("controllers")) {
 					actor.mControllers = rs.getString(valIndex++);
+				} else if (strkey.startsWith("weapon")) {
+					int index = Integer.parseInt(strkey.substring(6));
+					actor.mWeapons[index-1] = new Weapon();
+					actor.mWeapons[index-1].mWeaponName = rs.getString(valIndex++);
 				} else {
 					valIndex++;
 				}
@@ -300,8 +347,33 @@ public class EntityEngineSQLite {
 			for (String intkey:INT_KEYS) {
 				if (intkey.equals("fs")) {
 					actor.mFirstStrike = rs.getInt(valIndex++);
+				} else if (intkey.equals("at")) {
+					actor.mAt = rs.getInt(valIndex++);
+				} else if (intkey.equals("db")) {
+					actor.mDb = rs.getInt(valIndex++);
+				} else if (intkey.startsWith("ob") && intkey.length() == 3) {
+					int index = Integer.parseInt(intkey.substring(2));
+					actor.mWeapons[index-1].mSkill = rs.getInt(valIndex++);
 				} else {
 					valIndex++;
+				}
+			}
+			
+			// finally, perform a weapon lookup to validate the weapons and fill in the uid
+			for (int i=0; i<actor.mWeapons.length; i++) {
+				// support lookupname|display name
+				String [] nameSplit = actor.mWeapons[i].mWeaponName.split("\\|");
+				Integer uid = weaponMap.get(weaponLookupName(nameSplit[0]));
+				if (uid != null) {
+					actor.mWeapons[i].mWeaponId = uid;
+					if (nameSplit.length>1) {
+						actor.mWeapons[i].mWeaponName = nameSplit[1];
+					}
+				} else {
+					if (!actor.mWeapons[i].mWeaponName.trim().isEmpty()) {
+						System.err.println("Failed to lookup: " + actor.mWeapons[i].mWeaponName);
+					}
+					actor.mWeapons[i] = null;
 				}
 			}
 			map.put(actor.mName, actor);

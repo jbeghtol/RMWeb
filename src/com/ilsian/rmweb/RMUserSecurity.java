@@ -2,6 +2,7 @@ package com.ilsian.rmweb;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.HashMap;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
@@ -18,11 +19,43 @@ import com.ilsian.tomcat.UserSecurity;
  */
 public class RMUserSecurity implements UserSecurity {
 
+	static final boolean ALLOW_ANY_PASS = true;
+	
 	private static final String [] _ROLE_NAMES = { "Invalid", "Player", "GM", "Admin" };
 	public static final int kLoginInvalid = 0;
 	public static final int kLoginPlayer = 1;
 	public static final int kLoginGM = 2;
 	public static final int kLoginAdmin = 3;
+	
+	static class RMAccount {
+		public String mLogin;
+		public String mPass;
+		public int mRoll;
+		public RMAccount(String n, String p, int r) {
+			mLogin = n;
+			mPass = p;
+			mRoll = r;
+		}
+	};
+	
+	static final RMAccount [] _ACCOUNTS = { 
+		new RMAccount("greg", "greg", kLoginGM),
+		new RMAccount("justin", "justin", kLoginAdmin),
+		new RMAccount("skip", "skip", kLoginPlayer),
+		new RMAccount("mike", "mike", kLoginPlayer),
+		new RMAccount("john", "john", kLoginPlayer),
+		new RMAccount("brent", "brent", kLoginPlayer),
+		new RMAccount("steve", "steve", kLoginPlayer),
+		new RMAccount("kirk", "kirk", kLoginPlayer)
+	};
+	
+	static final HashMap<String, RMAccount> _ACCESS;
+	static {
+		_ACCESS = new HashMap<String, RMAccount>();
+		for (RMAccount acc:_ACCOUNTS) {
+			_ACCESS.put(acc.mLogin, acc);
+		}
+	}
 	
 	/**
 	 * Get the current signed in user information from a request (session).  And
@@ -132,12 +165,14 @@ public class RMUserSecurity implements UserSecurity {
 
 	int validatePermission(String user, String password)
 	{
-		if (user.equalsIgnoreCase("greg"))
-			return kLoginGM;
-		else if (user.equalsIgnoreCase("justin"))
-			return kLoginAdmin;
-		else if (user.equalsIgnoreCase("skip"))
-			return kLoginPlayer;
+		RMAccount acc = _ACCESS.get(user);
+		if (acc == null)
+			return kLoginInvalid;
+		
+		if (ALLOW_ANY_PASS || password.equals(acc.mPass)) {
+			return acc.mRoll;
+		}
+
 		return kLoginInvalid;
 	}
 	

@@ -52,9 +52,9 @@ div.rmsection {
 }
 
 div.rmtop {
-  height: 400px;
+  height: 450px;
   overflow-y:auto;
-  position:absolute; top:50px; left:0; width: 500px;
+  position:absolute; top:0; left:0; width: 500px;
 }
 
 div.rmheader {

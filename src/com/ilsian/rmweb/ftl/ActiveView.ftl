@@ -4,8 +4,8 @@
 <!-- GM Code be here! -->
 
 <div class="dropdown">
-<button class="rmdeclare" onclick="rollInitiative()">INIT</button><button class="rmexecute" onclick="advanceRound()">ROUND</button>
-  <button class="btn btn-default btn-sm dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+<button class="rmdeclare btn btn-primary btn-xs" onclick="rollInitiative()">Roll Init</button><button class="rmexecute btn btn-primary btn-xs" onclick="advanceRound()">Next Round</button>
+  <button class="btn btn-default btn-xs dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
     Skills
     <span class="caret"></span>
   </button>

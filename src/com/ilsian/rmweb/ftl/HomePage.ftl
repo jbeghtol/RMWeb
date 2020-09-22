@@ -332,8 +332,18 @@ $(document).ready(callbackInit);
 </SCRIPT>
 
 <body class="rmmain">
-<#include "NavBar.ftl">
 <div class="rmtop">
+<!-- user / logout -->
+   <div class="btn-group pull-right">
+    <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+      <i class="glyphicon glyphicon-user"></i>&nbsp;${rm.user}
+      <span class="caret"></span>
+    </a>
+    <ul class="dropdown-menu">
+      <li><a href="/gui?action=logout">Sign Out</a></li>
+    </ul>
+  </div>
+          
 <ul class="nav nav-tabs">
   <li class="active"><a data-toggle="tab" href="#rmactive">Active</a></li>
 <#if rm.permit gte 2>
@@ -342,6 +352,7 @@ $(document).ready(callbackInit);
   <li><a data-toggle="tab" href="#rmonline">Online</a></li>
   <li><a data-toggle="tab" href="#rmcombat" id="combatview">Combat</a></li>
 </ul>
+
 <div class="tab-content bgwhite rmheader">
   <div id="rmactive" class="tab-pane in active">
     <#include "ActiveView.ftl">

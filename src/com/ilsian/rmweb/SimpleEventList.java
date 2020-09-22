@@ -56,27 +56,6 @@ public 	class SimpleEventList extends LinkedList<SimpleEvent> {
 			}
 		});
 	}
-	
-	public synchronized JSONObject reportIfNeededOld(long lastKnown) throws JSONException {
-		
-		JSONObject outData = new JSONObject();
-		outData.put("mod_ts", changedTime);
-		if (lastKnown != changedTime) {
-			JSONArray list = new JSONArray();
-			for (SimpleEvent eve:this) {
-				if (eve.mTimestamp>lastKnown) {
-					JSONObject entry = new JSONObject();
-					entry.put("ts", eve.mTimestamp);
-					entry.put("event", eve.mEventData);
-					entry.put("header", eve.mHeader);
-					entry.put("type", eve.mType);
-					entry.put("user", eve.mUser);
-					list.put(entry);
-				}
-			}
-			outData.put("events", list);
-		}
-		return outData;
-	}
+
 	
 };

@@ -142,16 +142,6 @@ public class RMServlet extends AppServlet {
 			});
 		}
 		
-		public synchronized void rollInitiativeOld() {
-			currentStage = 1;
-			for (ActiveEntity entry:this.values()) {
-				entry.mLastInit = entry.mFirstStrike + Dice.roll(10) + Dice.roll(10);
-				// for sort, snap phases before normal before delib
-				entry.mLastInitSort = (entry.mLastInitPhase - 1) * -100 + entry.mLastInit;
-			}
-			changedTime = System.currentTimeMillis();
-		}
-		
 		public synchronized void groupSkillCheck(String skillName) {
 			ModelSync.modelUpdate(ModelSync.Model.ENTITIES, () -> {
 				for (ActiveEntity entry:this.values()) {
@@ -180,32 +170,6 @@ public class RMServlet extends AppServlet {
 			});
 		}
 		
-		public synchronized void groupSkillCheckOld(String skillName) {
-			for (ActiveEntity entry:this.values()) {
-				int baseSkill = 0;
-				switch (skillName) {
-					case "observation":
-						lastSkillCheck = "Observation";
-						baseSkill = 50;
-						break;
-					case "alertness":
-						lastSkillCheck = "Alertness";
-						baseSkill = 50;
-						break;
-					case "combatawareness":
-						lastSkillCheck = "Combat Aware";
-						baseSkill = 50;
-						break;
-				}
-				if (baseSkill == 0) {
-					entry.mLastResult = 0;
-				} else {
-					entry.mLastResult = baseSkill + Dice.rollOpenPercent();
-				}
-			}
-			changedTime = System.currentTimeMillis();
-		}
-		
 		public void advanceRound() {
 			ModelSync.modelUpdate(ModelSync.Model.ENTITIES, () -> {
 				currentStage = 0;
@@ -215,25 +179,6 @@ public class RMServlet extends AppServlet {
 				}
 				return true;
 			});
-		}
-		
-		public synchronized void advanceRoundOld() {
-			currentStage = 0;
-			currentRound++;
-			for (ActiveEntity entry:this.values()) {
-				entry.mLastInit = -1;
-			}
-			changedTime = System.currentTimeMillis();
-		}
-		
-		public synchronized void setInitPhaseOld(int uid, int phase) {
-			for (ActiveEntity entry:this.values()) {
-				if (entry.mUid == uid) {
-					entry.mLastInitPhase = phase;
-					break;
-				}
-			}
-			changedTime = System.currentTimeMillis();
 		}
 		
 		public void setInitPhase(int uid, int phase) {
@@ -266,23 +211,6 @@ public class RMServlet extends AppServlet {
 			});
 		}
 		
-		public synchronized JSONObject reportIfNeededOld(long lastKnown) throws JSONException {
-			JSONObject outData = new JSONObject();
-			outData.put("mod_ts", changedTime);
-			if (changedTime != lastKnown) {
-				JSONArray list = new JSONArray();
-				for (String val:keySet()) {
-					ActiveEntity actor = get(val);
-					list.put(actor.toJSON());
-				}
-				outData.put("records", list);
-				outData.put("round", currentRound);
-				outData.put("stage", currentStage);
-				outData.put("lastskill", lastSkillCheck);
-			}
-			return outData;
-		}
-
 		@Override
 		public void handleAction(String action, UserInfo user,
 				HttpServletRequest request, HttpServletResponse response)
@@ -326,18 +254,6 @@ public class RMServlet extends AppServlet {
 	{
 		long changedTime = System.currentTimeMillis();
 		
-		public synchronized void pingOld(String username) {
-			final long now = System.currentTimeMillis();
-			final long expires = now - 30000; // offline if no ping in 30s
-			if (!this.containsKey(username))
-				changedTime = now;
-			this.put(username, now);
-			// remove any oldies
-			if (this.entrySet().removeIf( entry -> (entry.getValue() < expires))) {
-				changedTime = now;
-			}
-		}
-		
 		public void ping(final String username) {
 			ModelSync.modelUpdate(ModelSync.Model.PLAYERS, () -> {
 				boolean changed = false;
@@ -369,19 +285,6 @@ public class RMServlet extends AppServlet {
 			});
 		}
 		
-		public synchronized JSONObject reportIfNeededOld(long lastKnown) throws JSONException {
-			JSONObject outData = new JSONObject();
-			outData.put("mod_ts", changedTime);
-			if (changedTime != lastKnown) {
-				JSONArray list = new JSONArray();
-				for (String val:keySet()) {
-					list.put(val);
-				}
-				outData.put("online", list);
-			}
-			return outData;
-		}
-
 	};
 	PlayerList mPlayerList = new PlayerList();
 	

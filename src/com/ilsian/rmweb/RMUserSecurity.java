@@ -42,7 +42,7 @@ public class RMUserSecurity implements UserSecurity {
 		new RMAccount("greg", "greg", kLoginGM),
 		new RMAccount("justin", "justin", kLoginAdmin),
 		new RMAccount("skip", "skip", kLoginPlayer),
-		new RMAccount("mike", "mike", kLoginPlayer),
+		new RMAccount("mike", "mike", kLoginAdmin),
 		new RMAccount("john", "john", kLoginPlayer),
 		new RMAccount("brent", "brent", kLoginPlayer),
 		new RMAccount("steve", "steve", kLoginPlayer),

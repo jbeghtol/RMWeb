@@ -1,15 +1,7 @@
 package com.ilsian.rmweb;
 
-import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintStream;
-import java.io.FileOutputStream;
-import java.sql.SQLException;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
@@ -22,10 +14,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.ilsian.rmweb.EntityEngineSQLite.ActiveEntity;
+import com.ilsian.rmweb.EntityEngineSQLite.Skill;
 import com.ilsian.tomcat.ActionHandler;
 import com.ilsian.tomcat.AppServlet;
 import com.ilsian.tomcat.UserInfo;
-import com.ilsian.tomcat.UserSecurity;
 import com.ilsian.tomcat.WebLib;
 
 public class RMServlet extends AppServlet {
@@ -87,7 +79,7 @@ public class RMServlet extends AppServlet {
 			response.sendRedirect("gui");
 		}
 	};
-	
+
 	class ActiveEntities extends HashMap<String, ActiveEntity> implements ActionHandler
 	{
 		long changedTime = System.currentTimeMillis();
@@ -106,7 +98,7 @@ public class RMServlet extends AppServlet {
 			}
 		}
 		
-		public synchronized void setActive(String name, boolean active) {
+		public void setActive(String name, boolean active) {
 			ModelSync.modelUpdate(ModelSync.Model.ENTITIES, () -> {
 				if (!active) {
 					ActiveEntity ent = this.get(name);
@@ -130,7 +122,7 @@ public class RMServlet extends AppServlet {
 			});
 		}
 		
-		public synchronized void rollInitiative() {
+		public void rollInitiative() {
 			ModelSync.modelUpdate(ModelSync.Model.ENTITIES, () -> {
 				currentStage = 1;
 				for (ActiveEntity entry:this.values()) {
@@ -141,29 +133,81 @@ public class RMServlet extends AppServlet {
 				return true;
 			});
 		}
+
 		
-		public synchronized void groupSkillCheck(String skillName) {
+		public void singleSkillCheck(UserInfo user, String skillName, int entityUID) {
+			final Skill lookup = new Skill();
+			lookup.mTotal = 0;
+			ModelSync.modelUpdate(ModelSync.Model.ENTITIES, () -> {
+				for (ActiveEntity entry:this.values()) {
+					if (entry.mUid != entityUID)
+						continue;
+					
+					Skill sk = entry.mSkills.get(skillName);
+					if (sk != null) {
+						lookup.mTotal = sk.mTotal;
+						lookup.mDisplayName = sk.mDisplayName;
+						lookup.mOwner = entry.mName;
+					}
+					break;
+				}
+				return false;
+			});
+
+			if (lookup.mTotal > 0) {
+				int roll = Dice.rollOpenPercent();
+				int total = roll + lookup.mTotal;
+				String explain = lookup.mTotal + " + (" + roll + ") = " + total;
+				String header = String.format("[%s] SkillCheck '%s' : %s", 
+						lookup.mOwner, lookup.mDisplayName, explain);				
+				SimpleEventList.getInstance().postEvent(new SimpleEvent("Total = " + total, 
+						header,	"rmskill", user.mUsername));
+			}
+		}
+		
+		public void customSkillCheck(UserInfo user, String skillName, int entityUID, int skillBase) {
+			final Skill lookup = new Skill();
+			lookup.mTotal = skillBase;
+			
+			ModelSync.modelUpdate(ModelSync.Model.ENTITIES, () -> {
+				for (ActiveEntity entry:this.values()) {
+					if (entry.mUid != entityUID)
+						continue;
+					
+					lookup.mDisplayName = skillName;
+					lookup.mOwner = entry.mName;
+					break;
+				}
+				return false;
+			});
+
+			if (skillBase > 0) {
+				int roll = Dice.rollOpenPercent();
+				int total = roll + lookup.mTotal;
+				String explain = lookup.mTotal + " + (" + roll + ") = " + total;
+				String header = String.format("[%s] SkillCheck '%s' : %s", 
+						lookup.mOwner, lookup.mDisplayName, explain);				
+				SimpleEventList.getInstance().postEvent(new SimpleEvent("Total = " + total, 
+						header,	"rmskill", user.mUsername));
+			}
+		}
+		
+		public void groupSkillCheck(String skillName) {
 			ModelSync.modelUpdate(ModelSync.Model.ENTITIES, () -> {
 				for (ActiveEntity entry:this.values()) {
 					int baseSkill = 0;
-					switch (skillName) {
-						case "observation":
-							lastSkillCheck = "Observation";
-							baseSkill = 50;
-							break;
-						case "alertness":
-							lastSkillCheck = "Alertness";
-							baseSkill = 50;
-							break;
-						case "combatawareness":
-							lastSkillCheck = "Combat Aware";
-							baseSkill = 50;
-							break;
+					Skill sk = entry.mSkills.get(skillName);
+					if (sk != null) {
+						lastSkillCheck = sk.mDisplayName;
+						baseSkill = sk.mTotal;
 					}
 					if (baseSkill == 0) {
 						entry.mLastResult = 0;
+						entry.mLastResultExplain = "No skill";
 					} else {
-						entry.mLastResult = baseSkill + Dice.rollOpenPercent();
+						int roll = Dice.rollOpenPercent();
+						entry.mLastResult = baseSkill + roll;
+						entry.mLastResultExplain = baseSkill + " + (" + roll + ") = " + entry.mLastResult;
 					}
 				}
 				return true;
@@ -228,6 +272,10 @@ public class RMServlet extends AppServlet {
 				setInitPhase(Integer.parseInt(request.getParameter("uid")), Integer.parseInt(request.getParameter("phase")));
 			} else if (action.equals("skillcheck") && user.mLevel >= RMUserSecurity.kLoginGM) {
 				groupSkillCheck(request.getParameter("skill"));
+			} else if (action.equals("skillsingle")) {
+				singleSkillCheck(user, request.getParameter("skill"), WebLib.getIntParam(request, "uid", -1));
+			} else if (action.equals("skillcustom")) {
+				customSkillCheck(user, request.getParameter("skill"), WebLib.getIntParam(request, "uid", -1), WebLib.getIntParam(request, "base", 0));
 			} else if (action.equals("activate") && user.mLevel >= RMUserSecurity.kLoginGM) {
 				try {
 					String name = EntityEngineSQLite.getInstance().queryName(WebLib.getIntParam(request, "uid", -1));
@@ -294,7 +342,7 @@ public class RMServlet extends AppServlet {
 		@Override
 		public void handleAction(String action, UserInfo user, HttpServletRequest request, HttpServletResponse response)
 				throws ServletException, IOException {
-				logger.info("Got Model Sync Request");
+				//logger.info("Got Model Sync Request");
 				
 				// Any data updates
 				mPlayerList.ping(user.mUsername);
@@ -388,6 +436,8 @@ public class RMServlet extends AppServlet {
 		addPostHandler("nextround", mActiveList);
 		addPostHandler("setphase", mActiveList);
 		addPostHandler("skillcheck", mActiveList);
+		addPostHandler("skillsingle", mActiveList);
+		addPostHandler("skillcustom", mActiveList);
 		addPostHandler("activate", mActiveList);
 		addPostHandler("deactivate", mActiveList);
 		

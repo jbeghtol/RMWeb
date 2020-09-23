@@ -1,13 +1,29 @@
 
+<table id="activetable" class="table table-dense table-striped">
+<tr>
+<th><input type="text" class="input span1" id="attacker" /></th>
+<th><input type="text" class="input span1" id="defender" /></th>
+</tr>
+<tr>
+<td>
+    <input type="number" class="input" id="obSkillId" oninput="obOutputId.max = obSkillId.value" />
+    <input type="range" name="obInputName" id="obInputId" value="100" min="0" max="100" oninput="obOutputId.value = obInputId.value">
+    <output name="obOutputName" id="obOutputId">100</output>
+</td>
+<td>
+</td>
+</tr>
+</table>
+
 <div class="control-group">
     <label class="control-label" for="opponents">Opponents</label>
     <div class="controls">
-        <input type="text" class="input span1" id="attacker" /> -vs-
-        <input type="text" class="input span1" id="defender" /> (
         <input type="checkbox" id="practice" name="practice" value="practice"> test)
     </div>
 </div>
-
+<div class="slidecontainer">
+  <input type="range" min="1" max="100" value="50" class="slider" id="myRange">
+</div>
 <div class="control-group">
     <label class="control-label" for="weaponselect">Weapon/Armor</label>
     <div class="controls">
@@ -60,3 +76,9 @@
         </div>
     </div>
 </div>
+
+</fieldset>
+</form>
+</div>
+
+<div id="output"></div>

@@ -37,7 +37,7 @@ public class ModelSync {
 		synchronized(lock_) {
 			if (modelUpdater.get()) {
 				update_times_[mdl.ordinal()] = System.currentTimeMillis();
-				System.err.println("Model updated: " + mdl);
+				//System.err.println("Model updated: " + mdl);
 				lock_.notifyAll();
 			}
 		}
@@ -58,7 +58,7 @@ public class ModelSync {
 			if (player_ts != update_times_[Model.PLAYERS.ordinal()] || 
 				log_ts != update_times_[Model.LOG.ordinal()] || 
 				ent_ts != update_times_[Model.ENTITIES.ordinal()] ) {
-				System.err.println("Sync wait returning immediately, new data exists!");
+				//System.err.println("Sync wait returning immediately, new data exists!");
 				return true;
 			}
 			//System.err.println("CLIENT WAITING FOR MODEL DATA");

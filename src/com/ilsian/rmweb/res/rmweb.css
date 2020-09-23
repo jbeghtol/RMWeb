@@ -34,7 +34,12 @@ div.rmevent {
 
 div.rmattack {
   color: #FFFFFF;
-  background-color: #444444;
+  background-color: #AD1229;
+}
+
+div.rmskill {
+  color: #FFFFFF;
+  background-color: #126DAD;
 }
 
 div.rmgmaction {
@@ -53,6 +58,11 @@ span.rmround {
     padding-right:10px;
 }
 
+div.eventresultbox {
+    color: black;
+    padding-left:5px;
+}
+
 div.rmsection {
   height: 100%;
 }
@@ -69,8 +79,14 @@ div.rmheader {
   overflow-y: auto;
 }
 
+div.rmmiddle {
+    position:absolute; top:455px; left: 0; right:0; bottom:0; height: 20px;
+    text-align: center;
+    font-weight: bold;
+}
+
 div.rmbottom {
-  overflow-y:auto; position:absolute; top:450px; left: 0; right:0; bottom:0;  
+  overflow-y:auto; position:absolute; top:475px; left: 0; right:0; bottom:0;  
 }
 
 

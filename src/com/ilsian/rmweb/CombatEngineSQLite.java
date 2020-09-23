@@ -339,10 +339,9 @@ public class CombatEngineSQLite implements CombatLookup {
     protected String formatCriticalResults(String [] results)
     {
     	StringBuffer sb = new StringBuffer();
-    	sb.append("<p style=\"color:black;\">");
     	if (results == null)
     	{
-    		sb.append("<p style=\"color:black;\">No results</p>");
+    		sb.append("No results");
     	}
     	else
     	{
@@ -357,13 +356,10 @@ public class CombatEngineSQLite implements CombatLookup {
     			{
     				res = m.group(1) + "<img class=\"mod\" src=\"/res/blood.png\" />" + m.group(2);
     			}
-    			sb.append("<p style=\"color:black;\">");
     			sb.append(res);
-    			sb.append("</p>");
     		}
     	}
     		
-    	sb.append("</p>");
     	return sb.toString();
     }
 }

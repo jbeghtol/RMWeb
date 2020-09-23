@@ -33,6 +33,12 @@ public class EntityEngineSQLite {
 		public int mSkill;
 	}
 	
+	public static class Skill {
+		public int mTotal;
+		public String mDisplayName;
+		public String mOwner; // not always set
+	}
+	
 	public static class ActiveEntity {
 		public int mUid;
 		public String mName;
@@ -42,9 +48,11 @@ public class EntityEngineSQLite {
 		public int mLastInit;
 		public int mLastInitSort;
 		public int mLastResult;
+		public String mLastResultExplain;
 		public int mAt;
 		public int mDb;
 		public Weapon [] mWeapons = new Weapon[4];
+		public HashMap<String, Skill> mSkills = new HashMap();
 		
 		JSONObject toJSON() throws JSONException {
 			JSONObject jact = new JSONObject();
@@ -53,6 +61,7 @@ public class EntityEngineSQLite {
 			jact.put("fs", mFirstStrike);
 			jact.put("phase", mLastInitPhase);
 			jact.put("result", mLastResult);
+			jact.put("explain", mLastResultExplain);
 			jact.put("initiative", mLastInit);
 			jact.put("sort", mLastInitSort);
 			jact.put("uid", mUid);
@@ -79,6 +88,13 @@ public class EntityEngineSQLite {
 	static final String [] BOOL_KEYS = { "public" };
 	static final String [] INT_KEYS = { "at", "db", "fs", "ob1", "ob2", "ob3", "ob4", "observation", "combatawareness", "alertness" };
 	
+	static final HashMap<String,String> SKILL_MAP;
+	static {
+		SKILL_MAP = new HashMap();
+		SKILL_MAP.put("observation", "Observation");
+		SKILL_MAP.put("combatawareness", "Combat Aware");
+		SKILL_MAP.put("alertness", "Alertness");
+	}
 	Connection iConnection=null;
 	
 	public static void main(String [] args) throws Exception
@@ -354,6 +370,11 @@ public class EntityEngineSQLite {
 				} else if (intkey.startsWith("ob") && intkey.length() == 3) {
 					int index = Integer.parseInt(intkey.substring(2));
 					actor.mWeapons[index-1].mSkill = rs.getInt(valIndex++);
+				} else if (SKILL_MAP.containsKey(intkey)) {
+					Skill sk = new Skill();
+					sk.mDisplayName = SKILL_MAP.get(intkey);
+					sk.mTotal = rs.getInt(valIndex++);
+					actor.mSkills.put(intkey, sk);
 				} else {
 					valIndex++;
 				}

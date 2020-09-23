@@ -13,7 +13,7 @@
 <td class="rmexecute" data-content="phaseicon" />
 <td data-content="name" />
 <td class="rmdeclare" data-content="stageselect" title="Snap, Normal, Deliberate" />
-<td data-content="result" />
+<td data-template-bind='[{"attribute": "title", "value": "explain"}]' data-content="result" />
 <td class="dropdown">
   <a class="btn btn-xs" data-toggle="dropdown" href="#"><i class="glyphicon glyphicon-tasks"></i></a>
   <ul class="dropdown-menu pull-right" role="menu" data-content-prepend="actionpopup">
@@ -136,12 +136,13 @@ function refreshView()
                // log model
                logts = data.log.mod_ts;
                if (data.log.events) {
-                   var currLogs = getElementHtml("rmlog");
                    for (var i=0;i<data.log.events.length; i++) {
-                       currLogs += "<div class=\"rmevent\"><div class=\"" + data.log.events[i].type 
-                           + "\">" + data.log.events[i].header + "<span style=\"float:right;\"><i class=\"glyphicon glyphicon-user\"></i>&nbsp;" + data.log.events[i].user + "&nbsp;</span></div>" + data.log.events[i].event + "</div>";
+                       var logline = "<div class=\"rmevent\"><div class=\"" + data.log.events[i].type 
+                           + "\">" + data.log.events[i].header + "<span style=\"float:right;\"><i class=\"glyphicon glyphicon-user\"></i>&nbsp;" + data.log.events[i].user + "&nbsp;</span></div><div class=\"eventresultbox\">" + data.log.events[i].event + "</div></div>";
+                       $( "#rmlog" ).append(logline);
                    }
-                   setElementHtml("rmlog", currLogs);
+                   var d = $('#rmlog');
+                   d.scrollTop(d.prop("scrollHeight"));
                }
                 
                // active model
@@ -252,10 +253,16 @@ function requestSkillCheck(skillname)
 
 function playerSkillCheck(skillname, element)
 {
+    var uid = element.getAttribute('entity');
     if (skillname == "_") {
         // custom skill request, ask for the name and value
+        prompt_custom_skill( function (skname, skval) {
+            console.log("Rolling Skill: " + skname + ", " + skval + " for " + uid);
+            $.ajax({type: "POST", url: "gui?action=skillcustom&uid=" + uid + "&skill=" + skname + "&base=" + skval});
+        });
     } else {
         // canned skill
+        $.ajax({type: "POST", url: "gui?action=skillsingle&uid=" + uid + "&skill=" + skillname});
     }
 }
 
@@ -368,12 +375,14 @@ $(document).ready(callbackInit);
   </div>
 </div>
 </div>
-<div class="rmbottom">
-<h3>Log</h3>
-<div id="rmlog">
+
+<div class="rmmiddle">
+Log
+</div>
+
+<div class="rmbottom" id="rmlog">
 </div>
 </div>
 
-</div>
 </body>
 </html>

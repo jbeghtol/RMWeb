@@ -6,9 +6,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.ilsian.rmweb.EntityEngineSQLite.ActiveEntity;
-
 public 	class SimpleEventList extends LinkedList<SimpleEvent> {
+	static final int MAX_HISTORY = 500;
 	
 	static SimpleEventList mInstance = null;
 	
@@ -30,6 +29,10 @@ public 	class SimpleEventList extends LinkedList<SimpleEvent> {
 		
 		ModelSync.modelUpdate(ModelSync.Model.LOG, () -> {
 			this.add(eve);
+			// keep the list under control (clients should perhaps do the same)
+			while (this.size() > MAX_HISTORY) {
+				this.removeFirst();
+			}
 			return true;
 		});
 	}

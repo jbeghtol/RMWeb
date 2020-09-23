@@ -17,6 +17,15 @@ function setElementHtml(name, value)
 	}
 }
 
+function setElementScrollEnd(name, value)
+{
+    var e = document.getElementById(name);
+    if (e)
+    {
+        e.scrollTop = e.scrollHeight;        
+    }
+}
+
 function getElementHtml(name)
 {
 	var e = document.getElementById(name);
@@ -212,34 +221,52 @@ function arrayToCSV(arr)
 	return csv;
 }
 
-function do_simple_combat(src) 
+
+function prompt_custom_skill(callback)
 {
-    var urlraw = 'gui?ftl=CombatDialog.ftl';
-    var urlForContents = 'url:' + encodeURI(urlraw);
-    
-    $.confirm({ 
+
+    $.confirm({
+        title: 'Skill Check',
         escapeKey: 'cancel',
-        title: 'Lets Get It On',
-        content: urlForContents,
-        columnClass: 'large',
+        content: '<div class="form-group"><label class="control-label">Skill Name</label><input autofocus type="text" id="input-row"><br><label class="control-label">Skill</label><input type="number" id="input-val" ></div>',
+        columnClass: 'small',
         type: 'blue',
         animation: 'opacity',
-        animationSpeed: 300,
+        animationSpeed: 100,
         buttons: {
-            conf: {
-                text: 'OK',
-                keys: ['enter'],
-                action: function(){
-                    // Do we do anything?
-                },
-            },
-            cancel: {
-                text: 'Cancel',
-                action: function(){
-                    // Nothin
-                }
-            }
-        }
-    }); 
+                ok: {
+                   text: 'Roll',
+                   keys: ['enter'],
+                   action: function () {
+                       var skName = this.$content.find('input#input-row').val().trim();
+                       var skVal = this.$content.find('input#input-val').val().trim();
+                       if (!skName) {
+                            $.alert({
+                                content: "Please enter a skill name.",
+                                type: 'red'
+                                });
+                            return false;
+                       } else if (skName.match(/^[0-9a-z]+$/)) {
+                            $.alert({
+                                content: "No weird characters in a skill name.",
+                                type: 'red'
+                                });
+                            return false;
+                       } else if (!skVal) {
+                            $.alert({
+                                content: "Please enter a skill value.",
+                                type: 'red'
+                                });
+                            return false;
+                       } else {
+                            callback(skName, skVal);
+                       }
+                   }
+               },
+               cancel: function () {
+                  // do nothing.
+               }
+           }
+        });
+ 
 }
-

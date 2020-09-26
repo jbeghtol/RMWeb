@@ -126,7 +126,10 @@ public class RMServlet extends AppServlet {
 			ModelSync.modelUpdate(ModelSync.Model.ENTITIES, () -> {
 				currentStage = 1;
 				for (ActiveEntity entry:this.values()) {
-					entry.mLastInit = entry.mFirstStrike + Dice.roll(10) + Dice.roll(10);
+					int d1 = Dice.roll(10);
+					int d2 = Dice.roll(10);
+					entry.mLastInit = entry.mFirstStrike + d1 + d2;
+					entry.mLastInitExplain = entry.mFirstStrike + " + (" + d1 + " + " + d2 + ") = " + entry.mLastInit;
 					// for sort, snap phases before normal before delib
 					entry.mLastInitSort = (entry.mLastInitPhase - 1) * -100 + entry.mLastInit;
 				}
@@ -158,7 +161,7 @@ public class RMServlet extends AppServlet {
 				int roll = Dice.rollOpenPercent();
 				int total = roll + lookup.mTotal;
 				String explain = lookup.mTotal + " + (" + roll + ") = " + total;
-				String header = String.format("[%s] SkillCheck '%s' : %s", 
+				String header = String.format("[%s] Skill Check '%s' : %s", 
 						lookup.mOwner, lookup.mDisplayName, explain);				
 				SimpleEventList.getInstance().postEvent(new SimpleEvent("Total = " + total, 
 						header,	"rmskill", user.mUsername));
@@ -181,12 +184,12 @@ public class RMServlet extends AppServlet {
 				return false;
 			});
 
-			if (skillBase > 0) {
+			if (skillBase >= 0) {
 				int roll = Dice.rollOpenPercent();
 				int total = roll + lookup.mTotal;
 				String explain = lookup.mTotal + " + (" + roll + ") = " + total;
-				String header = String.format("[%s] SkillCheck '%s' : %s", 
-						lookup.mOwner, lookup.mDisplayName, explain);				
+				String header = String.format("[%s] %s %s : %s", 
+						lookup.mOwner, lookup.mDisplayName==null?"Quick Roll":"Skill Check '", lookup.mDisplayName==null?"":(lookup.mDisplayName + "'"), explain);				
 				SimpleEventList.getInstance().postEvent(new SimpleEvent("Total = " + total, 
 						header,	"rmskill", user.mUsername));
 			}
@@ -220,6 +223,7 @@ public class RMServlet extends AppServlet {
 				currentRound++;
 				for (ActiveEntity entry:this.values()) {
 					entry.mLastInit = -1;
+					entry.mLastInitExplain = "";
 				}
 				return true;
 			});
@@ -236,7 +240,20 @@ public class RMServlet extends AppServlet {
 				return false;
 			});
 		}
-		public JSONObject reportIfNeeded(long lastKnown) throws JSONException {
+		
+		public void toggleVisible(int uid) {
+			ModelSync.modelUpdate(ModelSync.Model.ENTITIES, () -> {
+				for (ActiveEntity entry:this.values()) {
+					if (entry.mUid == uid) {
+						entry.mVisible = !entry.mVisible;
+						return true;
+					}
+				}
+				return false;
+			});
+		}
+		
+		public JSONObject reportIfNeeded(UserInfo user, long lastKnown) throws JSONException {
 			return ModelSync.extractModel(ModelSync.Model.ENTITIES, new ModelSync.DataModel() {
 				@Override
 				public void extractModelData(JSONObject outData, long modelTime) throws JSONException {
@@ -244,7 +261,8 @@ public class RMServlet extends AppServlet {
 						JSONArray list = new JSONArray();
 						for (String val:keySet()) {
 							ActiveEntity actor = get(val);
-							list.put(actor.toJSON());
+							if (actor.mVisible || user.mLevel >= RMUserSecurity.kLoginGM)
+								list.put(actor.toJSON());
 						}
 						outData.put("records", list);
 						outData.put("round", currentRound);
@@ -259,18 +277,18 @@ public class RMServlet extends AppServlet {
 		public void handleAction(String action, UserInfo user,
 				HttpServletRequest request, HttpServletResponse response)
 				throws ServletException, IOException {
-			if (action.equals("rollinit") && user.mLevel >= RMUserSecurity.kLoginGM) {
+			if (action.equals("rollinit") && user.mLevel >= RMUserSecurity.kLoginLeader) {
 				rollInitiative();
 				SimpleEventList.getInstance().postEvent(new SimpleEvent("Today is a good day to die.", "[GM] Round " + currentRound + " begins!", "rmgmaction", user.mUsername));
 			}
-			else if (action.equals("nextround") && user.mLevel >= RMUserSecurity.kLoginGM) {
+			else if (action.equals("nextround") && user.mLevel >= RMUserSecurity.kLoginLeader) {
 				advanceRound();
 				SimpleEventList.getInstance().postEvent(new SimpleEvent("Choose a phase and declare your actions.", "[GM] Round " + currentRound + " declarations", "rmgmaction", user.mUsername));
 			} else if (action.equals("setphase")) {
 				// has params: uid - entitiy uid, phase - next init phase in -1,0,1
 				// TODO: Security! Client can lie, so we should check controllers for the uid, but skip isnt that good of a hacker so LATER
 				setInitPhase(Integer.parseInt(request.getParameter("uid")), Integer.parseInt(request.getParameter("phase")));
-			} else if (action.equals("skillcheck") && user.mLevel >= RMUserSecurity.kLoginGM) {
+			} else if (action.equals("skillcheck") && user.mLevel >= RMUserSecurity.kLoginLeader) {
 				groupSkillCheck(request.getParameter("skill"));
 			} else if (action.equals("skillsingle")) {
 				singleSkillCheck(user, request.getParameter("skill"), WebLib.getIntParam(request, "uid", -1));
@@ -292,6 +310,8 @@ public class RMServlet extends AppServlet {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+			} else if (action.equals("toggleVisible") && user.mLevel >= RMUserSecurity.kLoginGM) {
+				toggleVisible(WebLib.getIntParam(request, "uid", -1));
 			}
 		}
 	};
@@ -374,7 +394,7 @@ public class RMServlet extends AppServlet {
 					outData.put("log", SimpleEventList.getInstance().reportIfNeeded(log_ts));
 					
 					// sync active entity model
-					outData.put("active", mActiveList.reportIfNeeded(ent_ts));
+					outData.put("active", mActiveList.reportIfNeeded(user, ent_ts));
 					
 		            response.setContentType("application/json");
 		            response.setStatus(HttpServletResponse.SC_OK);
@@ -440,6 +460,7 @@ public class RMServlet extends AppServlet {
 		addPostHandler("skillcustom", mActiveList);
 		addPostHandler("activate", mActiveList);
 		addPostHandler("deactivate", mActiveList);
+		addPostHandler("toggleVisible", mActiveList);
 		
 		addPostHandler("lookupTables", mCombatHandler.makeHandlerTable());
 		addPostHandler("lookupAttack", mCombatHandler.makeHandlerAttack());

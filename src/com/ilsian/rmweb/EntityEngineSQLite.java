@@ -47,10 +47,12 @@ public class EntityEngineSQLite {
 		public int mLastInitPhase;
 		public int mLastInit;
 		public int mLastInitSort;
+		public String mLastInitExplain;
 		public int mLastResult;
 		public String mLastResultExplain;
 		public int mAt;
 		public int mDb;
+		public boolean mVisible = true;
 		public Weapon [] mWeapons = new Weapon[4];
 		public HashMap<String, Skill> mSkills = new HashMap();
 		
@@ -63,11 +65,12 @@ public class EntityEngineSQLite {
 			jact.put("result", mLastResult);
 			jact.put("explain", mLastResultExplain);
 			jact.put("initiative", mLastInit);
+			jact.put("initexplain", mLastInitExplain);
 			jact.put("sort", mLastInitSort);
 			jact.put("uid", mUid);
 			jact.put("at", mAt);
 			jact.put("db", mDb);
-			
+			jact.put("visibility", mVisible);
 			JSONArray wlist = new JSONArray();
 			for (int i=0;i<mWeapons.length; i++) {
 				if (mWeapons[i] != null) {

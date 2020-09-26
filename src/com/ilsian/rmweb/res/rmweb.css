@@ -107,6 +107,10 @@ div.rmbottom {
   background-color: #FFFFFF;
 }
 
+.red {
+  color: #FF5050;
+}
+
 .black {
   color: #000000;
 }
@@ -168,6 +172,22 @@ tr.selected>td {
 
 li.selected {
 	background-color: #00000020 !important;
+}
+
+.rmresult {
+    text-align: center;
+}
+
+.rminitcol {
+    width: 15%;
+}
+
+.rmdatacol {
+    width: 40%;
+}
+
+.rmactcol {
+    width: 20%;
 }
 
 /** 

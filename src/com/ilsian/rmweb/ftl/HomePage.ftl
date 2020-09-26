@@ -4,19 +4,35 @@
 
 <script id="tmplActive" type="text/html">
 <table id="activetable" class="table table-dense table-striped">
-<thead><tr><th class="rmexecute">Init</th><th>Name</th><th class="rmdeclare">Phase</th><th id="activeskillresult">Result</th><th></th></tr></thead>
+<colgroup>
+    <col width="10%">
+    <col width="10%">
+    <col width="30%">
+    <col width="20%">
+    <col width="30%">
+</colgroup>
+<thead><tr><th class="rmexecute">Init</th><th class="rmdeclare">Phase</th><th>Name</th><th class="rmresult" id="activeskillresult">Result</th><th></th></tr></thead>
 <tbody id="activerows"></tbody></table>
 </script>
 
 <script id="tmplActiveRow" type="text/html">
 <tr>
-<td class="rmexecute" data-content="phaseicon" />
-<td data-content="name" />
+<td class="rmexecute" data-template-bind='[{"attribute": "title", "value": "initexplain"}]' data-content="phaseicon" />
 <td class="rmdeclare" data-content="stageselect" title="Snap, Normal, Deliberate" />
-<td data-template-bind='[{"attribute": "title", "value": "explain"}]' data-content="result" />
+<td data-content="name" />
+<td data-template-bind='[{"attribute": "title", "value": "explain"}]' class="rmresult" data-content="result" />
 <td class="dropdown">
+<#if rm.permit gte 3>
+  <a data-template-bind='[{"attribute": "entity", "value": "uid"}]' href="#" class="btn btn-xs" onclick="toggleEntityVisibility(this)">
+  <i data-template-bind='[{"attribute": "class", "value": "visibility", "formatter": "VisibilityFormatter"}]'></i>
+  </a>
+  <a data-template-bind='[{"attribute": "entity", "value": "uid"}]' href="#" class="btn btn-xs" onclick="changeActivation(this, false)">
+  <i class="glyphicon glyphicon-remove red"></i>
+  </a>
+</#if>
+  <a data-template-bind='[{"attribute": "entity", "value": "uid"}]' href="#" class="btn btn-xs" onclick="playerSkillCheck('-', this)"><i class="glyphicon glyphicon-certificate"></i></a>
   <a class="btn btn-xs" data-toggle="dropdown" href="#"><i class="glyphicon glyphicon-tasks"></i></a>
-  <ul class="dropdown-menu pull-right" role="menu" data-content-prepend="actionpopup">
+  <ul class="dropdown-menu pull-left" role="menu" data-content-prepend="actionpopup">
     <li><a data-template-bind='[{"attribute": "entity", "value": "uid"}]' href="#" onclick="playerLoadDefense(this)">Load as Defender</a></li>
     <li class="divider"></li>
     <li><a data-template-bind='[{"attribute": "entity", "value": "uid"}]' href="#" onclick="playerSkillCheck('alertness', this)">Alertness</a></li>
@@ -38,8 +54,9 @@
 <tr>
 <td data-content="public" /><td data-content="name" />
 <td>
-<button class="btn btn-xs btn-success" data-template-bind='[{"attribute": "entity", "value": "_id"}]' onclick="changeActivation(this, true)">Load</button>
-<button class="btn btn-xs btn-warning" data-template-bind='[{"attribute": "entity", "value": "_id"}]' onclick="changeActivation(this, false)">Remove</button>
+<button class="btn btn-xs" data-template-bind='[{"attribute": "entity", "value": "_id"}]' title="Show in Active" onclick="changeActivation(this, true)">Load <i class="glyphicon glyphicon-eye-open"></i></button>
+<button class="btn btn-xs" data-template-bind='[{"attribute": "entity", "value": "_id"}]' title="Hide in Active" onclick="changeActivation(this, true)">Load <i class="glyphicon glyphicon-eye-close"></i></button>
+<button class="btn btn-xs" data-template-bind='[{"attribute": "entity", "value": "_id"}]' title="Remove from Active" onclick="changeActivation(this, false)">Remove <i class="glyphicon glyphicon-log-out"></i></button>
 </td>
 </tr>
 </script>
@@ -260,11 +277,24 @@ function playerSkillCheck(skillname, element)
             console.log("Rolling Skill: " + skname + ", " + skval + " for " + uid);
             $.ajax({type: "POST", url: "gui?action=skillcustom&uid=" + uid + "&skill=" + skname + "&base=" + skval});
         });
+    } else if (skillname == "-") {
+        // quick roll, ask for the value only
+        prompt_quickroll( function (skval) {
+            console.log("Quick Rolling: " + skval + " for " + uid);
+            $.ajax({type: "POST", url: "gui?action=skillcustom&uid=" + uid + "&base=" + skval});
+        });
     } else {
         // canned skill
         $.ajax({type: "POST", url: "gui?action=skillsingle&uid=" + uid + "&skill=" + skillname});
     }
 }
+
+function toggleEntityVisibility(element)
+{
+    var uid = element.getAttribute('entity');
+    $.ajax({type: "POST", url: "gui?action=toggleVisible&uid=" + uid});
+}
+
 
 function changeActivation(element, toLoad)
 {
@@ -327,6 +357,12 @@ function callbackInit() {
         },
         PlayerMenuIDFormatter: function (value, template) {
             return "PlayerMenu_" + value;
+        },
+        VisibilityFormatter: function (value, template) {
+            if (value)
+                return 'glyphicon glyphicon-eye-open';
+            else
+                return 'glyphicon glyphicon-eye-close';
         }
     });
     doRMInit();
@@ -352,7 +388,7 @@ $(document).ready(callbackInit);
           
 <ul class="nav nav-tabs">
   <li class="active"><a data-toggle="tab" href="#rmactive">Active</a></li>
-<#if rm.permit gte 2>
+<#if rm.permit gte 3>
   <li><a data-toggle="tab" href="#rmall">All</a></li>
 </#if>
   <li><a data-toggle="tab" href="#rmonline">Online</a></li>
@@ -363,7 +399,7 @@ $(document).ready(callbackInit);
   <div id="rmactive" class="tab-pane in active">
     <#include "ActiveView.ftl">
   </div>
-<#if rm.permit gte 2>
+<#if rm.permit gte 3>
   <div id="rmall" class="tab-pane">
   </div>
 </#if>

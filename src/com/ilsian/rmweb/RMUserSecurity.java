@@ -21,11 +21,12 @@ public class RMUserSecurity implements UserSecurity {
 
 	static final boolean ALLOW_ANY_PASS = true;
 	
-	private static final String [] _ROLE_NAMES = { "Invalid", "Player", "GM", "Admin" };
+	private static final String [] _ROLE_NAMES = { "Invalid", "Player", "Leader", "GM", "Admin" };
 	public static final int kLoginInvalid = 0;
 	public static final int kLoginPlayer = 1;
-	public static final int kLoginGM = 2;
-	public static final int kLoginAdmin = 3;
+	public static final int kLoginLeader = 2;
+	public static final int kLoginGM = 3;
+	public static final int kLoginAdmin = 4;
 	
 	static class RMAccount {
 		public String mLogin;
@@ -40,13 +41,14 @@ public class RMUserSecurity implements UserSecurity {
 	
 	static final RMAccount [] _ACCOUNTS = { 
 		new RMAccount("greg", "greg", kLoginGM),
-		new RMAccount("justin", "justin", kLoginAdmin),
+		new RMAccount("justin", "justin", kLoginLeader),
 		new RMAccount("skip", "skip", kLoginPlayer),
-		new RMAccount("mike", "mike", kLoginAdmin),
+		new RMAccount("mike", "mike", kLoginLeader),
 		new RMAccount("john", "john", kLoginPlayer),
 		new RMAccount("brent", "brent", kLoginPlayer),
 		new RMAccount("steve", "steve", kLoginPlayer),
-		new RMAccount("kirk", "kirk", kLoginPlayer)
+		new RMAccount("kirk", "kirk", kLoginPlayer),
+		new RMAccount("admin", "fordebug", kLoginAdmin)
 	};
 	
 	static final HashMap<String, RMAccount> _ACCESS;

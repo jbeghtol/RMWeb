@@ -270,3 +270,46 @@ function prompt_custom_skill(callback)
         });
  
 }
+
+var currQuickroll = null;
+
+function screenEnter(input, event)
+{
+    var key = event.which;
+    if (key == 13 && currQuickroll) {
+        var skVal = currQuickroll.$content.find('input#input-row').val().trim();
+        if (!skVal) skVal = 0;
+        currQuickroll.rmcallback(skVal);
+        currQuickroll.close();
+    }
+} 
+
+function prompt_quickroll(callback)
+{
+    currQuickroll = $.confirm({
+        rmcallback: callback,
+        title: 'Quick Roll',
+        escapeKey: 'cancel',
+        content: '<div class="form-group"><label class="control-label">Base</label><input autofocus type="number" id="input-row" class="form-control" onkeydown="screenEnter(this, event)"></div>',
+        columnClass: 'small',
+        type: 'blue',
+        animation: 'opacity',
+        animationSpeed: 100,
+        buttons: {
+                ok: {
+                   text: 'Roll',
+                   keys: ['enter'],
+                   action: function () {
+                       var skVal = this.$content.find('input#input-row').val().trim();
+                       if (!skVal) skVal = 0;
+                       callback(skVal);
+                   }
+               },
+               cancel: function () {
+                  // do nothing.
+               }
+           }
+        });
+ 
+}
+

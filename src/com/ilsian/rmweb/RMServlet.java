@@ -91,14 +91,34 @@ public class RMServlet extends AppServlet {
 		public ActiveEntities() {
 			// when loading, we start with all 'public' entities, which are 'players'
 			try {
-				EntityEngineSQLite.getInstance().queryToMap(null, this, mMasterWeaponList);
+				EntityEngineSQLite.getInstance().queryToMap(null, this, mMasterWeaponList, null, false);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
 		
-		public void setActive(String name, boolean active) {
+		public void setGroupActive(int entuid, boolean active, boolean hidden) {
+			// TODO: Activate all players in this name's group
+			ModelSync.modelUpdate(ModelSync.Model.ENTITIES, () -> {
+				try {
+					String tag = EntityEngineSQLite.getInstance().queryGroup(entuid);
+					if (tag == null)
+						return false;
+					
+					if (!active) {
+						return (this.values().removeIf( entry -> (entry.mTag.equals(tag))));
+					} else {
+						return EntityEngineSQLite.getInstance().queryToMap(null, this, mMasterWeaponList, tag, hidden);
+					}
+				} catch (Exception exc) {
+					exc.printStackTrace();
+				}
+				return false;
+			});
+		}
+		
+		public void setActive(String name, boolean active, boolean hidden) {
 			ModelSync.modelUpdate(ModelSync.Model.ENTITIES, () -> {
 				if (!active) {
 					ActiveEntity ent = this.get(name);
@@ -110,11 +130,15 @@ public class RMServlet extends AppServlet {
 					ActiveEntity ent = this.get(name);
 					if (ent == null) {
 						try {
-							EntityEngineSQLite.getInstance().queryToMap(name, this, mMasterWeaponList);
-							return true;
+							return EntityEngineSQLite.getInstance().queryToMap(name, this, mMasterWeaponList, null, hidden);
 						} catch (Exception e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
+						}
+					} else {
+						if (ent.mVisible == hidden) {
+							ent.mVisible = !hidden;
+							return true;
 						}
 					}
 				}
@@ -294,18 +318,28 @@ public class RMServlet extends AppServlet {
 				singleSkillCheck(user, request.getParameter("skill"), WebLib.getIntParam(request, "uid", -1));
 			} else if (action.equals("skillcustom")) {
 				customSkillCheck(user, request.getParameter("skill"), WebLib.getIntParam(request, "uid", -1), WebLib.getIntParam(request, "base", 0));
-			} else if (action.equals("activate") && user.mLevel >= RMUserSecurity.kLoginGM) {
+			} else if ((action.equals("activate") || action.equals("activatepeer")) && user.mLevel >= RMUserSecurity.kLoginGM) {
 				try {
-					String name = EntityEngineSQLite.getInstance().queryName(WebLib.getIntParam(request, "uid", -1));
-					setActive(name, true);
+					if (action.equals("activate")) {
+						String name = EntityEngineSQLite.getInstance().queryName(WebLib.getIntParam(request, "uid", -1));
+						setActive(name, true, WebLib.getBoolParam(request, "hidden", false));
+					}
+					else {
+						setGroupActive(WebLib.getIntParam(request, "uid", -1), true, WebLib.getBoolParam(request, "hidden", false));
+					}
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-			} else if (action.equals("deactivate") && user.mLevel >= RMUserSecurity.kLoginGM) {
+			} else if ((action.equals("deactivate") || action.equals("deactivatepeer")) && user.mLevel >= RMUserSecurity.kLoginGM) {
 				try {
-					String name = EntityEngineSQLite.getInstance().queryName(WebLib.getIntParam(request, "uid", -1));
-					setActive(name, false);
+					if (action.equals("deactivate")) {
+						String name = EntityEngineSQLite.getInstance().queryName(WebLib.getIntParam(request, "uid", -1));
+						setActive(name, false, false);
+					}
+					else {
+						setGroupActive(WebLib.getIntParam(request, "uid", -1), false, WebLib.getBoolParam(request, "hidden", false));
+					}
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -314,6 +348,7 @@ public class RMServlet extends AppServlet {
 				toggleVisible(WebLib.getIntParam(request, "uid", -1));
 			}
 		}
+		
 	};
 	
 	ActiveEntities mActiveList = null;
@@ -413,7 +448,7 @@ public class RMServlet extends AppServlet {
 		@Override
 		public void handleAction(String action, UserInfo user, HttpServletRequest request, HttpServletResponse response) {
 			try {
-				JSONObject outData = EntityEngineSQLite.getInstance().queryEntities(user.mLevel <= RMUserSecurity.kLoginPlayer);
+				JSONObject outData = EntityEngineSQLite.getInstance().queryEntities(user.mLevel < RMUserSecurity.kLoginGM);
 	            response.setContentType("application/json");
 	            response.setStatus(HttpServletResponse.SC_OK);
 	            ServletOutputStream p = response.getOutputStream();
@@ -460,6 +495,8 @@ public class RMServlet extends AppServlet {
 		addPostHandler("skillcustom", mActiveList);
 		addPostHandler("activate", mActiveList);
 		addPostHandler("deactivate", mActiveList);
+		addPostHandler("activatepeer", mActiveList);
+		addPostHandler("deactivatepeer", mActiveList);
 		addPostHandler("toggleVisible", mActiveList);
 		
 		addPostHandler("lookupTables", mCombatHandler.makeHandlerTable());

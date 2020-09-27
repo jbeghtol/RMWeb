@@ -42,6 +42,7 @@ public class EntityEngineSQLite {
 	public static class ActiveEntity {
 		public int mUid;
 		public String mName;
+		public String mTag;
 		public String mControllers;
 		public int mFirstStrike;
 		public int mLastInitPhase;
@@ -60,6 +61,7 @@ public class EntityEngineSQLite {
 			JSONObject jact = new JSONObject();
 			jact.put("name", mName);
 			jact.put("controllers", mControllers);
+			jact.put("tag", mTag);
 			jact.put("fs", mFirstStrike);
 			jact.put("phase", mLastInitPhase);
 			jact.put("result", mLastResult);
@@ -87,7 +89,7 @@ public class EntityEngineSQLite {
 	};
 	
 	// These ACTUALLY define the schema
-	static final String [] STRING_KEYS = { "name", "controllers", "weapon1", "weapon2", "weapon3", "weapon4" };
+	static final String [] STRING_KEYS = { "name", "tag", "controllers", "weapon1", "weapon2", "weapon3", "weapon4" };
 	static final String [] BOOL_KEYS = { "public" };
 	static final String [] INT_KEYS = { "at", "db", "fs", "ob1", "ob2", "ob3", "ob4", "observation", "combatawareness", "alertness" };
 	
@@ -179,7 +181,7 @@ public class EntityEngineSQLite {
 		return sbuild.toString();
 	}
 	
-	public String createQueryStatement(boolean pubOnly, String name) {
+	public String createQueryStatement(boolean pubOnly, String name, String tag) {
 		StringBuilder sbuild = new StringBuilder();
 		sbuild.append("SELECT _id");
 		for (String skey:STRING_KEYS) {
@@ -199,8 +201,10 @@ public class EntityEngineSQLite {
 			}
 		} else if (name != null) {
 			sbuild.append(" where name=?");
+		} else if (tag != null) {
+			sbuild.append(" where tag=?");
 		}
-		sbuild.append(" order by name asc");
+		sbuild.append(" order by tag asc, name asc");
 		System.err.println("QUERY -> " + sbuild.toString());
 		return sbuild.toString();
 	}
@@ -304,12 +308,22 @@ public class EntityEngineSQLite {
 		return null;
 	}
 	
+	String queryGroup(int uid) throws SQLException {
+		PreparedStatement p = iConnection.prepareStatement("SELECT tag FROM entities where _id=?");
+		p.setInt(1, uid);
+		ResultSet rs = p.executeQuery();
+		if (rs.next()) {
+			return rs.getString(1);
+		}
+		return null;
+	}
+	
 	JSONObject queryEntities(boolean publicOnly) throws SQLException, JSONException {
 		JSONObject robj = new JSONObject();
 		JSONArray ents = new JSONArray();
 		robj.put("entities", ents);
 		
-		PreparedStatement p = iConnection.prepareStatement(createQueryStatement(publicOnly, null));
+		PreparedStatement p = iConnection.prepareStatement(createQueryStatement(publicOnly, null, null));
 		ResultSet rs = p.executeQuery();
 		while (rs.next()) {
 			JSONObject ent = new JSONObject();
@@ -333,14 +347,18 @@ public class EntityEngineSQLite {
 		return name.toLowerCase().replaceAll("[^a-zA-Z0-9]", "");
 	}
 	
-	void queryToMap(String name, Map<String, ActiveEntity> map, String [] weaponNames) throws SQLException {
+	boolean queryToMap(String name, Map<String, ActiveEntity> map, String [] weaponNames, String tag, boolean hidden) throws SQLException {
 		HashMap<String, Integer> weaponMap = new HashMap();
 		for (int i=0;i<weaponNames.length; i++) {
 			weaponMap.put(weaponLookupName(weaponNames[i]), i);
 		}
-		PreparedStatement p = iConnection.prepareStatement(createQueryStatement(name==null?true:false, name));
+		PreparedStatement p = iConnection.prepareStatement(createQueryStatement((name==null&&tag==null)?true:false, name, tag));
 		if (name != null)
 			p.setString(1, name);
+		else if (tag != null)
+			p.setString(1, tag);
+		
+		boolean changed = false;
 		
 		ResultSet rs = p.executeQuery();
 		while (rs.next()) {
@@ -350,6 +368,8 @@ public class EntityEngineSQLite {
 			for (String strkey: STRING_KEYS) {
 				if (strkey.equals("name")) {
 					actor.mName = rs.getString(valIndex++);
+				} else if (strkey.equals("tag"))  {
+					actor.mTag = rs.getString(valIndex++);
 				} else if (strkey.equals("controllers")) {
 					actor.mControllers = rs.getString(valIndex++);
 				} else if (strkey.startsWith("weapon")) {
@@ -400,7 +420,10 @@ public class EntityEngineSQLite {
 					actor.mWeapons[i] = null;
 				}
 			}
+			actor.mVisible = !hidden;
 			map.put(actor.mName, actor);
+			changed = true;
 		}
+		return changed;
 	}
 }

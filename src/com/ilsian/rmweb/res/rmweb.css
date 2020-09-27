@@ -99,6 +99,11 @@ div.rmbottom {
   padding: 2px;
 }
 
+.groupheader {
+    color: #FFFFFF;
+    background-color: #000000;
+}
+
 .white {
   color: #FFFFFF;
 }

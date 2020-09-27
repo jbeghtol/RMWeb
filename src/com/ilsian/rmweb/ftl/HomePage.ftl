@@ -46,7 +46,7 @@
 
 <script id="tmplAllEntities" type="text/html">
 <table id="alltable" class="table table-dense table-striped">
-<thead><tr><th>Auto</th><th>Name</th><th>Activation</th></tr></thead>
+<thead><tr><th>Auto</th><th>Name</th><th>Load</th><th>Remove</th></tr></thead>
 <tbody id="allrows"></tbody></table>
 </script>
 
@@ -54,9 +54,24 @@
 <tr>
 <td data-content="public" /><td data-content="name" />
 <td>
-<button class="btn btn-xs" data-template-bind='[{"attribute": "entity", "value": "_id"}]' title="Show in Active" onclick="changeActivation(this, true)">Load <i class="glyphicon glyphicon-eye-open"></i></button>
-<button class="btn btn-xs" data-template-bind='[{"attribute": "entity", "value": "_id"}]' title="Hide in Active" onclick="changeActivation(this, true)">Load <i class="glyphicon glyphicon-eye-close"></i></button>
-<button class="btn btn-xs" data-template-bind='[{"attribute": "entity", "value": "_id"}]' title="Remove from Active" onclick="changeActivation(this, false)">Remove <i class="glyphicon glyphicon-log-out"></i></button>
+<a class="btn btn-xs" data-template-bind='[{"attribute": "entity", "value": "_id"}]' title="Show in Active" onclick="changeActivation(this, true, false)"><i class="glyphicon glyphicon-eye-open"></i></a>
+<a class="btn btn-xs" data-template-bind='[{"attribute": "entity", "value": "_id"}]' title="Hide in Active" onclick="changeActivation(this, true, true)"><i class="glyphicon glyphicon-eye-close"></i></a>
+</td>
+<td>
+<a class="btn btn-xs" data-template-bind='[{"attribute": "entity", "value": "_id"}]' title="Remove from Active" onclick="changeActivation(this, false)"><i class="glyphicon glyphicon-log-out"></i></a>
+</td>
+</tr>
+</script>
+
+<script id="tmplAllEntitiesGroup" type="text/html">
+<tr class="groupheader">
+<td colspan="2" class="groupheader" data-content="tag" />
+<td class="groupheader">
+<a class="btn btn-xs" data-template-bind='[{"attribute": "entity", "value": "_id"}]' title="Show in Active" onclick="changeGroupActivation(this, true, false)"><i class="glyphicon glyphicon-eye-open"></i></a>
+<a class="btn btn-xs" data-template-bind='[{"attribute": "entity", "value": "_id"}]' title="Hide in Active" onclick="changeGroupActivation(this, true, true)"><i class="glyphicon glyphicon-eye-close"></i></a>
+</td>
+<td class="groupheader">
+<a class="btn btn-xs" data-template-bind='[{"attribute": "entity", "value": "_id"}]' title="Remove from Active" onclick="changeGroupActivation(this, false)"><i class="glyphicon glyphicon-log-out"></i></a>
 </td>
 </tr>
 </script>
@@ -230,7 +245,30 @@ function updateEntities()
                console.log('Loaded entities total=' + allEntities.length);
                
                 $('#rmall').loadTemplate( $('#tmplAllEntities'), {} );
-                $('#allrows').loadTemplate( $('#tmplAllEntitiesRow'), allEntities );
+                
+                // split into groups
+                var groupName = '_';
+                var groupList;
+                var groupLists = new Array();
+                for (var i=0;i<allEntities.length; i++) {
+                    if (groupName != allEntities[i].tag) {
+                        groupName = allEntities[i].tag;
+                        groupList = new Array();
+                        groupLists.push(groupList);                        
+                    }
+                    groupList.push(allEntities[i]);
+                }
+                
+                for (var i=0;i<groupLists.length;i++) {
+                    groupList = groupLists[i];
+                    if (i==0) {
+                        $('#allrows').loadTemplate( $('#tmplAllEntitiesGroup'), groupList[0] );
+                    } else {
+                        $('#allrows').loadTemplate( $('#tmplAllEntitiesGroup'), groupList[0], { append: true } );
+                    }    
+                    $('#allrows').loadTemplate( $('#tmplAllEntitiesRow'), groupList, { append: true } );
+                }
+                //$('#allrows').loadTemplate( $('#tmplAllEntitiesRow'), allEntities );
            },
            error: function(XMLHttpRequest, textStatus, errorThrown) 
            {
@@ -296,13 +334,22 @@ function toggleEntityVisibility(element)
 }
 
 
-function changeActivation(element, toLoad)
+function changeActivation(element, toLoad, loadHidden)
 {
     var uid = element.getAttribute('entity');
     if (toLoad)
-        $.ajax({type: "POST", url: "gui?action=activate&uid=" + uid});
+        $.ajax({type: "POST", url: "gui?action=activate&uid=" + uid + "&hidden=" + loadHidden});
     else
         $.ajax({type: "POST", url: "gui?action=deactivate&uid=" + uid});
+}
+
+function changeGroupActivation(element, toLoad, loadHidden)
+{
+    var uid = element.getAttribute('entity');
+    if (toLoad)
+        $.ajax({type: "POST", url: "gui?action=activatepeer&uid=" + uid + "&hidden=" + loadHidden});
+    else
+        $.ajax({type: "POST", url: "gui?action=deactivatepeer&uid=" + uid});
 }
 
 function playerLoadAttack(element, weaponindex)

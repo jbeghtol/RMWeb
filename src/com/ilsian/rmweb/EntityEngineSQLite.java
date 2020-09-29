@@ -246,6 +246,9 @@ public class EntityEngineSQLite {
 			System.err.println("Parsing row=" + csvRecord.getRecordNumber());
 			
 			final String name = csvRecord.get(headerMap.get("name")).trim();
+			// skip lines with no name
+			if (name.isEmpty())
+				continue;
 			ps_lookup.setString(1, name);
 			final ResultSet rs = ps_lookup.executeQuery();
 			int uid = -1;

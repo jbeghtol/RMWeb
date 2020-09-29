@@ -40,7 +40,7 @@ public class RMUserSecurity implements UserSecurity {
 	};
 	
 	static final RMAccount [] _ACCOUNTS = { 
-		new RMAccount("greg", "greg", kLoginGM),
+		new RMAccount("greg", "ucsd", kLoginGM),
 		new RMAccount("justin", "justin", kLoginLeader),
 		new RMAccount("skip", "skip", kLoginPlayer),
 		new RMAccount("mike", "mike", kLoginLeader),
@@ -171,7 +171,7 @@ public class RMUserSecurity implements UserSecurity {
 		if (acc == null)
 			return kLoginInvalid;
 		
-		if (ALLOW_ANY_PASS || password.equals(acc.mPass)) {
+		if ( (ALLOW_ANY_PASS && acc.mRoll < kLoginGM) || password.equals(acc.mPass)) {
 			return acc.mRoll;
 		}
 

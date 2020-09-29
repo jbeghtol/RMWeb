@@ -3,7 +3,7 @@
 <#include "PageBegin.ftl">
 
 <script id="tmplActive" type="text/html">
-<table id="activetable" class="table table-dense table-striped">
+<table id="activetable" class="table table-dense table-striped nomargin">
 <colgroup>
     <col width="10%">
     <col width="10%">
@@ -45,8 +45,10 @@
 </script>
 
 <script id="tmplAllEntities" type="text/html">
-<table id="alltable" class="table table-dense table-striped">
-<thead><tr><th>Auto</th><th>Name</th><th>Load</th><th>Remove</th></tr></thead>
+<table id="alltable" class="table table-dense table-striped nomargin">
+<thead><tr><th>Auto</th><th>Name</th><th>Load</th><th>Remove&nbsp;
+<button class="btn btn-primary btn-xs" title="Upload updates to entities" onclick="rm_file_upload_dialog('signalEntityLoad')">Import <i class="glyphicon glyphicon-floppy-open"></i></button>
+</th></tr></thead>
 <tbody id="allrows"></tbody></table>
 </script>
 
@@ -244,7 +246,7 @@ function updateEntities()
                allEntities = data.entities;
                console.log('Loaded entities total=' + allEntities.length);
                
-                $('#rmall').loadTemplate( $('#tmplAllEntities'), {} );
+                $('#rmallcontents').loadTemplate( $('#tmplAllEntities'), {} );
                 
                 // split into groups
                 var groupName = '_';
@@ -448,6 +450,8 @@ $(document).ready(callbackInit);
   </div>
 <#if rm.permit gte 3>
   <div id="rmall" class="tab-pane">
+    <div id="rmallcontents">
+    </div>
   </div>
 </#if>
   <div id="rmonline" class="tab-pane">

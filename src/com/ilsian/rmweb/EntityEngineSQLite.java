@@ -107,7 +107,7 @@ public class EntityEngineSQLite {
 		EntityEngineSQLite cdb = new EntityEngineSQLite();
 		cdb.open();
 		cdb.createSchema();
-		cdb.updateDataFromImport(new File("c:\\users\\justin\\rmweb.csv"));
+		cdb.updateDataFromImport(new File("c:\\users\\justin\\rmweb.csv"), new StringBuilder());
 		cdb.close();
 	}
 
@@ -224,7 +224,10 @@ public class EntityEngineSQLite {
 		}
 	}
 
-	protected void updateDataFromImport(File csvFile) throws Exception {
+	protected void updateDataFromImport(File csvFile, StringBuilder info) throws Exception {
+		int updated = 0;
+		int inserted = 0;
+		
 		PreparedStatement ps_lookup = iConnection.prepareStatement("SELECT _id FROM entities where name=?");
 		PreparedStatement ps_add = iConnection.prepareStatement(createInsertStatement());
 		PreparedStatement ps_update = iConnection.prepareStatement(createUpateStatement());
@@ -250,9 +253,11 @@ public class EntityEngineSQLite {
 				uid = rs.getInt(1);
 				ps_insert = ps_update;
 				System.err.println("Entity is OLD=" + name + ", _id=" + uid);
+				updated++;
 			} else {
 				System.err.println("Entity is NEW=" + name);
 				ps_insert = ps_add;
+				inserted++;
 			}
 			rs.close();
 			
@@ -296,6 +301,7 @@ public class EntityEngineSQLite {
 		}
 		ps_add.close();
 		ps_update.close();
+		info.append("New: " + inserted + ", Updated: " + updated);
 	}
 
 	String queryName(int uid) throws SQLException {
@@ -425,5 +431,18 @@ public class EntityEngineSQLite {
 			changed = true;
 		}
 		return changed;
+	}
+	
+	public boolean importLive(File csvFile, String userRefName, StringBuilder resultLog)
+	{
+		try {
+			resultLog.append(userRefName);
+			resultLog.append(": ");
+			updateDataFromImport(csvFile, resultLog);
+			return true;
+		} catch (Exception exc) {
+			resultLog.append("Error: " + exc.getMessage());
+			return false;
+		}
 	}
 }

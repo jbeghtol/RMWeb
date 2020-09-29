@@ -313,3 +313,38 @@ function prompt_quickroll(callback)
  
 }
 
+function rm_file_upload_dialog(signalId) {
+    // let the dialog do its thing
+    $.confirm({ 
+        escapeKey: 'cancel',
+        content: 'url:/gui?ftl=DialogUpload&type=csv',
+        onContentReady: function(data, status, xhr) {
+            onDialogLoad(this);
+        },
+        onDestroy: function() {
+            if (signalId)
+                onDialogSignal(signalId);
+        },
+        columnClass: 'medium',
+        type: 'blue',
+        animation: 'opacity',
+        animationSpeed: 300,
+        autoResize: false,
+        buttons: {
+            conf: {
+                text: 'Upload',
+                isDisabled: true,
+                keys: ['enter'],
+                action: function() {
+                    return false;
+                }
+            },
+            cancel: {
+                text: 'Cancel',
+                action: function(){
+                    // nothing
+                }
+            }
+        }
+    });
+}

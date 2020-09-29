@@ -195,6 +195,10 @@ li.selected {
     width: 20%;
 }
 
+.nomargin {
+    margin: 0;
+}
+
 /** 
 This code from here, restores submenus to BS3 
 see: https://stackoverflow.com/questions/18023493/bootstrap-3-dropdown-sub-menu-missing
@@ -239,4 +243,13 @@ see: https://stackoverflow.com/questions/18023493/bootstrap-3-dropdown-sub-menu-
     -webkit-border-radius:6px 0 6px 6px;
     -moz-border-radius:6px 0 6px 6px;
     border-radius:6px 0 6px 6px;
+}
+
+.hiddenfile {
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
 }

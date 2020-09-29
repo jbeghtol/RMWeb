@@ -1,7 +1,10 @@
 package com.ilsian.rmweb;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.HashMap;
+import java.util.List;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
@@ -12,6 +15,11 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import org.apache.tomcat.util.http.fileupload.FileItem;
+import org.apache.tomcat.util.http.fileupload.disk.DiskFileItemFactory;
+import org.apache.tomcat.util.http.fileupload.servlet.ServletFileUpload;
+import org.apache.tomcat.util.http.fileupload.servlet.ServletRequestContext;
 
 import com.ilsian.rmweb.EntityEngineSQLite.ActiveEntity;
 import com.ilsian.rmweb.EntityEngineSQLite.Skill;
@@ -462,6 +470,97 @@ public class RMServlet extends AppServlet {
 		}
 	};
 	
+	/**
+	 * Method to handle file uploads from the user
+	 */
+	final ActionHandler mFileUploadHandler = new ActionHandler() {
+
+		/**
+		 * Get the local file to be used to store the uploaded file name. Attempts
+		 * to get a unique file that doesn't rely on the source name being valid
+		 * in our OS environment.
+		 * @throws IOException 
+		 */
+		File getSafeTargetFile(File rootDir, String sourceName, String type, UserInfo user) throws IOException {
+			final String safesuffix = "." + user.mUsername.replaceAll("[^A-Za-z0-9]", "");
+			return File.createTempFile(type + "-", safesuffix, rootDir);
+		}
+		
+		@Override
+		public void handleAction(String action, UserInfo user,
+				HttpServletRequest request, HttpServletResponse response)
+				throws ServletException, IOException {
+			
+			final String type = WebLib.getStringParam(request, "type", "invalid");
+			if (user.mLevel < RMUserSecurity.kLoginGM) {
+				WebLib.renderArrayJSONResponse(response, new boolean[] { false }, new String[] { "User access is denied." });
+				return;
+			}
+
+			if (!ServletFileUpload.isMultipartContent(request)) {
+				WebLib.renderArrayJSONResponse(response, new boolean[] { false }, new String[] { "Request content invalid." });
+				return;
+			}
+
+			ServletFileUpload uploadHandler = new ServletFileUpload(new DiskFileItemFactory());
+			ServletRequestContext reqContext = new ServletRequestContext(request);
+
+			// uploads are stored in a subdir of the working directory
+			File uploadPath = new File("uploads");
+			if (!uploadPath.exists())
+				uploadPath.mkdirs();
+
+			HashMap<String,String> formParams = new HashMap();
+			
+			PrintWriter writer = response.getWriter();
+			response.setContentType("application/json");
+			JSONArray json = new JSONArray();
+			try {
+				List<FileItem> items = uploadHandler.parseRequest(reqContext);
+				for (FileItem item : items) {
+					if (!item.isFormField()) {
+						// save the file contents
+						final File file = getSafeTargetFile(uploadPath, item.getName(), type, user);
+						item.write(file);
+						
+						// handle the uploaded file
+						final StringBuilder msg = new StringBuilder();
+						final boolean hresult = EntityEngineSQLite.getInstance().importLive(file,  item.getName(), msg);
+						// update the json response objects
+						final JSONObject jsono = new JSONObject();
+						jsono.put("name", item.getName());
+						jsono.put("size", item.getSize());
+						jsono.put("result", hresult);
+						jsono.put("message", msg.toString());
+						json.put(jsono);
+					}
+					else {
+						// this presumes formData comes first - which should be guaranteed by our form
+						formParams.put(item.getFieldName(), item.getString());
+					}
+				}
+			} catch (Exception e) {
+				// this is unlikely to be useful, but in case there are
+				// exceptions where client connection is still okay, add
+				// the exception as a resut record
+				final JSONObject jsono = new JSONObject();
+				try {
+					jsono.put("result", false);
+					jsono.put("message", e.toString());
+				} catch (JSONException ignored) {
+					// for this input, we will never throw
+				}
+				json.put(jsono);
+			} finally {
+				writer.write(json.toString());
+				writer.close();
+			}
+
+		}
+		
+	};
+	
+	
 	CombatHandler mCombatHandler = new CombatHandler();
 	String [] mMasterWeaponList = null;
 	
@@ -498,6 +597,8 @@ public class RMServlet extends AppServlet {
 		addPostHandler("activatepeer", mActiveList);
 		addPostHandler("deactivatepeer", mActiveList);
 		addPostHandler("toggleVisible", mActiveList);
+		
+		addPostHandler("upload", mFileUploadHandler);
 		
 		addPostHandler("lookupTables", mCombatHandler.makeHandlerTable());
 		addPostHandler("lookupAttack", mCombatHandler.makeHandlerAttack());

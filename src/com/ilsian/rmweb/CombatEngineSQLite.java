@@ -347,6 +347,8 @@ public class CombatEngineSQLite implements CombatLookup {
     	{
     		for (String res:results)
     		{
+    			if (sb.length() > 0)
+    				sb.append("<br>");
     			// first replace the easy ones
     			res = res.replaceAll("\\*", "<img class=\"mod\" src=\"/res/stunned.png\" />").
     					replaceAll("@", "<img class=\"mod\" src=\"/res/noparry.png\" />");

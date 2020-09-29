@@ -47,7 +47,7 @@
 <script id="tmplAllEntities" type="text/html">
 <table id="alltable" class="table table-dense table-striped nomargin">
 <thead><tr><th>Auto</th><th>Name</th><th>Load</th><th>Remove&nbsp;
-<button class="btn btn-primary btn-xs" title="Upload updates to entities" onclick="rm_file_upload_dialog('signalEntityLoad')">Import <i class="glyphicon glyphicon-floppy-open"></i></button>
+<button class="btn btn-primary btn-xs" title="Upload updates to entities" onclick="rm_file_upload_dialog('sigEntities')">Import <i class="glyphicon glyphicon-floppy-open"></i></button>
 </th></tr></thead>
 <tbody id="allrows"></tbody></table>
 </script>
@@ -417,13 +417,18 @@ function callbackInit() {
     doRMInit();
     updateEntities();
     refreshView();
+    $('#sigEntities').change(function() {
+        updateEntities();
+    });
 }
 
 $(document).ready(callbackInit);
 </SCRIPT>
 
 <body class="rmmain">
-<div class="rmtop">
+<div id="signals" style="display: none;"><span id="sigEntities"></span></div>
+<div class="rmtop bgwhite">
+<div class="rmtabs">
 <!-- user / logout -->
    <div class="btn-group pull-right">
     <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
@@ -443,8 +448,8 @@ $(document).ready(callbackInit);
   <li><a data-toggle="tab" href="#rmonline">Online</a></li>
   <li><a data-toggle="tab" href="#rmcombat" id="combatview">Combat</a></li>
 </ul>
-
-<div class="tab-content bgwhite rmheader">
+</div>
+<div class="tab-content bgwhite">
   <div id="rmactive" class="tab-pane in active">
     <#include "ActiveView.ftl">
   </div>

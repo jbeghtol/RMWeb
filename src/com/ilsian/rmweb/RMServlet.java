@@ -106,6 +106,17 @@ public class RMServlet extends AppServlet {
 			}
 		}
 		
+		public void refreshActiveFromDB() {
+			ModelSync.modelUpdate(ModelSync.Model.ENTITIES, () -> {
+				try {
+					return EntityEngineSQLite.getInstance().queryUpdateMap(this, mMasterWeaponList);
+				} catch (Exception exc) {
+					exc.printStackTrace();
+				}
+				return false;
+			});
+		}
+
 		public void setGroupActive(int entuid, boolean active, boolean hidden) {
 			// TODO: Activate all players in this name's group
 			ModelSync.modelUpdate(ModelSync.Model.ENTITIES, () -> {
@@ -515,6 +526,7 @@ public class RMServlet extends AppServlet {
 			PrintWriter writer = response.getWriter();
 			response.setContentType("application/json");
 			JSONArray json = new JSONArray();
+			boolean anyChanges = false;
 			try {
 				List<FileItem> items = uploadHandler.parseRequest(reqContext);
 				for (FileItem item : items) {
@@ -533,11 +545,16 @@ public class RMServlet extends AppServlet {
 						jsono.put("result", hresult);
 						jsono.put("message", msg.toString());
 						json.put(jsono);
+						if (hresult)
+							anyChanges = true;
 					}
 					else {
 						// this presumes formData comes first - which should be guaranteed by our form
 						formParams.put(item.getFieldName(), item.getString());
 					}
+				}
+				if (anyChanges && mActiveList != null) {
+					mActiveList.refreshActiveFromDB();
 				}
 			} catch (Exception e) {
 				// this is unlikely to be useful, but in case there are

@@ -353,6 +353,87 @@ public class EntityEngineSQLite {
 		return name.toLowerCase().replaceAll("[^a-zA-Z0-9]", "");
 	}
 	
+	void decodeEntity(Entity actor, ResultSet rs, HashMap<String, Integer> weaponMap) throws SQLException {
+		actor.mUid = rs.getInt(1);
+		int valIndex = 2;
+		for (String strkey: STRING_KEYS) {
+			if (strkey.equals("name")) {
+				actor.mName = rs.getString(valIndex++);
+			} else if (strkey.equals("tag"))  {
+				actor.mTag = rs.getString(valIndex++);
+			} else if (strkey.equals("controllers")) {
+				actor.mControllers = rs.getString(valIndex++);
+			} else if (strkey.startsWith("weapon")) {
+				int index = Integer.parseInt(strkey.substring(6));
+				actor.mWeapons[index-1] = new Weapon();
+				actor.mWeapons[index-1].mWeaponName = rs.getString(valIndex++);
+			} else {
+				valIndex++;
+			}
+		}
+		for (String boolkey: BOOL_KEYS) {
+			valIndex++;
+		}
+		for (String intkey:INT_KEYS) {
+			if (intkey.equals("fs")) {
+				actor.mFirstStrike = rs.getInt(valIndex++);
+			} else if (intkey.equals("at")) {
+				actor.mAt = rs.getInt(valIndex++);
+			} else if (intkey.equals("db")) {
+				actor.mDb = rs.getInt(valIndex++);
+			} else if (intkey.startsWith("ob") && intkey.length() == 3) {
+				int index = Integer.parseInt(intkey.substring(2));
+				actor.mWeapons[index-1].mSkill = rs.getInt(valIndex++);
+			} else if (SKILL_MAP.containsKey(intkey)) {
+				Skill sk = new Skill();
+				sk.mDisplayName = SKILL_MAP.get(intkey);
+				sk.mTotal = rs.getInt(valIndex++);
+				actor.mSkills.put(intkey, sk);
+			} else {
+				valIndex++;
+			}
+		}
+		
+		// finally, perform a weapon lookup to validate the weapons and fill in the uid
+		for (int i=0; i<actor.mWeapons.length; i++) {
+			// support lookupname|display name
+			String [] nameSplit = actor.mWeapons[i].mWeaponName.split("\\|");
+			Integer uid = weaponMap.get(weaponLookupName(nameSplit[0]));
+			if (uid != null) {
+				actor.mWeapons[i].mWeaponId = uid;
+				if (nameSplit.length>1) {
+					actor.mWeapons[i].mWeaponName = nameSplit[1];
+				}
+			} else {
+				if (!actor.mWeapons[i].mWeaponName.trim().isEmpty()) {
+					System.err.println("Failed to lookup: " + actor.mWeapons[i].mWeaponName);
+				}
+				actor.mWeapons[i] = null;
+			}
+		}	
+	}
+	
+	boolean queryUpdateMap(Map<String, ActiveEntity> map, String [] weaponNames) {
+		final HashMap<String, Integer> weaponMap = new HashMap();
+		for (int i=0;i<weaponNames.length; i++) {
+			weaponMap.put(weaponLookupName(weaponNames[i]), i);
+		}
+		// basically, we updated our data store underneath our loaded models - but
+		// these models may have some useful transient data we want to keep.
+		return map.entrySet().removeIf(actor -> {
+			// clever by 1/2, update or remove the bad apples
+			PreparedStatement p = iConnection.prepareStatement(createQueryStatement(false, actor.mName, null));
+			p.setString(1, actor.mName);
+			ResultSet rs = p.executeQuery();
+			if (rs.next()) {
+				decodeEntity(actor, rs, weaponMap);
+				return false; // dont remove
+			} else {
+				return true; // remove
+			}
+		});
+	}
+
 	boolean queryToMap(String name, Map<String, ActiveEntity> map, String [] weaponNames, String tag, boolean hidden) throws SQLException {
 		HashMap<String, Integer> weaponMap = new HashMap();
 		for (int i=0;i<weaponNames.length; i++) {
@@ -369,63 +450,7 @@ public class EntityEngineSQLite {
 		ResultSet rs = p.executeQuery();
 		while (rs.next()) {
 			ActiveEntity actor = new ActiveEntity();
-			actor.mUid = rs.getInt(1);
-			int valIndex = 2;
-			for (String strkey: STRING_KEYS) {
-				if (strkey.equals("name")) {
-					actor.mName = rs.getString(valIndex++);
-				} else if (strkey.equals("tag"))  {
-					actor.mTag = rs.getString(valIndex++);
-				} else if (strkey.equals("controllers")) {
-					actor.mControllers = rs.getString(valIndex++);
-				} else if (strkey.startsWith("weapon")) {
-					int index = Integer.parseInt(strkey.substring(6));
-					actor.mWeapons[index-1] = new Weapon();
-					actor.mWeapons[index-1].mWeaponName = rs.getString(valIndex++);
-				} else {
-					valIndex++;
-				}
-			}
-			for (String boolkey: BOOL_KEYS) {
-				valIndex++;
-			}
-			for (String intkey:INT_KEYS) {
-				if (intkey.equals("fs")) {
-					actor.mFirstStrike = rs.getInt(valIndex++);
-				} else if (intkey.equals("at")) {
-					actor.mAt = rs.getInt(valIndex++);
-				} else if (intkey.equals("db")) {
-					actor.mDb = rs.getInt(valIndex++);
-				} else if (intkey.startsWith("ob") && intkey.length() == 3) {
-					int index = Integer.parseInt(intkey.substring(2));
-					actor.mWeapons[index-1].mSkill = rs.getInt(valIndex++);
-				} else if (SKILL_MAP.containsKey(intkey)) {
-					Skill sk = new Skill();
-					sk.mDisplayName = SKILL_MAP.get(intkey);
-					sk.mTotal = rs.getInt(valIndex++);
-					actor.mSkills.put(intkey, sk);
-				} else {
-					valIndex++;
-				}
-			}
-			
-			// finally, perform a weapon lookup to validate the weapons and fill in the uid
-			for (int i=0; i<actor.mWeapons.length; i++) {
-				// support lookupname|display name
-				String [] nameSplit = actor.mWeapons[i].mWeaponName.split("\\|");
-				Integer uid = weaponMap.get(weaponLookupName(nameSplit[0]));
-				if (uid != null) {
-					actor.mWeapons[i].mWeaponId = uid;
-					if (nameSplit.length>1) {
-						actor.mWeapons[i].mWeaponName = nameSplit[1];
-					}
-				} else {
-					if (!actor.mWeapons[i].mWeaponName.trim().isEmpty()) {
-						System.err.println("Failed to lookup: " + actor.mWeapons[i].mWeaponName);
-					}
-					actor.mWeapons[i] = null;
-				}
-			}
+			decodeEntity(actor, rs, weaponMap);
 			actor.mVisible = !hidden;
 			map.put(actor.mName, actor);
 			changed = true;

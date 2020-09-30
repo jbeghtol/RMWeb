@@ -31,6 +31,7 @@ public class EntityEngineSQLite {
 		public int mWeaponId;
 		public String mWeaponName;
 		public int mSkill;
+		public int mMaxRank = 4;
 	}
 	
 	public static class Skill {
@@ -80,6 +81,7 @@ public class EntityEngineSQLite {
 					jw.put("name", mWeapons[i].mWeaponName);
 					jw.put("uid", mWeapons[i].mWeaponId);
 					jw.put("ob", mWeapons[i].mSkill);
+					jw.put("rank", mWeapons[i].mMaxRank);
 					wlist.put(jw);
 				}
 			}
@@ -314,6 +316,32 @@ public class EntityEngineSQLite {
 		return null;
 	}
 	
+	void delete(int uid) throws SQLException {
+		PreparedStatement p = null;
+		try {
+			p = iConnection.prepareStatement("DELETE FROM entities where _id=?");
+			p.setInt(1, uid);
+			p.executeUpdate();
+		} finally {
+			Util.safeClose(p);
+		}
+	}
+	
+	void deleteGroup(int uid) throws SQLException {
+		String groupName = queryGroup(uid);
+		if (groupName == null)
+			return;
+		
+		PreparedStatement p = null;
+		try {
+			p = iConnection.prepareStatement("DELETE FROM entities where tag=?");
+			p.setString(1, groupName);
+			p.executeUpdate();
+		} finally {
+			Util.safeClose(p);
+		}
+	}
+	
 	String queryGroup(int uid) throws SQLException {
 		PreparedStatement p = iConnection.prepareStatement("SELECT tag FROM entities where _id=?");
 		p.setInt(1, uid);
@@ -403,6 +431,13 @@ public class EntityEngineSQLite {
 				actor.mWeapons[i].mWeaponId = uid;
 				if (nameSplit.length>1) {
 					actor.mWeapons[i].mWeaponName = nameSplit[1];
+				}
+				if (nameSplit.length>2) {
+					try {
+						actor.mWeapons[i].mMaxRank = Integer.parseInt(nameSplit[2]);
+					} catch (Exception grr) {
+						grr.printStackTrace();
+					}
 				}
 			} else {
 				if (!actor.mWeapons[i].mWeaponName.trim().isEmpty()) {

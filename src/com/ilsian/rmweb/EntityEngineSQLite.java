@@ -353,7 +353,7 @@ public class EntityEngineSQLite {
 		return name.toLowerCase().replaceAll("[^a-zA-Z0-9]", "");
 	}
 	
-	void decodeEntity(Entity actor, ResultSet rs, HashMap<String, Integer> weaponMap) throws SQLException {
+	void decodeEntity(ActiveEntity actor, ResultSet rs, HashMap<String, Integer> weaponMap) throws SQLException {
 		actor.mUid = rs.getInt(1);
 		int valIndex = 2;
 		for (String strkey: STRING_KEYS) {
@@ -422,14 +422,23 @@ public class EntityEngineSQLite {
 		// these models may have some useful transient data we want to keep.
 		return map.entrySet().removeIf(actor -> {
 			// clever by 1/2, update or remove the bad apples
-			PreparedStatement p = iConnection.prepareStatement(createQueryStatement(false, actor.mName, null));
-			p.setString(1, actor.mName);
-			ResultSet rs = p.executeQuery();
-			if (rs.next()) {
-				decodeEntity(actor, rs, weaponMap);
-				return false; // dont remove
-			} else {
-				return true; // remove
+			PreparedStatement p = null;
+			ResultSet rs = null;
+			try {
+				p = iConnection.prepareStatement(createQueryStatement(false, actor.getValue().mName, null));
+				p.setString(1, actor.getValue().mName);
+				rs = p.executeQuery();
+				if (rs.next()) {
+					decodeEntity(actor.getValue(), rs, weaponMap);
+					return false; // dont remove
+				} else {
+					return true; // remove
+				}
+			} catch (SQLException sqe) {
+				return false; // ?? better not to remove 
+			} finally {
+				Util.safeClose(p);
+				Util.safeClose(rs);
 			}
 		});
 	}

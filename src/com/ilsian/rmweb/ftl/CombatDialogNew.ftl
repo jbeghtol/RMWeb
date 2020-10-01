@@ -1,16 +1,31 @@
 
 <table id="activetable" class="table table-dense table-striped">
 <tr>
-<th><input type="text" class="input span1" id="attacker" /></th>
-<th><input type="text" class="input span1" id="defender" /></th>
+<th><input type="text" class="input span1" id="attacker" placeholder="Attacker Name" /></th>
+<th><input type="text" class="input span1" id="defender" placeholder="Defender Name" /></th>
 </tr>
 <tr>
 <td>
-    <input type="number" class="input" id="obSkillId" oninput="obOutputId.max = obSkillId.value" />
-    <input type="range" name="obInputName" id="obInputId" value="100" min="0" max="100" oninput="obOutputId.value = obInputId.value">
-    <output name="obOutputName" id="obOutputId">100</output>
+<select id="weaponselect"></select><select id="rankselect"></select>
 </td>
 <td>
+<select class="span1" id="armorselect"></select><span class="add-on">DB</span><input type="number" class="input span1" id="db" />
+</td>
+</tr>
+<tr>
+<td>
+<span class="add-on">OB-A</span><input type="number" class="input span1" id="ob" />
+</td>
+<td>
+<span class="add-on">OB-D</span><input type="number" class="input span1" id="parry" />
+</td>
+</tr>
+<tr>
+<td>
+<span class="add-on">Mods</span><input type="number" class="input span1" id="attackmods" />
+</td>
+<td>
+SPECIAL
 </td>
 </tr>
 </table>
@@ -21,23 +36,11 @@
         <input type="checkbox" id="practice" name="practice" value="practice"> test)
     </div>
 </div>
-<div class="slidecontainer">
-  <input type="range" min="1" max="100" value="50" class="slider" id="myRange">
-</div>
-<div class="control-group">
-    <label class="control-label" for="weaponselect">Weapon/Armor</label>
-    <div class="controls">
-        <select class="span2" id="weaponselect"></select>
-        <select class="span1" id="armorselect"></select>
-    </div>
-</div>
 
 <div class="control-group">
     <label class="control-label" for="ob">Offense/Defense</label>
     <div class="controls">
         <div class="input-prepend">
-            <span class="add-on">OB</span><input type="number" class="input span1" id="ob" />
-            <span class="add-on">DB</span><input type="number" class="input span1" id="db" />
         </div>
     </div>
 </div>
@@ -46,7 +49,6 @@
     <label class="control-label" for="attackmods">Mods/Roll</label>
     <div class="controls">
         <div class="input-prepend">
-            <span class="add-on">Mods</span><input type="number" class="input span1" id="attackmods" />
             <button onclick="doFormAttackRoll()" class="btn btn-primary" type="button">Roll</button><input type="number" class="input span1" id="attackroll" onkeydown="formAttackKey(this)" />
         </div>
     </div>

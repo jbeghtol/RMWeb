@@ -348,3 +348,27 @@ function rm_file_upload_dialog(signalId) {
         }
     });
 }
+
+function rm_confirm_dialog(myTitle, myMessage, mySuccessHandler)
+{
+    $.confirm({ 
+        escapeKey: 'cancel',
+        title: myTitle,
+        content: myMessage,
+        columnClass: 'medium',
+        type: 'blue',
+        animation: 'opacity',
+        animationSpeed: 300,
+        scrollToPreviousElement: false,
+        buttons: {
+            conf: {
+                text: 'OK',
+                keys: ['enter'],
+                action: mySuccessHandler
+            },
+            cancel: function () {
+                // no-op
+            }
+        }
+    });
+}

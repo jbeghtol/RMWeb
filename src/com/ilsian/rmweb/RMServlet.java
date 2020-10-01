@@ -3,6 +3,7 @@ package com.ilsian.rmweb;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Logger;
@@ -15,7 +16,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import org.apache.tomcat.util.http.fileupload.FileItem;
 import org.apache.tomcat.util.http.fileupload.disk.DiskFileItemFactory;
 import org.apache.tomcat.util.http.fileupload.servlet.ServletFileUpload;
@@ -106,8 +106,19 @@ public class RMServlet extends AppServlet {
 			}
 		}
 		
+		public void refreshActiveFromDB() {
+			ModelSync.modelUpdate(ModelSync.Model.ENTITIES, () -> {
+				try {
+					return EntityEngineSQLite.getInstance().queryUpdateMap(this, mMasterWeaponList);
+				} catch (Exception exc) {
+					exc.printStackTrace();
+				}
+				return false;
+			});
+		}
+
 		public void setGroupActive(int entuid, boolean active, boolean hidden) {
-			// TODO: Activate all players in this name's group
+			// Activate all players in this name's group
 			ModelSync.modelUpdate(ModelSync.Model.ENTITIES, () -> {
 				try {
 					String tag = EntityEngineSQLite.getInstance().queryGroup(entuid);
@@ -152,6 +163,31 @@ public class RMServlet extends AppServlet {
 				}
 				return false;
 			});
+		}
+		
+		public void deleteEntity(int uid) {
+			try {
+				String name = EntityEngineSQLite.getInstance().queryName(uid);
+				if (name != null) {
+					// first, remove them from active just in case
+					setActive(name, false, false);
+					// now delete the bugger
+					EntityEngineSQLite.getInstance().delete(uid);
+				}
+			} catch (Exception sqe) {
+				sqe.printStackTrace();
+			}
+		}
+		
+		public void deleteEntityGroup(int uid) {
+			try {
+				// first, remove them all from active just in case
+				setGroupActive(uid, false, false);
+				// now delete the buggers
+				EntityEngineSQLite.getInstance().deleteGroup(uid);
+			} catch (Exception sqe) {
+				sqe.printStackTrace();
+			}
 		}
 		
 		public void rollInitiative() {
@@ -354,6 +390,10 @@ public class RMServlet extends AppServlet {
 				}
 			} else if (action.equals("toggleVisible") && user.mLevel >= RMUserSecurity.kLoginGM) {
 				toggleVisible(WebLib.getIntParam(request, "uid", -1));
+			} else if (action.equals("delete") && user.mLevel >= RMUserSecurity.kLoginGM) {
+				deleteEntity(WebLib.getIntParam(request, "uid", -1));
+			} else if (action.equals("deletegroup") && user.mLevel >= RMUserSecurity.kLoginGM) {
+				deleteEntityGroup(WebLib.getIntParam(request, "uid", -1));
 			}
 		}
 		
@@ -515,6 +555,7 @@ public class RMServlet extends AppServlet {
 			PrintWriter writer = response.getWriter();
 			response.setContentType("application/json");
 			JSONArray json = new JSONArray();
+			boolean anyChanges = false;
 			try {
 				List<FileItem> items = uploadHandler.parseRequest(reqContext);
 				for (FileItem item : items) {
@@ -533,11 +574,16 @@ public class RMServlet extends AppServlet {
 						jsono.put("result", hresult);
 						jsono.put("message", msg.toString());
 						json.put(jsono);
+						if (hresult)
+							anyChanges = true;
 					}
 					else {
 						// this presumes formData comes first - which should be guaranteed by our form
 						formParams.put(item.getFieldName(), item.getString());
 					}
+				}
+				if (anyChanges && mActiveList != null) {
+					mActiveList.refreshActiveFromDB();
 				}
 			} catch (Exception e) {
 				// this is unlikely to be useful, but in case there are
@@ -597,6 +643,8 @@ public class RMServlet extends AppServlet {
 		addPostHandler("activatepeer", mActiveList);
 		addPostHandler("deactivatepeer", mActiveList);
 		addPostHandler("toggleVisible", mActiveList);
+		addPostHandler("delete", mActiveList);
+		addPostHandler("deletegroup", mActiveList);
 		
 		addPostHandler("upload", mFileUploadHandler);
 		

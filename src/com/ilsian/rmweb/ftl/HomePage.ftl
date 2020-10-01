@@ -61,6 +61,7 @@
 </td>
 <td>
 <a class="btn btn-xs" data-template-bind='[{"attribute": "entity", "value": "_id"}]' title="Remove from Active" onclick="changeActivation(this, false)"><i class="glyphicon glyphicon-log-out"></i></a>
+<a class="btn btn-xs" data-template-bind='[{"attribute": "entity", "value": "_id"},{"attribute": "entname", "value": "name"}]' title="Delete from Database" onclick="deleteEntity(this)"><i class="glyphicon glyphicon-trash" style="color: red;"></i></a>
 </td>
 </tr>
 </script>
@@ -74,6 +75,7 @@
 </td>
 <td class="groupheader">
 <a class="btn btn-xs" data-template-bind='[{"attribute": "entity", "value": "_id"}]' title="Remove from Active" onclick="changeGroupActivation(this, false)"><i class="glyphicon glyphicon-log-out"></i></a>
+<a class="btn btn-xs" data-template-bind='[{"attribute": "entity", "value": "_id"},{"attribute": "enttag", "value": "tag"}]' title="Delete from Database" onclick="deleteEntityGroup(this)"><i class="glyphicon glyphicon-trash" style="color: red;"></i></a>
 </td>
 </tr>
 </script>
@@ -335,6 +337,23 @@ function toggleEntityVisibility(element)
     $.ajax({type: "POST", url: "gui?action=toggleVisible&uid=" + uid});
 }
 
+function deleteEntity(element)
+{
+    var uid = element.getAttribute('entity');
+    var name = element.getAttribute('entname');
+    rm_confirm_dialog("Confirm Delete", "Delete " + name + "?", function() {
+        $.ajax({type: "POST", url: "gui?action=delete&uid=" + uid, success: function(data) { $('#sigEntities').change(); } });
+    });
+}
+
+function deleteEntityGroup(element)
+{
+    var uid = element.getAttribute('entity');
+    var tag = element.getAttribute('enttag');
+    rm_confirm_dialog("Confirm Delete", "Delete ALL entities in group " + tag + "?", function() {
+        $.ajax({type: "POST", url: "gui?action=deletegroup&uid=" + uid, success: function(data) { $('#sigEntities').change(); } });
+    });
+}
 
 function changeActivation(element, toLoad, loadHidden)
 {

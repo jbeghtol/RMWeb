@@ -4,6 +4,7 @@ public class DamageResult {
 
 	public int iDamage;
 	public String iCriticals="";
+	public int iRankLimit;
 	
 	public DamageResult(int dam, String crit) {
 		iDamage = dam;

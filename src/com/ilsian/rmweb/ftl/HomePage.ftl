@@ -381,6 +381,8 @@ function playerLoadAttack(element, weaponindex)
         setInputValueById("attacker", ent.name);
         setInputValueById("ob", ent.weapons[weaponindex].ob);
         setSelectOptionById("weaponselect", ent.weapons[weaponindex].uid);
+        // NOTE: This will be an issue for the old combat view
+        setSelectOptionById("rankselect", ent.weapons[weaponindex].rank);
         console.log("Loading attack for: " + ent.name + ", weapon: " + ent.weapons[weaponindex].name);
     }
 }
@@ -482,7 +484,7 @@ $(document).ready(callbackInit);
     <ul id="ulonline" />
   </div>
   <div id="rmcombat" class="tab-pane">
-    <#include "CombatDialog.ftl">
+    <#include "CombatDialogNew.ftl">
   </div>
 </div>
 </div>

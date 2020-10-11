@@ -58,6 +58,10 @@ div.rmtabs {
   background-color: #D9DDFF;
 }
 
+input.shortnum {
+  width: 60px;
+}
+
 span.rmround {
     padding-right:10px;
 }
@@ -256,4 +260,31 @@ see: https://stackoverflow.com/questions/18023493/bootstrap-3-dropdown-sub-menu-
     overflow: hidden;
     position: absolute;
     z-index: -1;
+}
+
+.combathalf {
+    width: 240px;
+}
+
+.att {
+    background-color: #FF8D8B;
+    text-align: center;
+    font-weight: bold;
+}
+
+.def {
+    background-color: #FFF473;
+    text-align: center;
+    font-weight: bold;
+}
+
+.combat {
+    background-color: #EAEAEA;
+    font-weight: bold;
+}
+
+.crit {
+    background-color: white;
+    margin: 3px;
+    padding: 2px;
 }

@@ -11,8 +11,10 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 
+
 import com.ilsian.tomcat.ActionHandler;
 import com.ilsian.tomcat.UserInfo;
+import com.ilsian.tomcat.WebLib;
 
 
 public class CombatHandler {
@@ -38,7 +40,7 @@ public class CombatHandler {
 	}
 	
 	public ActionHandler makeHandlerAttack() {
-		return new AttackLookup();
+		return new AttackLookupServer();
 	}
 	
 	public ActionHandler makeHandlerCritical() {
@@ -89,33 +91,47 @@ public class CombatHandler {
 		} 
 	}
 	
-	class AttackLookup implements ActionHandler
+	class AttackLookupServer implements ActionHandler
 	{
 		@Override
 		public void handleAction(String action, UserInfo user, HttpServletRequest request, HttpServletResponse response)
 		{
-			final String roll = request.getParameter("roll");
-			final String windex = request.getParameter("weap");
-			final String at = request.getParameter("at");
+			// In this version, we are provided all the details to create explain
+			final int ob = WebLib.getIntParam(request, "ob", 0);
+			final int parry = WebLib.getIntParam(request, "parry", 0);
+			final int db = WebLib.getIntParam(request, "db", 0);
+			final int mods = WebLib.getIntParam(request, "mods", 0);
+			
+			final int userRoll = WebLib.getIntParam(request, "roll", -1000);
+			
+			final int windex = WebLib.getIntParam(request, "weap", 0);
+			final int at = WebLib.getIntParam(request, "at", 1);
 			final String attacker = request.getParameter("attacker");
 			final String defender = request.getParameter("defender");
 			final String validityStr = request.getParameter("validity");
-			final String explain = request.getParameter("explain");
+			//final String explain = request.getParameter("explain");
+			
+			final int rankLimit = WebLib.getIntParam(request, "ranklimit", 3);
 			final int validity = validityStr==null?3:Integer.parseInt(validityStr);
 
-			if (roll == null || windex == null || at == null)
-			{
-				response.setStatus( HttpServletResponse.SC_BAD_REQUEST );
-				return;
+			// DICE!
+			Dice.Open roll = Dice.rollOpen();
+			if (userRoll > -1000) {
+				roll.manual(userRoll);
 			}
+			
+			int summation = ob + mods - db - parry + roll.total_;
+			String explain = String.format("%d + %d - %d - %d + %s", ob, mods, db, parry, roll, summation);
 			
 			try {
 				final CombatEngineSQLite engine = getEngine();
-				DamageResult dam = engine.getDamage(Integer.parseInt(roll), Integer.parseInt(windex), Integer.parseInt(at));
+				// TODO: Check the base roll to see if it would be a fumble in the table
+				DamageResult dam = engine.getDamage(roll.base_, summation, windex, at, rankLimit);
 				
 				String msg;
 				if (dam.iDamage < 0) {
 					msg = "FUMBLE";
+					dam.iDamage = 0;
 				} else if (dam.iDamage > 0) {
 					msg = "HIT " + dam.iDamage + " " + dam.iCriticals;
 				} else {
@@ -123,10 +139,14 @@ public class CombatHandler {
 				}
 				
 				if (validity < VALIDITY_PRACTICE) {
-					String header = String.format("[%s] Attack%s [%s] : %s = %s", attacker==null?"???":attacker,
+					String rankExplain = "";
+					if (dam.iRankLimit > 0) {
+						rankExplain = String.format(" [R%d]", rankLimit + 1);
+					}
+					String header = String.format("[%s] Attack%s [%s] : %s = %s%s", attacker==null?"???":attacker,
 							validity==VALIDITY_COMPUTER?"":"*",
 							defender==null?"???":defender,
-							explain, roll);
+							explain, summation, rankExplain);
 					SimpleEventList.getInstance().postEvent(new SimpleEvent(msg, 
 							header,	"rmattack", user.mUsername));
 				}
@@ -134,6 +154,9 @@ public class CombatHandler {
 				JSONObject p = new JSONObject();
 				p.put("hits", dam.iDamage);
 				p.put("criticals", dam.iCriticals);
+				p.put("roll", roll.total_);
+				p.put("summation", summation);
+				p.put("explain", explain);
 				
 				response.setStatus( HttpServletResponse.SC_OK );
 				response.setContentType("application/json");
@@ -156,28 +179,33 @@ public class CombatHandler {
 		@Override
 		public void handleAction(String action, UserInfo user, HttpServletRequest request, HttpServletResponse response)
 		{
-			final String stringroll = request.getParameter("roll");
+			final int userRoll = WebLib.getIntParam(request, "roll", -1000);
 			final String crits = request.getParameter("crits");
 			final String attacker = request.getParameter("attacker");
 			final String defender = request.getParameter("defender");
 			final String validityStr = request.getParameter("validity");
 			final int validity = validityStr==null?3:Integer.parseInt(validityStr);
 			
-			if (stringroll == null || crits == null)
+			// DICE!
+			Dice.Open dice = Dice.rollOpen(false);
+			if (userRoll > -1000) {
+				dice.manual(userRoll);
+			}
+			
+			if (crits == null)
 			{
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 				return;
 			}
 			
-			final int roll = Integer.parseInt(stringroll);
 			try {
-				final String innerHtml = getEngine().getCriticalsAsHtml(roll, crits);
+				final String innerHtml = getEngine().getCriticalsAsHtml(dice, crits);
 				
 				if (validity < VALIDITY_PRACTICE) {
 					String header = String.format("[%s] Critical%s [%s] : %s : (%d)", attacker==null?"???":attacker,
 							validity==VALIDITY_COMPUTER?"":"*",
 							defender==null?"???":defender,
-							crits, roll);
+							crits, dice.expressedRoll());
 					SimpleEventList.getInstance().postEvent(new SimpleEvent(innerHtml, 
 							header,
 							"rmattack", user.mUsername));
@@ -185,7 +213,7 @@ public class CombatHandler {
 				
 				JSONObject p = new JSONObject();
 				p.put("effects", innerHtml);
-				
+				p.put("roll", dice.expressedRoll());
 				response.setStatus( HttpServletResponse.SC_OK );
 				response.setContentType("application/json");
 				PrintWriter outs = response.getWriter();

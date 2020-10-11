@@ -15,6 +15,9 @@ public class CombatEngineSQLite implements CombatLookup {
 
 	Connection iConnection=null;
 	
+	// these are the max table limits for rank-limited skills
+	private static final int[] RANK_LIMITS = {105, 120, 135, 150};
+	
 	public static void main(String [] args) throws Exception
 	{
 		CombatEngineSQLite cdb = new CombatEngineSQLite();
@@ -23,7 +26,7 @@ public class CombatEngineSQLite implements CombatLookup {
 			System.err.println("WEAPON: " + s);
 		for (String s:cdb.getCriticalList())
 			System.err.println("CRITICAL: " + s);
-		System.err.println("DAMAGE: " + cdb.getDamage(140, 2, 4));
+		System.err.println("DAMAGE: " + cdb.getDamage(99, 140, 2, 4, 3));
 		System.err.println("CRIT ROLL:");
 		for (String s:cdb.getCriticals(99, "ES,AS"))
 			System.err.println("-> " + s);
@@ -262,17 +265,79 @@ public class CombatEngineSQLite implements CombatLookup {
 		return false;
 	}
 	
-	public DamageResult getDamage(int roll, int weaponIndex, int at) {
+	public boolean isFumble(int roll, int weaponIndex, StringBuilder sb)
+	{
 		weaponIndex++;
+		try {
+			Statement st = iConnection.createStatement();
+			ResultSet rs = st.executeQuery("select fumble,onfumble from weaponlisttable where _id=" + weaponIndex);
+			if (rs.next())
+			{
+				int fbelow = rs.getInt(1);
+				if (roll <= fbelow) {
+					String fm = rs.getString(2);
+					if (fm != null && !fm.isEmpty()) 
+						sb.append(fm);
+					return true;
+				}
+			}
+		} catch (SQLException sqe) {
+			System.err.println("Error checking fumble: " + sqe);
+		}
+		
+		return false;
+	}
+	
+	public DamageResult getDamage(int um_roll, int roll, int weaponIndex, int at, int rankSelect) {
+		// check basic fumbles first
+		StringBuilder fumbCrit = new StringBuilder();
+		if (isFumble(um_roll, weaponIndex, fumbCrit)) {
+			DamageResult dr = new DamageResult(-1);
+			if (fumbCrit.length() > 0) dr.iCriticals = fumbCrit.toString();
+			return dr;
+		}
+
+		weaponIndex++;
+		
+		int rankLimit = 150;
+		// Lookup rankLimit using rankSelect and weaponIndex
+		Statement s = null;
+		ResultSet rrs = null;
+		try
+		{
+			s = iConnection.createStatement();
+			rrs = s.executeQuery("select ranked from weaponlisttable where _id=" + weaponIndex);
+			if (rrs.next())
+			{
+				if (rrs.getBoolean(1)) {
+					if (rankSelect >= 0 && rankSelect < RANK_LIMITS.length) {
+						rankLimit = RANK_LIMITS[rankSelect];
+					} else {
+						System.err.println("Invalid Rank Selection!");
+					}
+				}
+			}
+		} catch (SQLException sqe) {
+			sqe.printStackTrace();
+		} finally {
+			Util.safeClose(rrs);
+			Util.safeClose(s);
+		}
+		
 		DamageResult d = new DamageResult(0);
+		if (rankLimit < 150 && roll > rankLimit) {
+			// only set if it limits the effect
+			d.iRankLimit = rankLimit;
+		}
 		try {
 			PreparedStatement ps = iConnection.prepareStatement("select damage,critical from weapondatatable where weapon_id=? and at=? and low_range<=? and high_range>=?");
 			while (roll > 0)
 			{
+				int effectiveRoll = Math.min(rankLimit, (roll>150?150:roll));
 				ps.setInt(1,weaponIndex);
 				ps.setInt(2, at);
-				ps.setInt(3, (roll>150?150:roll));
-				ps.setInt(4, (roll>150?150:roll));
+				ps.setInt(3, effectiveRoll);
+				ps.setInt(4, effectiveRoll);
 				ResultSet rs = ps.executeQuery();
 				if (rs.next())
 				{
@@ -286,6 +351,13 @@ public class CombatEngineSQLite implements CombatLookup {
 			System.err.println("Error checking damage: " + sqe);
 		}
 		
+		if (d.iDamage < 0) {
+			// Fumble detected in lookup portion - kind of a kludge but lookup the fumble table by reporting an UM1
+			if (isFumble(1, weaponIndex, fumbCrit)) {
+				// this *should* be true
+				if (fumbCrit.length() > 0) d.iCriticals = fumbCrit.toString();
+			}			
+		}
 		return d;
 	}	
 	
@@ -296,7 +368,6 @@ public class CombatEngineSQLite implements CombatLookup {
 		try {
 			// tables holds a comma separated list of severity+critical
 			String [] crits = tables.split(",");
-			//INSERT INTO criticaldatatable (id, crit_id, low_range, high_range, severity, critical) values (?,?,?,?,?,?)
 			PreparedStatement ps = iConnection.prepareStatement("select critical from criticaldatatable where crit_id in (select _id from criticallisttable where code=?) and severity=? and low_range<=? and high_range>=?");
 			for (int i=0;i<crits.length;i++)
 			{
@@ -328,6 +399,69 @@ public class CombatEngineSQLite implements CombatLookup {
 		String [] sr = new String[results.size()];
 		results.copyInto(sr);
 		return sr;
+	}
+	
+	public String [] getCriticals(Dice.Open roll, String tables)
+	{
+		Vector results = new Vector();
+		
+		try {
+			// tables holds a comma separated list of severity+critical
+			String [] crits = tables.split(",");
+			PreparedStatement ps = iConnection.prepareStatement("select critical from criticaldatatable where crit_id in (select _id from criticallisttable where code=?) and severity=? and low_range<=? and high_range>=?");
+			PreparedStatement checkps = iConnection.prepareStatement("select max(high_range) from criticaldatatable where crit_id in (select _id from criticallisttable where code=?)");
+			for (int i=0;i<crits.length;i++)
+			{
+				String ct = crits[i].trim();
+				if (ct.length()==0)
+					continue;
+				
+				char severity = ct.charAt(0);
+				char table = ct.charAt(1);
+				
+				// check if we use open ended or d100 only
+				checkps.setString(1, Character.toString(table));
+				ResultSet checkrs = checkps.executeQuery();
+				if (!checkrs.next()) {
+					// can't find it, skip it
+					continue;
+				}
+				
+				int tableMax = checkrs.getInt(1);
+				checkrs.close();
+				
+				if (tableMax > 100)
+					roll.used_open_ = true;
+				
+				int rollForCrit = Math.min(tableMax, roll.total_);				
+				
+				ps.setString(1, Character.toString(table));
+				ps.setString(2, Character.toString(severity));
+				ps.setInt(3, rollForCrit);
+				ps.setInt(4, rollForCrit);
+				ResultSet rs = ps.executeQuery();
+				if (rs.next())
+				{
+					results.add(rs.getString(1));
+				}
+				rs.close();
+			}
+			ps.close();
+			
+			// return results
+			if (results.size() == 0)
+				return null;
+		} catch (SQLException sqe) {
+			System.err.println("FAILED LOOKING UP CRITICAL: " + sqe);
+		}
+		String [] sr = new String[results.size()];
+		results.copyInto(sr);
+		return sr;
+	}
+	
+	public String getCriticalsAsHtml(Dice.Open roll, String tables)
+	{
+		return formatCriticalResults(getCriticals(roll, tables));
 	}
 	
 	public String getCriticalsAsHtml(int roll, String tables)

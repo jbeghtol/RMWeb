@@ -15,30 +15,69 @@ public class Dice {
 	}
 	
 	public static int rollOpenPercent() {
-		int baseRoll = rollClosed();
+		return new Open(true).total_;
+	}
 	
-		if (baseRoll > 95)
-		{
-			/* open end up! */
-			int nextRoll = rollClosed();
-			while (nextRoll > 95)
+	public static Open rollOpen(boolean allowDown) {
+		return new Open(allowDown);
+	}
+	
+	public static Open rollOpen() {
+		return new Open(true);
+	}
+
+	static class Open {
+		public int base_;
+		public int total_;
+		public boolean manual_;
+		public boolean used_open_; // set when someone uses the open ended version, for crits
+		
+		public Open(boolean allowDown) {
+			base_ = rollClosed();
+			total_ = base_;
+			
+			if (base_ > 95)
 			{
-				baseRoll += nextRoll;
-				nextRoll = rollClosed();
+				/* open end up! */
+				int nextRoll = rollClosed();
+				while (nextRoll > 95)
+				{
+					total_ += nextRoll;
+					nextRoll = rollClosed();
+				}
+				total_ += nextRoll;
 			}
-			baseRoll += nextRoll;
+			else if (allowDown && base_ < 6)
+			{
+				/* open end down! */
+				int nextRoll = rollClosed();
+				while (nextRoll < 6)
+				{
+					total_ -= nextRoll;
+					nextRoll = rollClosed();
+				}
+				total_ -= nextRoll;
+			}		
 		}
-		else if (baseRoll < 6)
-		{
-			/* open end down! */
-			int nextRoll = rollClosed();
-			while (nextRoll < 6)
-			{
-				baseRoll -= nextRoll;
-				nextRoll = rollClosed();
+		
+		public void manual(int val) {
+			manual_ = true;
+			base_ = val;
+			total_ = val;
+		}
+		
+		public int expressedRoll() {
+			return used_open_?total_:base_;
+		}
+		
+		public String toString() {
+			if (total_ != base_) {
+				return String.format("(%d | %d)", base_, total_);
+			} else if (manual_) {
+				return String.format("(%d*)", total_);
+			} else {
+				return String.format("(%d)", total_);
 			}
-			baseRoll -= nextRoll;
-		}		
-		return baseRoll;
+		}
 	}
 }

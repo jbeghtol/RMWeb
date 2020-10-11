@@ -6,9 +6,14 @@ function doLookupCritical(inRoll, inCrits, attacker, defender, validity)
 	$.post(	"gui?action=lookupCritical", { roll: inRoll, crits: inCrits, attacker: attacker, defender: defender, validity: validity }, onCritResults );
 }
 
-function doLookupAttack(inRawRoll, inRoll, inWeapon, inArmor, attacker, defender, validity, explain)
+function doLookupAttack(inRawRoll, inRoll, inWeapon, inArmor, rankLimit, attacker, defender, validity, explain)
 {
-	$.post(	"gui?action=lookupAttack", { rawRoll: inRawRoll, roll: inRoll, weap: inWeapon, at: inArmor, attacker: attacker, defender: defender, validity: validity, explain: explain }, onAttackResults );
+	$.post(	"gui?action=lookupAttack", { rawRoll: inRawRoll, roll: inRoll, weap: inWeapon, at: inArmor, attacker: attacker, defender: defender, validity: validity, explain: explain, ranklimit: rankLimit }, onAttackResults );
+}
+
+function doAttack(reqdata)
+{
+    $.post( "gui?action=lookupAttack", reqdata, onAttackResults );
 }
 
 function doUpdateTables()
@@ -22,10 +27,18 @@ function onCritResults(results)
 {
 	var e = document.getElementById('criticalresults');
 	e.innerHTML = results.effects;
+	$('#criticalroll').val(results.roll);
 }
 
 function onAttackResults(results)
 {
+    var a = document.getElementById('attackroll');
+    a.value = results.roll;
+    
+    var b = document.getElementById('attacktotal');
+    b.value = results.summation;
+    b.setAttribute('title', results.explain);
+     
 	var e = document.getElementById('attackresult');
 	e.value = results.hits + results.criticals;
 	
@@ -108,17 +121,19 @@ function rollOpen()
 
 function doFormAttackRoll()
 {
-	var roll = rollOpen();
-	var r = document.getElementById('attackroll');
-	r.value = roll;
-	updateAttackSum();
+	//var roll = rollOpen();
+	//var r = document.getElementById('attackroll');
+	//r.value = roll;
+	//updateAttackSum();
+	// clear the roll ahead of time
+	$('#attackroll').val('');
 	doFormAttack(1);
 }
 
 function formAttackKey()
 {
     if(event.key === 'Enter') {
-        updateAttackSum();
+        //updateAttackSum();
         doFormAttack(0);
     }
 }
@@ -146,7 +161,7 @@ function updateAttackSum()
 	document.getElementById('attacktotal').setAttribute('title', explain);
 }
 
-function doFormAttack(validity)
+function doFormAttackOld(validity)
 {
     var roll = document.getElementById('attackroll');
     var explain = document.getElementById('attackexplain');
@@ -155,17 +170,53 @@ function doFormAttack(validity)
 	var a = document.getElementById('armorselect');
 	var att = document.getElementById('attacker');
     var def = document.getElementById('defender');
+    // extract rank limit, if it exists - default to max (3) otherwise
+    var rlimitelem = document.getElementById('rankselect');
+    var rlimit = 3;
+    if (rlimitelem)
+        rlimit = rlimitelem.options[rlimitelem.selectedIndex].value;
+        
     var practice = document.getElementById('practice');
     if (practice.checked)
         validity = 2;
-	doLookupAttack(roll.value, r.value, w.options[w.selectedIndex].value, a.options[a.selectedIndex].value, att.value, def.value, validity, document.getElementById('attacktotal').getAttribute('title'));
+	doLookupAttack(roll.value, r.value, w.options[w.selectedIndex].value, a.options[a.selectedIndex].value, rlimit, att.value, def.value, validity, document.getElementById('attacktotal').getAttribute('title'));
+}
+
+function doFormAttack(validity)
+{
+    // extract rank limit, if it exists - default to max (3) otherwise
+    var rlimitelem = document.getElementById('rankselect');
+    var rlimit = 3;
+    if (rlimitelem)
+        rlimit = rlimitelem.options[rlimitelem.selectedIndex].value;
+        
+    var practice = document.getElementById('practice');
+    if (practice.checked)
+        validity = 2;
+    
+    // build the request from the form
+    var req = new Object();
+    req.roll = $('#attackroll').val();
+    req.weap = $('#weaponselect').val();
+    req.at = $('#armorselect').val();
+    req.attacker = $('#attacker').val();
+    req.defender = $('#defender').val();
+    req.ob = getNumeric('ob');
+    req.mods = getNumeric('attackmods');
+    req.db = getNumeric('db');
+    req.parry = getNumeric('parry');
+    req.validity = validity;
+    req.ranklimit = rlimit;
+    req.size = $('#sizeselect').val();
+    doAttack(req);
 }
 
 function doFormCriticalRoll()
 {
-	var roll = rollClosed();
-	var r = document.getElementById('criticalroll');
-	r.value = roll;
+	//var roll = rollClosed();
+	//var r = document.getElementById('criticalroll');
+	//r.value = roll;
+	$('#criticalroll').val('');
 	doFormCritical(1);
 }
 
@@ -195,7 +246,7 @@ function doRMTest()
 
 function doRMTest2()
 {
-	doLookupAttack(150, 1, 1);
+	doLookupAttack(150, 1, 1, 3);
 }
 
 function doRMInit()

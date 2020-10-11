@@ -172,6 +172,11 @@ function refreshView()
                // log model
                logts = data.log.mod_ts;
                if (data.log.events) {
+                   if (data.log.events.length>0) {
+                       if (data.log.events[0].event == "System reset") {
+                           setElementHtml("rmlog", "");
+                       }
+                   }
                    for (var i=0;i<data.log.events.length; i++) {
                        var logline = "<div class=\"rmevent\"><div class=\"" + data.log.events[i].type 
                            + "\">" + data.log.events[i].header + "<span style=\"float:right;\"><i class=\"glyphicon glyphicon-user\"></i>&nbsp;" + data.log.events[i].user + "&nbsp;</span></div><div class=\"eventresultbox\">" + data.log.events[i].event + "</div></div>";
@@ -298,6 +303,13 @@ function rollInitiative()
 function advanceRound()
 {
     $.ajax({type: "POST", url: "gui?action=nextround"});
+}
+
+function request_archive()
+{
+    rm_confirm_dialog("Confirm Clean", "Reset to round 1 and clear log?", function() {
+       $.ajax({type: "POST", url: "gui?action=cleanslate"})
+    });
 }
 
 function updateInitiativePhase(uid, phase)
@@ -457,6 +469,9 @@ $(document).ready(callbackInit);
       <span class="caret"></span>
     </a>
     <ul class="dropdown-menu">
+      <#if rm.permit gte 3>
+      <li><a onclick="request_archive()" href="#">Clean Slate</a></li>
+      </#if>
       <li><a href="/gui?action=logout">Sign Out</a></li>
     </ul>
   </div>

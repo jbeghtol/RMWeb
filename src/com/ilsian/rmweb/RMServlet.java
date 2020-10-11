@@ -309,6 +309,21 @@ public class RMServlet extends AppServlet {
 			});
 		}
 		
+		public void resetRounds() {
+			ModelSync.modelUpdate(ModelSync.Model.ENTITIES, () -> {
+				currentStage = 0;
+				currentRound = 1;
+				lastSkillCheck = "Result";
+				for (ActiveEntity entry:this.values()) {
+					entry.mLastInit = -1;
+					entry.mLastInitExplain = "";
+					entry.mLastResult = 0;
+					entry.mLastResultExplain = "Reset";
+				}
+				return true;
+			});
+		}
+		
 		public void toggleVisible(int uid) {
 			ModelSync.modelUpdate(ModelSync.Model.ENTITIES, () -> {
 				for (ActiveEntity entry:this.values()) {
@@ -510,6 +525,23 @@ public class RMServlet extends AppServlet {
 		}
 	};
 	
+	ActionHandler cleanSlateHandler = new ActionHandler() {
+		@Override
+		public void handleAction(String action, UserInfo user, HttpServletRequest request, HttpServletResponse response) {
+			if (user.mLevel < RMUserSecurity.kLoginGM) {
+				response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+				return;
+			}
+			
+			long now = System.currentTimeMillis();
+			SimpleEventList.getInstance().archiveAndClear(now);
+			if (mActiveList != null)
+				mActiveList.resetRounds();
+			
+			response.setStatus(HttpServletResponse.SC_OK);
+		}
+	};
+	
 	/**
 	 * Method to handle file uploads from the user
 	 */
@@ -645,6 +677,8 @@ public class RMServlet extends AppServlet {
 		addPostHandler("toggleVisible", mActiveList);
 		addPostHandler("delete", mActiveList);
 		addPostHandler("deletegroup", mActiveList);
+		
+		addPostHandler("cleanslate", cleanSlateHandler);
 		
 		addPostHandler("upload", mFileUploadHandler);
 		

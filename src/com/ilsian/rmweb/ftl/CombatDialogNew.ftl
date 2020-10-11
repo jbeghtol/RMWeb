@@ -72,7 +72,8 @@ Result
 <tr>
 <td class="combat" colspan="2" >
 Critical <input type="text" class="input" id="attackcritical" />
-<button onclick="doFormCriticalRoll()" class="btn btn-primary" type="button">Roll</button><input type="number" class="shortnum" id="criticalroll" onkeydown="formCriticalKey(this)" />
+<button onclick="doFormCriticalRoll()" class="btn btn-primary" type="button">Roll</button>
+<input type="number" class="shortnum" id="criticalroll" onkeydown="formCriticalKey(this)" />
 </td>
 </tr>
 

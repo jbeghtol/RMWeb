@@ -109,7 +109,9 @@ public class CombatHandler {
 			final String attacker = request.getParameter("attacker");
 			final String defender = request.getParameter("defender");
 			final String validityStr = request.getParameter("validity");
-			//final String explain = request.getParameter("explain");
+			final String critVsLarge = WebLib.getStringParam(request, "largecrit", "A");
+			final int reduceCrits = WebLib.getIntParam(request, "reducecrit", 0);
+			final int sizeClass = WebLib.getIntParam(request, "size", 0);
 			
 			final int rankLimit = WebLib.getIntParam(request, "ranklimit", 3);
 			final int validity = validityStr==null?3:Integer.parseInt(validityStr);
@@ -125,7 +127,6 @@ public class CombatHandler {
 			
 			try {
 				final CombatEngineSQLite engine = getEngine();
-				// TODO: Check the base roll to see if it would be a fumble in the table
 				DamageResult dam = engine.getDamage(roll.base_, summation, windex, at, rankLimit);
 				
 				String msg;
@@ -133,7 +134,11 @@ public class CombatHandler {
 					msg = "FUMBLE";
 					dam.iDamage = 0;
 				} else if (dam.iDamage > 0) {
-					msg = "HIT " + dam.iDamage + " " + dam.iCriticals;
+					if (dam.checkReduceCriticals(reduceCrits, sizeClass, critVsLarge)) {
+						msg = "HIT " + dam.iDamage + " " + dam.iCriticals + " (Downgraded from " + dam.iOGCrits + ")";
+					} else {
+						msg = "HIT " + dam.iDamage + " " + dam.iCriticals;
+					}
 				} else {
 					msg = "MISS";
 				}

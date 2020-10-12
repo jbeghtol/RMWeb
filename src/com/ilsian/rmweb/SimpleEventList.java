@@ -27,6 +27,8 @@ public 	class SimpleEventList extends LinkedList<SimpleEvent> {
 	
 	public synchronized void archiveAndClear(long ts) {
 		ModelSync.modelUpdate(ModelSync.Model.LOG, () -> {
+			
+			// TODO: Serialize our list to disk
 			this.clear();
 			this.add(new SimpleEvent("System reset", "Notice", "rmsystem", "system"));
 			return true;

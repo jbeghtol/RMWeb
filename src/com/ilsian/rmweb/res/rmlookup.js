@@ -121,11 +121,6 @@ function rollOpen()
 
 function doFormAttackRoll()
 {
-	//var roll = rollOpen();
-	//var r = document.getElementById('attackroll');
-	//r.value = roll;
-	//updateAttackSum();
-	// clear the roll ahead of time
 	$('#attackroll').val('');
 	doFormAttack(1);
 }
@@ -198,6 +193,7 @@ function doFormAttack(validity)
     var req = new Object();
     req.roll = $('#attackroll').val();
     req.weap = $('#weaponselect').val();
+    req.largecrit = $('#weapontype').val();
     req.at = $('#armorselect').val();
     req.attacker = $('#attacker').val();
     req.defender = $('#defender').val();
@@ -208,14 +204,12 @@ function doFormAttack(validity)
     req.validity = validity;
     req.ranklimit = rlimit;
     req.size = $('#sizeselect').val();
+    req.reducecrit = $('#specialselect').val();
     doAttack(req);
 }
 
 function doFormCriticalRoll()
 {
-	//var roll = rollClosed();
-	//var r = document.getElementById('criticalroll');
-	//r.value = roll;
 	$('#criticalroll').val('');
 	doFormCritical(1);
 }

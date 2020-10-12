@@ -21,24 +21,24 @@
 <tr>
 <td class="att">
 Type<select id="weapontype">
-<option value="normal">Normal</option>
-<option value="magic">Magic</option>
-<option value="mithril">Mithril</option>
-<option value="holy">Holy</option>
-<option value="slaying">Slaying</option>
+<option value="A">Normal</option>
+<option value="B">Magic</option>
+<option value="C">Mithril</option>
+<option value="D">Holy</option>
+<option value="E">Slaying</option>
 </select>
 <span class="add-on">Mods</span><input type="number" id="attackmods" class="shortnum" />
 </td>
 <td class="def">
 Size<select id="sizeselect">
-<option value="normal">Nm</option>
-<option value="large">La</option>
-<option value="super">SL</option>
+<option value="0">Normal</option>
+<option value="1">Large</option>
+<option value="2">SuperLg</option>
 </select>
-Special<select id="sizeselect">
-<option value="none">None</option>
-<option value="reduce1">Crits -1</option>
-<option value="reduce2">Crits -2</option>
+Special<select id="specialselect">
+<option value="0">None</option>
+<option value="1">Crits -1</option>
+<option value="2">Crits -2</option>
 </select>
 </td>
 </tr>

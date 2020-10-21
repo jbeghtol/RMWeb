@@ -459,6 +459,44 @@ public class CombatEngineSQLite implements CombatLookup {
 		return sr;
 	}
 	
+	CritParser critParser_ = new CritParser();
+	
+	public static class CriticalResults
+	{
+		public String html_;
+		public String [] results_;
+		public EffectRecord [] details_;
+	}
+	
+	public boolean hasReverseCritical(String tables) {
+		String [] crits = tables.split(",");
+		for (int i=0;i<crits.length;i++)
+		{
+			String ct = crits[i].trim();
+			if (ct.length()==0)
+				continue;
+			
+			char table = ct.charAt(1);
+			if (table == 'f' || table == 'F')
+				return true;
+		}
+		return false;
+	}
+	
+	public CriticalResults getCriticalResults(Dice.Open roll, String tables)
+	{
+		CriticalResults cres = new CriticalResults();
+		cres.results_ = getCriticals(roll, tables);
+		cres.html_ = formatCriticalResults(cres.results_);
+		if (cres.results_ != null) {
+			cres.details_ = new EffectRecord[cres.results_.length];
+			for (int i=0;i<cres.results_.length;i++) {
+				cres.details_[i] = critParser_.extractDetail(cres.results_[i]);
+			}
+		}
+		return cres;
+	}
+	
 	public String getCriticalsAsHtml(Dice.Open roll, String tables)
 	{
 		return formatCriticalResults(getCriticals(roll, tables));

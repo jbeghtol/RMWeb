@@ -13,10 +13,12 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 
 public class EntityEngineSQLite {
 
+	static Logger logger = Logger.getLogger("com.ilsian.rmweb.EntityEngineSQLite");
 	static EntityEngineSQLite instance_;
 	
 	public static EntityEngineSQLite getInstance() throws Exception {
@@ -57,6 +59,7 @@ public class EntityEngineSQLite {
 		public boolean mVisible = true;
 		public Weapon [] mWeapons = new Weapon[4];
 		public HashMap<String, Skill> mSkills = new HashMap();
+		public EffectRecord mEffects = new EffectRecord();
 		
 		JSONObject toJSON() throws JSONException {
 			JSONObject jact = new JSONObject();
@@ -86,14 +89,26 @@ public class EntityEngineSQLite {
 				}
 			}
 			jact.put("weapons", wlist);
+			
+			// add the effects
+			JSONObject jeff = new JSONObject();
+			if (Global.USE_COMBAT_TRACKER)
+				jeff.put("brief", mEffects.getHighlights());
+			else
+				jeff.put("brief", "");
+			jeff.put("detail", mEffects.getDetail());
+			jact.put("effects", jeff);
+			
 			return jact;
 		}
 	};
 	
+	static final int SCHEMA_VERSION = 1;
+	
 	// These ACTUALLY define the schema
 	static final String [] STRING_KEYS = { "name", "tag", "controllers", "weapon1", "weapon2", "weapon3", "weapon4" };
 	static final String [] BOOL_KEYS = { "public" };
-	static final String [] INT_KEYS = { "at", "db", "fs", "ob1", "ob2", "ob3", "ob4", "observation", "combatawareness", "alertness" };
+	static final String [] INT_KEYS = { "at", "db", "fs", "ob1", "ob2", "ob3", "ob4", "observation", "combatawareness", "alertness", "breakstun", "powerperception" };
 	
 	static final HashMap<String,String> SKILL_MAP;
 	static {
@@ -101,6 +116,9 @@ public class EntityEngineSQLite {
 		SKILL_MAP.put("observation", "Observation");
 		SKILL_MAP.put("combatawareness", "Combat Aware");
 		SKILL_MAP.put("alertness", "Alertness");
+		// added v1
+		SKILL_MAP.put("breakstun", "Break Stun"); // 10th int
+		SKILL_MAP.put("powerperception", "Power Perceive"); // 11th int
 	}
 	Connection iConnection=null;
 	
@@ -115,8 +133,17 @@ public class EntityEngineSQLite {
 
 	public void open() throws Exception
 	{
+		boolean dbExists = (new File("entities.db").exists());
 		Class.forName("org.sqlite.JDBC");
-		iConnection = DriverManager.getConnection("jdbc:sqlite:entities.db"); 
+		iConnection = DriverManager.getConnection("jdbc:sqlite:entities.db");
+		if (!dbExists) {
+			// database file didn't exist before, sqlite created it but we still need to create our schema
+			System.err.println("Database for entities didn't exist.  Creating.");
+			createSchema();
+		} else {
+			// check if any database updates are needed
+			updateSchema();
+		}
 	}
 	
 	public void close()
@@ -127,6 +154,60 @@ public class EntityEngineSQLite {
 				iConnection.close();
 			} catch (SQLException ignore) {
 			}
+		}
+	}
+	
+	protected void updateSchema() throws SQLException {
+		int currVersion = getCurrentSchemaVersion();
+		if (currVersion == SCHEMA_VERSION) {
+			logger.info("Database schema matched.");
+			return;
+		}
+		Statement s = iConnection.createStatement();
+		while (currVersion != SCHEMA_VERSION) {
+			switch (currVersion) {
+				case 0:	// changes from 0 to 1
+					for (int ikey=10; ikey<=11; ikey++) {
+						// these INT_KEYS added
+						s.executeUpdate("ALTER TABLE entities ADD COLUMN " + INT_KEYS[ikey] + " int default 0");
+						logger.info("Added column: " + INT_KEYS[ikey] );
+					}
+					break;
+				case 1: // TODO: Future, changes from 1 to 2
+					break;
+			}
+			currVersion++;
+		}
+		s.close();
+		writeCurrentSchemaVersion();
+	}
+	
+	protected int getCurrentSchemaVersion() {
+		int currVersion = 0;
+		Statement s = null;
+		ResultSet rs = null;
+		try {
+			s = iConnection.createStatement();
+			rs = s.executeQuery("pragma user_version");
+			if (rs.next()) {
+				currVersion = rs.getInt(1);
+			}
+		} catch (SQLException sqe) {
+			logger.warning("Failed to get schema version: " + sqe);
+			Util.safeClose(s);
+			Util.safeClose(rs);
+		}
+		return currVersion;
+	}
+	
+	protected void writeCurrentSchemaVersion() {
+		Statement s = null;
+		try {
+			s = iConnection.createStatement();
+			s.executeUpdate("pragma user_version=" + SCHEMA_VERSION);
+		} catch (SQLException sqe) {
+			Util.safeClose(s);
+			logger.warning("Failed to update db version:" + sqe);
 		}
 	}
 	

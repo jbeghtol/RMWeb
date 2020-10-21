@@ -32,6 +32,13 @@ public class Dice {
 		public boolean manual_;
 		public boolean used_open_; // set when someone uses the open ended version, for crits
 		
+		public Open(Open src, int newTotal) {
+			base_ = src.base_;
+			manual_ = src.manual_;
+			used_open_ = src.used_open_;
+			total_ = newTotal;
+		}
+		
 		public Open(boolean allowDown) {
 			base_ = rollClosed();
 			total_ = base_;

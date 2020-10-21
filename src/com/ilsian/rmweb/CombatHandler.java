@@ -12,6 +12,8 @@ import org.json.JSONObject;
 
 
 
+
+import com.ilsian.rmweb.CombatEngineSQLite.CriticalResults;
 import com.ilsian.tomcat.ActionHandler;
 import com.ilsian.tomcat.UserInfo;
 import com.ilsian.tomcat.WebLib;
@@ -130,17 +132,22 @@ public class CombatHandler {
 				DamageResult dam = engine.getDamage(roll.base_, summation, windex, at, rankLimit);
 				
 				String msg;
+				String resclass;
+				
 				if (dam.iDamage < 0) {
 					msg = "FUMBLE";
 					dam.iDamage = 0;
+					resclass = "fumble";
 				} else if (dam.iDamage > 0) {
 					if (dam.checkReduceCriticals(reduceCrits, sizeClass, critVsLarge)) {
 						msg = "HIT " + dam.iDamage + " " + dam.iCriticals + " (Downgraded from " + dam.iOGCrits + ")";
 					} else {
 						msg = "HIT " + dam.iDamage + " " + dam.iCriticals;
 					}
+					resclass = "hit";
 				} else {
 					msg = "MISS";
+					resclass = "miss";
 				}
 				
 				if (validity < VALIDITY_PRACTICE) {
@@ -148,6 +155,10 @@ public class CombatHandler {
 					if (dam.iRankLimit > 0) {
 						rankExplain = String.format(" [R%d]", rankLimit + 1);
 					}
+					if (dam.iDamage > 0) {
+						ActiveEntities.instance().applyDamage(attacker, defender, dam.iDamage, null);
+					}
+					
 					String header = String.format("[%s] Attack%s [%s] : %s = %s%s", attacker==null?"???":attacker,
 							validity==VALIDITY_COMPUTER?"":"*",
 							defender==null?"???":defender,
@@ -162,6 +173,7 @@ public class CombatHandler {
 				p.put("roll", roll.total_);
 				p.put("summation", summation);
 				p.put("explain", explain);
+				p.put("result", resclass);
 				
 				response.setStatus( HttpServletResponse.SC_OK );
 				response.setContentType("application/json");
@@ -186,8 +198,8 @@ public class CombatHandler {
 		{
 			final int userRoll = WebLib.getIntParam(request, "roll", -1000);
 			final String crits = request.getParameter("crits");
-			final String attacker = request.getParameter("attacker");
-			final String defender = request.getParameter("defender");
+			String attacker = request.getParameter("attacker");
+			String defender = request.getParameter("defender");
 			final String validityStr = request.getParameter("validity");
 			final int validity = validityStr==null?3:Integer.parseInt(validityStr);
 			
@@ -204,11 +216,26 @@ public class CombatHandler {
 			}
 			
 			try {
-				final String innerHtml = getEngine().getCriticalsAsHtml(dice, crits);
+				String critMod = "";
+				if (getEngine().hasReverseCritical(crits)) {
+					// special handling for fumbles, switch the attacker and defender
+					String tmp = attacker;
+					attacker = defender;
+					defender = tmp;
+					critMod = "Reverse-";
+				}
+				
+				final CriticalResults cres = getEngine().getCriticalResults(dice, crits);
+				String innerHtml = cres.html_;
 				
 				if (validity < VALIDITY_PRACTICE) {
-					String header = String.format("[%s] Critical%s [%s] : %s : (%d)", attacker==null?"???":attacker,
-							validity==VALIDITY_COMPUTER?"":"*",
+					// apply the effects
+					String defStatus = ActiveEntities.instance().applyDamage(attacker, defender, 0, cres);
+					if (Global.USE_COMBAT_TRACKER && !defStatus.isEmpty()) {
+						innerHtml += "<br>[" + defender + "]:" + defStatus;
+					}
+					String header = String.format("[%s] %sCritical%s [%s] : %s : (%d)", attacker==null?"???":attacker,
+							critMod,validity==VALIDITY_COMPUTER?"":"*",
 							defender==null?"???":defender,
 							crits, dice.expressedRoll());
 					SimpleEventList.getInstance().postEvent(new SimpleEvent(innerHtml, 

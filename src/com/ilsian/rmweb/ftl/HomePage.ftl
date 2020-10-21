@@ -19,7 +19,7 @@
 <tr>
 <td class="rmexecute" data-template-bind='[{"attribute": "title", "value": "initexplain"}]' data-content="phaseicon" />
 <td class="rmdeclare" data-content="stageselect" title="Snap, Normal, Deliberate" />
-<td data-content="name" />
+<td data-content-prepend="name" data-template-bind='[{"attribute": "title", "value": "effects.detail"}]' ><span data-content="effects.brief" /></td> 
 <td data-template-bind='[{"attribute": "title", "value": "explain"}]' class="rmresult" data-content="result" />
 <td class="dropdown">
 <#if rm.permit gte 3>
@@ -38,6 +38,8 @@
     <li><a data-template-bind='[{"attribute": "entity", "value": "uid"}]' href="#" onclick="playerSkillCheck('alertness', this)">Alertness</a></li>
     <li><a data-template-bind='[{"attribute": "entity", "value": "uid"}]' href="#" onclick="playerSkillCheck('combatawareness', this)">Combat Awareness</a></li>
     <li><a data-template-bind='[{"attribute": "entity", "value": "uid"}]' href="#" onclick="playerSkillCheck('observation', this)">Observation</a></li>
+    <li><a data-template-bind='[{"attribute": "entity", "value": "uid"}]' href="#" onclick="playerSkillCheck('powerperception', this)">Power Perc.</a></li>
+    <li><a data-template-bind='[{"attribute": "entity", "value": "uid"}]' href="#" onclick="playerSkillCheck('breakstun', this)">Break Stun</a></li>
     <li><a data-template-bind='[{"attribute": "entity", "value": "uid"}]' href="#" onclick="playerSkillCheck('_', this)">[Custom]</a></li>
   </ul>
 </td>

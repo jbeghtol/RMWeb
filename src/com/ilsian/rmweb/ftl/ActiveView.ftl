@@ -13,6 +13,7 @@
     <li><a href="#" onclick="requestSkillCheck('alertness')">Alertness</a></li>
     <li><a href="#" onclick="requestSkillCheck('combatawareness')">Combat Awareness</a></li>
     <li><a href="#" onclick="requestSkillCheck('observation')">Observation</a></li>
+    <li><a href="#" onclick="requestSkillCheck('powerperception')">Power Perceive</a></li>
   </ul>
 </div>
 </#if>

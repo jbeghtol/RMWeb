@@ -1,6 +1,9 @@
 package com.ilsian.rmweb;
 
+import java.util.logging.Logger;
+
 public class DamageResult {
+	static Logger logger = Logger.getLogger("DamageResult");
 
 	public int iDamage;
 	public String iCriticals="";
@@ -44,6 +47,12 @@ public class DamageResult {
 		String [] multi = iCriticals.split(",");
 		for (int i=0; i<multi.length; i++)
 		{
+			multi[i] = multi[i].trim();
+			if (multi[i].isEmpty()) {
+				multi[i]=null; //nerf'd - but WHY?!?!
+				logger.warning("Weird Crit error: " + iCriticals);
+				continue;
+			}
 			char rval = (char) (multi[i].charAt(0) - reduceCrits);
 			if (rval < 'A') {
 				multi[i]=null; //nerf'd

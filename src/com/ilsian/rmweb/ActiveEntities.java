@@ -157,7 +157,8 @@ public class ActiveEntities extends HashMap<String, ActiveEntity> implements Act
 		public boolean valid_;
 	}
 	
-	protected void doSkillCheck(Skill lookup, String skillName, UserInfo user) {
+	/*
+	protected void doSkillCheckOBS(Skill lookup, String skillName, UserInfo user) {
 		if (lookup.mTotal > 0) {
 			int roll = Dice.rollOpenPercent();
 			int total = roll + lookup.mTotal;
@@ -168,6 +169,7 @@ public class ActiveEntities extends HashMap<String, ActiveEntity> implements Act
 					header,	"rmskill", user.mUsername));
 		}
 	}
+	*/
 	
 	static final int [] STUN_MOD_TABLE = { 0, 0, -10, -20, -20, -30, -30, -30, -50, -50, -70  };
 	static final HashMap<SkillResolve.General, Integer> STUN_REDUCE;
@@ -215,7 +217,9 @@ public class ActiveEntities extends HashMap<String, ActiveEntity> implements Act
 			}
 		} else {
 			// Normal flow, any skill, maybe figure out success level
-			res.detail_ = "Total = " + res.total_;
+			//SkillResolve.General checkResult = SkillResolve.General.resolve( new Dice.Open(res.roll_, res.total_) );
+			String multiResult = SkillResolve.General.multiResolve( new Dice.Open(res.roll_, res.total_) );
+			res.detail_ = "Total = " + res.total_ + " " + multiResult;
 		}
 		res.valid_ = true;
 		return changedEntity;
@@ -263,9 +267,9 @@ public class ActiveEntities extends HashMap<String, ActiveEntity> implements Act
 		});
 
 		if (skillBase >= 0) {
-			int roll = Dice.rollOpenPercent();
-			int total = roll + lookup.mTotal;
-			String explain = lookup.mTotal + " + (" + roll + ") = " + total;
+			Dice.Open roll = Dice.rollOpen();
+			int total = roll.total_ + lookup.mTotal;
+			String explain = lookup.mTotal + " + " + roll + " = " + total;
 			String header = String.format("[%s] %s %s : %s", 
 					lookup.mOwner, lookup.mDisplayName==null?"Quick Roll":"Skill Check '", lookup.mDisplayName==null?"":(lookup.mDisplayName + "'"), explain);				
 			SimpleEventList.getInstance().postEvent(new SimpleEvent("Total = " + total, 
@@ -286,9 +290,9 @@ public class ActiveEntities extends HashMap<String, ActiveEntity> implements Act
 					entry.mLastResult = 0;
 					entry.mLastResultExplain = "No skill";
 				} else {
-					int roll = Dice.rollOpenPercent();
-					entry.mLastResult = baseSkill + roll;
-					entry.mLastResultExplain = baseSkill + " + (" + roll + ") = " + entry.mLastResult;
+					Dice.Open roll = Dice.rollOpen();
+					entry.mLastResult = baseSkill + roll.total_;
+					entry.mLastResultExplain = baseSkill + " + " + roll + " = " + entry.mLastResult;
 				}
 			}
 			return true;

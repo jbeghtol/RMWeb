@@ -14,10 +14,6 @@ public class Dice {
 		return roll(100);
 	}
 	
-	public static int rollOpenPercent() {
-		return new Open(true).total_;
-	}
-	
 	public static Open rollOpen(boolean allowDown) {
 		return new Open(allowDown);
 	}

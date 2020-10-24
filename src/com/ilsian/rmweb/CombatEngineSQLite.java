@@ -430,8 +430,9 @@ public class CombatEngineSQLite implements CombatLookup {
 				int tableMax = checkrs.getInt(1);
 				checkrs.close();
 				
-				if (tableMax > 100)
+				if (tableMax > 100) {
 					roll.used_open_ = true;
+				}
 				
 				int rollForCrit = Math.min(tableMax, roll.total_);				
 				

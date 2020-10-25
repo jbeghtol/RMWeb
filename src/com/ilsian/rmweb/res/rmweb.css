@@ -124,6 +124,18 @@ div.rmbottom {
   color: #FF5050;
 }
 
+.green {
+  color: #50FF50;
+}
+
+.bad {
+  color: #FF5050;
+}
+
+.good {
+  color: #508850;
+}
+
 .black {
   color: #000000;
 }

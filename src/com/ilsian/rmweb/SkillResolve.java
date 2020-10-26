@@ -153,6 +153,11 @@ public class SkillResolve {
 	};
 	
 	public static int RRTarget(int attackLevel, int defLevel) {
+		if (attackLevel < 1)
+			attackLevel = 1;
+		if (defLevel < 1)
+			defLevel = 1;
+		
 		if (attackLevel > 15 && defLevel > 15) {
 			// this is easy
 			return 50 + attackLevel - defLevel;

@@ -49,6 +49,14 @@ public class CombatHandler {
 		return new CritLookup();
 	}
 	
+	public ActionHandler makeHandlerBAR() {
+		return new BARLookup();
+	}
+
+	public ActionHandler makeHandlerRR() {
+		return new RRLookup();
+	}
+	
 	public class TableLookup implements ActionHandler
 	{
 		@Override
@@ -258,5 +266,149 @@ public class CombatHandler {
 			}			
 		}
 		
+	}
+	
+	class BARLookup implements ActionHandler
+	{
+		@Override
+		public void handleAction(String action, UserInfo user, HttpServletRequest request, HttpServletResponse response)
+		{
+			// In this version, we are provided all the details to create explain
+			final int userRoll = WebLib.getIntParam(request, "roll", -1000);
+			final int mods = WebLib.getIntParam(request, "mods", 0);
+			final int base = WebLib.getIntParam(request, "base", 0);
+			String attacker = request.getParameter("attacker");
+			String defender = request.getParameter("defender");
+			final String validityStr = request.getParameter("validity");
+			final int validity = validityStr==null?3:Integer.parseInt(validityStr);
+			
+			// DICE!
+			Dice.Open dice = Dice.rollOpen(false);
+			if (userRoll > -1000) {
+				dice.manual(userRoll);
+			}
+
+			// use the dice total to lookup the result
+			dice.total_ = base + mods + dice.base_;
+			String expl = base + " + " + mods + " + (" + dice.base_ + ")";
+			
+			int resultMod = SkillResolve.BAR(dice);
+		
+			try {
+				String innerHtml;
+				JSONObject p = new JSONObject();
+				p.put("roll", dice.base_);
+				p.put("explain", expl);
+				p.put("summation", dice.total_);
+				if (resultMod == Integer.MAX_VALUE) {
+					// fumble
+					p.put("error", "FAIL");
+					innerHtml = "SPELL FAIL";
+				} else {
+					// normal modifier
+					p.put("modifier", resultMod);
+					innerHtml = "RR Modifier: " + resultMod;
+				}
+				
+				if (validity < VALIDITY_PRACTICE) {
+					String header = String.format("[%s] BAR%s vs [%s] : %s = %d", 
+							attacker==null?"???":attacker,
+							validity==VALIDITY_COMPUTER?"":"*",
+							defender==null?"???":defender,
+							expl, dice.total_);
+					SimpleEventList.getInstance().postEvent(new SimpleEvent(innerHtml, 
+							header,
+							"rmattack", user.mUsername));
+				}
+				
+				response.setStatus( HttpServletResponse.SC_OK );
+				response.setContentType("application/json");
+				PrintWriter outs = response.getWriter();
+				outs.print(p.toString());
+				outs.flush();
+				outs.close();
+			} catch (Exception exc) {
+				exc.printStackTrace();
+				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+				return;
+			}
+		}
+	}
+	
+	class RRLookup implements ActionHandler
+	{
+		@Override
+		public void handleAction(String action, UserInfo user, HttpServletRequest request, HttpServletResponse response)
+		{
+			// In this version, we are provided all the details to create explain
+			final int userRoll = WebLib.getIntParam(request, "roll", -1000);
+			final int mods = WebLib.getIntParam(request, "mods", 0);
+			final int rrbonus = WebLib.getIntParam(request, "rr_bonus", 0);
+			final int lvlAttacker = WebLib.getIntParam(request, "level_att", 1);
+			final int lvlDefender = WebLib.getIntParam(request, "level_def", 1);
+			String attacker = request.getParameter("attacker");
+			String defender = request.getParameter("defender");
+			// TODO: get rr_effect
+			
+			final String validityStr = request.getParameter("validity");
+			final int validity = validityStr==null?3:Integer.parseInt(validityStr);
+			
+			// DICE!
+			Dice.Open dice = Dice.rollOpen(false);
+			if (userRoll > -1000) {
+				dice.manual(userRoll);
+			}
+
+			// Determine TARGET
+			int target = SkillResolve.RRTarget(lvlAttacker, lvlDefender);
+			
+			// use the dice total to lookup the result
+			int total = mods + rrbonus + dice.total_;
+			int delta = total - target;
+			String expl = mods + " + " + rrbonus + " + (" + dice.base_ + ")";
+
+			try {
+				String innerHtml;
+				JSONObject p = new JSONObject();
+				p.put("roll", dice.base_);
+				p.put("explain", expl);
+				p.put("target", target);
+				p.put("summation", total);
+				p.put("delta", delta);
+				
+				if (delta < 0) {
+					// defender fails!
+					int perFive = 1 + -delta / 5;
+					int perTen = 1 + -delta / 10;
+					innerHtml = String.format("FAIL by %d (Fives: %d, Tens: %d)", delta, perFive, perTen);
+				} else {
+					// defender saves!
+					innerHtml = "RESISTS by " + delta;
+				}
+				p.put("result", innerHtml);
+				
+				if (validity < VALIDITY_PRACTICE) {
+					String header = String.format("[%s] RR%s for [%s] : %s = %d", 
+							attacker==null?"???":attacker,
+							validity==VALIDITY_COMPUTER?"":"*",
+							defender==null?"???":defender,
+							expl, total);
+					SimpleEventList.getInstance().postEvent(new SimpleEvent(innerHtml, 
+							header,
+							"rmattack", user.mUsername));
+				}
+				
+				response.setStatus( HttpServletResponse.SC_OK );
+				response.setContentType("application/json");
+				PrintWriter outs = response.getWriter();
+				outs.print(p.toString());
+				outs.flush();
+				outs.close();
+			} catch (Exception exc) {
+				exc.printStackTrace();
+				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+				return;
+			}
+		}
 	}
 }

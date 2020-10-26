@@ -393,6 +393,7 @@ function playerLoadAttack(element, weaponindex)
     var ent = findActiveEntity(uid);
     if (ent) {
         setInputValueById("attacker", ent.name);
+        setInputValueById("sp_attacker", ent.name);
         setInputValueById("ob", ent.weapons[weaponindex].ob);
         setSelectOptionById("weaponselect", ent.weapons[weaponindex].uid);
         // NOTE: This will be an issue for the old combat view
@@ -407,6 +408,7 @@ function playerLoadDefense(element)
     var ent = findActiveEntity(uid);
     if (ent) {
         setInputValueById("defender", ent.name);
+        setInputValueById("sp_defender", ent.name);
         setInputValueById("db", ent.db);
         setSelectOptionById("armorselect", ent.at);
         console.log("Loading defense for uid: " + uid);
@@ -485,6 +487,7 @@ $(document).ready(callbackInit);
 </#if>
   <li><a data-toggle="tab" href="#rmonline">Online</a></li>
   <li><a data-toggle="tab" href="#rmcombat" id="combatview">Combat</a></li>
+  <li><a data-toggle="tab" href="#rmspell" id="spellview">Spell</a></li>
 </ul>
 </div>
 <div class="tab-content bgwhite">
@@ -502,6 +505,9 @@ $(document).ready(callbackInit);
   </div>
   <div id="rmcombat" class="tab-pane">
     <#include "CombatDialogNew.ftl">
+  </div>
+  <div id="rmspell" class="tab-pane">
+    <#include "SpellView.ftl">
   </div>
 </div>
 </div>

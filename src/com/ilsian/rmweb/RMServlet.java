@@ -358,5 +358,8 @@ public class RMServlet extends AppServlet {
 		addPostHandler("lookupTables", mCombatHandler.makeHandlerTable());
 		addPostHandler("lookupAttack", mCombatHandler.makeHandlerAttack());
 		addPostHandler("lookupCritical", mCombatHandler.makeHandlerCritical());
+		addPostHandler("BAR", mCombatHandler.makeHandlerBAR());
+		addPostHandler("RR", mCombatHandler.makeHandlerRR());
+		
 	}
 }

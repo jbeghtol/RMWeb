@@ -233,6 +233,119 @@ function doFormCritical(validity)
 	doLookupCritical(rl.value, cr.value, att.value, def.value, validity);
 }
 
+//////// SPELL LOOKUP STUFF
+
+
+function requestBAR(reqdata)
+{
+    $.post( "gui?action=BAR", reqdata, onBARResults );
+}
+
+function processBAR(validity)
+{
+    // clear previous RR results to avoid confusion
+    $('#sp_rr_roll').val('');
+    $('#sp_rr_mod').val('');
+    $('#sp_rr_total').val('');
+    $('#sp_rr_target').val('');
+    $('#sp_rr_results').html('');
+    
+    // build the request from the form
+    var req = new Object();
+    req.roll = $('#sp_bar_roll').val();
+    req.mods = getNumeric('sp_bonus');
+    req.base = getNumeric('sp_ranks');
+    req.attacker = $('#sp_attacker').val();
+    req.defender = $('#sp_defender').val();
+    req.validity = validity;
+    
+    requestBAR(req);
+}
+
+function onBARResults(results)
+{
+    var a = document.getElementById('sp_bar_roll');
+    a.value = results.roll;
+    
+    var b = document.getElementById('sp_bar_total');
+    b.value = results.summation;
+    b.setAttribute('title', results.explain);
+     
+    var e = document.getElementById('sp_bar_result');
+    if (results.error) {
+        e.value = results.error;
+        $('#sp_rr_mod').val('');
+    }
+    else {
+        e.value = results.modifier;
+        $('#sp_rr_mod').val(results.modifier);
+    }
+}
+
+function doFormBAR()
+{
+    $('#sp_bar_roll').val('');
+    processBAR(1);
+}
+
+function formBARKey()
+{
+    if(event.key === 'Enter') {
+        processBAR(0);
+    }
+}
+
+function requestRR(reqdata)
+{
+    $.post( "gui?action=RR", reqdata, onRRResults );
+}
+
+function onRRResults(results)
+{
+    $('#sp_rr_roll').val(results.roll);
+    
+    var b = document.getElementById('sp_rr_total');
+    b.value = results.summation;
+    b.setAttribute('title', results.explain);
+    
+    $('#sp_rr_target').val(results.target);
+    
+    var e = document.getElementById('sp_rr_results');
+    e.innerHTML = results.result;
+}
+
+function processRR(validity)
+{
+    // build the request from the form
+    var req = new Object();
+    req.roll = $('#sp_rr_roll').val();
+    req.mods = getNumeric('sp_rr_mod');
+    req.level_att = getNumeric('sp_level_att');
+    req.level_def = getNumeric('sp_level_def');
+    req.attacker = $('#sp_attacker').val();
+    req.defender = $('#sp_defender').val();
+    req.rr_bonus = $('#sp_rr_bonus').val();
+    req.validity = validity;
+    
+    requestRR(req);
+}
+
+function doFormRR()
+{
+    $('#sp_rr_roll').val('');
+    processRR(1);
+}
+
+function formRRKey()
+{
+    if(event.key === 'Enter') {
+        //updateAttackSum();
+        processRR(0);
+    }
+}
+
+//////// END SPELL LOOKUP STUFF
+
 function doRMTest()
 {
 	doLookupCritical(95, 'ES');

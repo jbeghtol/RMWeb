@@ -97,6 +97,7 @@ public class EntityEngineSQLite {
 			else
 				jeff.put("brief", "");
 			jeff.put("detail", mEffects.getDetail());
+			jeff.put("w", mEffects.asJSON());
 			jact.put("effects", jeff);
 			
 			return jact;

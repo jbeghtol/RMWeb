@@ -414,6 +414,17 @@ public class ActiveEntities extends HashMap<String, ActiveEntity> implements Act
 		});
 	}
 	
+	public void updateWounds(HttpServletRequest request) {
+		ModelSync.modelUpdate(ModelSync.Model.ENTITIES, () -> {
+			ActiveEntity ent = this.get(WebLib.getStringParam(request, "name", "--"));
+			if (ent != null) {
+				ent.mEffects.updateFromForm(request);
+				return true;
+			}
+			return false;
+		});
+	}
+	
 	@Override
 	public void handleAction(String action, UserInfo user,
 			HttpServletRequest request, HttpServletResponse response)
@@ -468,7 +479,10 @@ public class ActiveEntities extends HashMap<String, ActiveEntity> implements Act
 			deleteEntity(WebLib.getIntParam(request, "uid", -1));
 		} else if (action.equals("deletegroup") && user.mLevel >= RMUserSecurity.kLoginGM) {
 			deleteEntityGroup(WebLib.getIntParam(request, "uid", -1));
+		} else if (action.equals("updateWounds") && user.mLevel >= RMUserSecurity.kLoginGM) {
+			updateWounds(request);
 		}
 	}
+
 	
 }

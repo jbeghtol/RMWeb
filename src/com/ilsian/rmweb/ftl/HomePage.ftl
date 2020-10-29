@@ -2,6 +2,8 @@
 <@pageinit subtitle="Home" context="home" />
 <#include "PageBegin.ftl">
 
+<#include "EditWounds.ftl">
+
 <script id="tmplActive" type="text/html">
 <table id="activetable" class="table table-dense table-striped nomargin">
 <colgroup>
@@ -19,7 +21,7 @@
 <tr>
 <td class="rmexecute" data-template-bind='[{"attribute": "title", "value": "initexplain"}]' data-content="phaseicon" />
 <td class="rmdeclare" data-content="stageselect" title="Snap, Normal, Deliberate" />
-<td data-content-prepend="name" data-template-bind='[{"attribute": "title", "value": "effects.detail"}]' ><span data-content="effects.brief" /></td> 
+<td onclick="editWounds(this)" data-content-prepend="name" data-template-bind='[{"attribute": "title", "value": "effects.detail", "attribute": "entity", "value": "uid"}]' ><span data-content="effects.brief" /></td> 
 <td data-template-bind='[{"attribute": "title", "value": "explain"}]' class="rmresult" data-content="result" />
 <td class="dropdown">
 <#if rm.permit gte 3>
@@ -351,6 +353,13 @@ function toggleEntityVisibility(element)
     $.ajax({type: "POST", url: "gui?action=toggleVisible&uid=" + uid});
 }
 
+function editWounds(element)
+{
+    var ent = findActiveEntity(element.getAttribute('entity'));
+    var contents = expandTemplate('#tmplEditWounds', ent );
+    rm_edit_wounds_dialog(contents, ent.name);
+}
+
 function deleteEntity(element)
 {
     var uid = element.getAttribute('entity');
@@ -515,7 +524,6 @@ $(document).ready(callbackInit);
 <div class="rmmiddle">
 Log
 </div>
-
 <div class="rmbottom" id="rmlog">
 </div>
 </div>

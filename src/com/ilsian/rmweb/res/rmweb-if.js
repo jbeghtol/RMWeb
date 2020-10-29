@@ -349,6 +349,65 @@ function rm_file_upload_dialog(signalId) {
     });
 }
 
+function rm_edit_wounds_dialog(contents, name) {
+    $.confirm({ 
+        title: 'Wounds: ' + name,
+        escapeKey: 'cancel',
+        content: contents,
+        columnClass: 'medium',
+        type: 'blue',
+        animation: 'opacity',
+        animationSpeed: 300,
+        autoResize: false,
+        buttons: {
+            conf: {
+                text: 'OK',
+                keys: ['enter'],
+                action: function() {
+                    console.log("ENTER");
+                    var form = this.$content.find('form#form_wound');
+                    var url = "gui?action=updateWounds";
+                       
+                    $.ajax({
+                           type: "POST",
+                           url: url,
+                           data: form.serialize(), // serializes the form's elements.
+                           success: function(data)
+                           {
+                              console.log("Updated wounds successful.");
+                           }
+                         });
+                    return true;
+                }
+            },
+            reset: {
+                text: 'Clear All',
+                action: function() {
+                    var url = "gui?action=updateWounds";
+                    var nameonly = new Object();
+                    nameonly.name = this.$content.find('input#wnd_name').val();
+                    $.ajax({
+                           type: "POST",
+                           url: url,
+                           data: nameonly,
+                           success: function(data)
+                           {
+                              console.log("Cleared wounds successful.");
+                           }
+                         });
+                    return true;
+                }
+            },
+            cancel: {
+                text: 'Cancel',
+                action: function(){
+                    // nothing
+                }
+            }
+        }
+    });
+}
+
 function rm_confirm_dialog(myTitle, myMessage, mySuccessHandler)
 {
     $.confirm({ 

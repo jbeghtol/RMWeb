@@ -350,6 +350,7 @@ public class RMServlet extends AppServlet {
 		addPostHandler("toggleVisible", mActiveList);
 		addPostHandler("delete", mActiveList);
 		addPostHandler("deletegroup", mActiveList);
+		addPostHandler("updateWounds", mActiveList);
 		
 		addPostHandler("cleanslate", cleanSlateHandler);
 		
@@ -361,5 +362,6 @@ public class RMServlet extends AppServlet {
 		addPostHandler("BAR", mCombatHandler.makeHandlerBAR());
 		addPostHandler("RR", mCombatHandler.makeHandlerRR());
 		
+		addFtlHandler("EditWounds.ftl", new TemplateResourceHandler("EditWounds.ftl").setMinSecurity(RMUserSecurity.kLoginGM));
 	}
 }

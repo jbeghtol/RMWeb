@@ -2,6 +2,14 @@ package com.ilsian.rmweb;
 
 import java.util.ArrayList;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.ilsian.tomcat.WebLib;
+
 
 public class EffectRecord {
 	
@@ -34,6 +42,52 @@ public class EffectRecord {
 	
 	public String getDetail() {
 		return toString();
+	}
+	
+	public void updateFromForm(HttpServletRequest req) {
+		damage_ = WebLib.getIntParam(req, "hits", 0);
+		bleeding_ = WebLib.getIntParam(req, "bleed", 0);
+		stun_ = WebLib.getIntParam(req, "stun", 0);
+		noParry_ = WebLib.getIntParam(req, "noparry", 0);
+		mustParry_ = WebLib.getIntParam(req, "mustparry", 0);
+		modifiers_.clear();
+		int bn = WebLib.getIntParam(req, "bonus", 0);
+		if (bn > 0) {
+			modifiers_.add(new TimedModifier(bn, WebLib.getIntParam(req, "bonusdur", 0)));
+		}
+		int pe = WebLib.getIntParam(req, "penalty", 0);
+		if (pe < 0) {
+			modifiers_.add(new TimedModifier(pe, WebLib.getIntParam(req, "penaltydur", 0)));
+		}
+	}
+	
+	public JSONObject asJSON() throws JSONException {
+		JSONObject w = new JSONObject();
+		w.put("hits", damage_);
+		w.put("bleed", bleeding_);
+		w.put("stun", stun_);
+		w.put("noparry", noParry_);
+		w.put("mustparry", mustParry_);
+		
+		int bonus = 0;
+		int penalty = 0;
+		int bonusDur = 0;
+		int penaltyDur = 0;
+		for (TimedModifier tm:modifiers_) {
+			if (tm.value_ > 0) {
+				bonus += tm.value_;
+				bonusDur = Math.max(bonusDur, tm.duration_);
+			}
+			else {
+				penalty += tm.value_;
+				penaltyDur = Math.max(penaltyDur, tm.duration_);
+			}
+		}
+		w.put("bonus", bonus);
+		w.put("bonusdur", bonusDur);
+		w.put("penalty", penalty);
+		w.put("penaltydur", penaltyDur);
+		return w;
 	}
 	
 	public String toString() {

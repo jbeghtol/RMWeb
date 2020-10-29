@@ -235,12 +235,12 @@ public class CombatHandler {
 				
 				final CriticalResults cres = getEngine().getCriticalResults(dice, crits);
 				String innerHtml = cres.html_;
-				
+				String resHtml = innerHtml;
 				if (validity < VALIDITY_PRACTICE) {
 					// apply the effects
 					String defStatus = ActiveEntities.instance().applyDamage(attacker, defender, 0, cres);
 					if (Global.USE_COMBAT_TRACKER && !defStatus.isEmpty()) {
-						innerHtml += "<br>[" + defender + "]:" + defStatus;
+						innerHtml += "<br><i>[" + defender + "]:" + defStatus + "</i>";
 					}
 					String header = String.format("[%s] %sCritical%s [%s] : %s : (%d)", attacker==null?"???":attacker,
 							critMod,validity==VALIDITY_COMPUTER?"":"*",
@@ -252,7 +252,7 @@ public class CombatHandler {
 				}
 				
 				JSONObject p = new JSONObject();
-				p.put("effects", innerHtml);
+				p.put("effects", resHtml);
 				p.put("roll", dice.expressedRoll());
 				response.setStatus( HttpServletResponse.SC_OK );
 				response.setContentType("application/json");
@@ -335,6 +335,10 @@ public class CombatHandler {
 		}
 	}
 	
+	private int divUp(int numberOfObjects, int pageSize) {
+	    return numberOfObjects / pageSize + (numberOfObjects % pageSize == 0 ? 0 : 1);
+	}
+	
 	class RRLookup implements ActionHandler
 	{
 		@Override
@@ -378,8 +382,8 @@ public class CombatHandler {
 				
 				if (delta < 0) {
 					// defender fails!
-					int perFive = 1 + -delta / 5;
-					int perTen = 1 + -delta / 10;
+					int perFive = divUp(-delta, 5);
+					int perTen = divUp(-delta, 10);
 					innerHtml = String.format("FAIL by %d (Fives: %d, Tens: %d)", delta, perFive, perTen);
 				} else {
 					// defender saves!

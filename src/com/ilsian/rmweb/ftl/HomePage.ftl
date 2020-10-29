@@ -7,20 +7,19 @@
 <script id="tmplActive" type="text/html">
 <table id="activetable" class="table table-dense table-striped nomargin">
 <colgroup>
-    <col width="10%">
-    <col width="10%">
-    <col width="30%">
-    <col width="20%">
-    <col width="30%">
+    <col width="13%">
+    <col width="40%">
+    <col width="22%">
+    <col width="25%">
 </colgroup>
-<thead><tr><th class="rmexecute">Init</th><th class="rmdeclare">Phase</th><th>Name</th><th class="rmresult" id="activeskillresult">Result</th><th></th></tr></thead>
+<thead><tr><th><span class="rmexecute">Init</span><span class="rmdeclare">Phase</span></th><th>Name</th><th class="rmresult" id="activeskillresult">Result</th><th></th></tr></thead>
 <tbody id="activerows"></tbody></table>
 </script>
 
 <script id="tmplActiveRow" type="text/html">
 <tr>
-<td class="rmexecute" data-template-bind='[{"attribute": "title", "value": "initexplain"}]' data-content="phaseicon" />
-<td class="rmdeclare" data-content="stageselect" title="Snap, Normal, Deliberate" />
+<td><span class="rmexecute" data-template-bind='[{"attribute": "title", "value": "initexplain"}]' data-content="phaseicon" />
+<span class="rmdeclare" data-content="stageselect" title="Snap, Normal, Deliberate" /></td>
 <td onclick="editWounds(this)" data-content-prepend="name" data-template-bind='[{"attribute": "title", "value": "effects.detail", "attribute": "entity", "value": "uid"}]' ><span data-content="effects.brief" /></td> 
 <td data-template-bind='[{"attribute": "title", "value": "explain"}]' class="rmresult" data-content="result" />
 <td class="dropdown">

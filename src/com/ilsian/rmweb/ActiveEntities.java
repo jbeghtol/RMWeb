@@ -1,6 +1,7 @@
 package com.ilsian.rmweb;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.servlet.ServletException;
@@ -156,20 +157,6 @@ public class ActiveEntities extends HashMap<String, ActiveEntity> implements Act
 		public String detail_;
 		public boolean valid_;
 	}
-	
-	/*
-	protected void doSkillCheckOBS(Skill lookup, String skillName, UserInfo user) {
-		if (lookup.mTotal > 0) {
-			int roll = Dice.rollOpenPercent();
-			int total = roll + lookup.mTotal;
-			String explain = lookup.mTotal + " + (" + roll + ") = " + total;
-			String header = String.format("[%s] Skill Check '%s' : %s", 
-					lookup.mOwner, lookup.mDisplayName, explain);				
-			SimpleEventList.getInstance().postEvent(new SimpleEvent("Total = " + total, 
-					header,	"rmskill", user.mUsername));
-		}
-	}
-	*/
 	
 	static final int [] STUN_MOD_TABLE = { 0, 0, -10, -20, -20, -30, -30, -30, -50, -50, -70  };
 	static final HashMap<SkillResolve.General, Integer> STUN_REDUCE;
@@ -342,10 +329,11 @@ public class ActiveEntities extends HashMap<String, ActiveEntity> implements Act
 						// We could add this to the status - all entities who change from a round inc
 						if (summary.length() > 0)
 							summary.append("<br>");
-						summary.append("[");
+						summary.append("<i>[");
 						summary.append(entry.mName);
 						summary.append("]: ");
 						summary.append(entry.mEffects.getDetail());
+						summary.append("</i>");
 					}
 				}
 			}
@@ -414,15 +402,20 @@ public class ActiveEntities extends HashMap<String, ActiveEntity> implements Act
 		});
 	}
 	
-	public void updateWounds(HttpServletRequest request) {
+	public void updateWounds(HttpServletRequest request, UserInfo user) {
+		final ArrayList<String> eves = new ArrayList<String>();
 		ModelSync.modelUpdate(ModelSync.Model.ENTITIES, () -> {
 			ActiveEntity ent = this.get(WebLib.getStringParam(request, "name", "--"));
 			if (ent != null) {
 				ent.mEffects.updateFromForm(request);
+				eves.add(String.format("<i>[%s]:%s</i>", ent.mName, ent.mEffects.getDetail()));
+				eves.add(String.format("[%s] wounds updated", ent.mName));
 				return true;
 			}
 			return false;
 		});
+		if (eves.size() == 2)
+			SimpleEventList.getInstance().postEvent(new SimpleEvent(eves.get(0), eves.get(1), "rmgmaction", user.mUsername));
 	}
 	
 	@Override
@@ -480,7 +473,7 @@ public class ActiveEntities extends HashMap<String, ActiveEntity> implements Act
 		} else if (action.equals("deletegroup") && user.mLevel >= RMUserSecurity.kLoginGM) {
 			deleteEntityGroup(WebLib.getIntParam(request, "uid", -1));
 		} else if (action.equals("updateWounds") && user.mLevel >= RMUserSecurity.kLoginGM) {
-			updateWounds(request);
+			updateWounds(request, user);
 		}
 	}
 

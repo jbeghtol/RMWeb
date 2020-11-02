@@ -1,17 +1,13 @@
 package com.ilsian.rmweb;
 
-import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Hashtable;
+import java.util.HashMap;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-
-
-
 
 import com.ilsian.rmweb.CombatEngineSQLite.CriticalResults;
 import com.ilsian.tomcat.ActionHandler;
@@ -21,6 +17,7 @@ import com.ilsian.tomcat.WebLib;
 
 public class CombatHandler {
 
+	
 	public static final int VALIDITY_MANUAL = 0;
 	public static final int VALIDITY_COMPUTER = 1;
 	public static final int VALIDITY_PRACTICE = 2;
@@ -37,6 +34,8 @@ public class CombatHandler {
 		return mEngine;
 	}
 
+	WoundDB mWoundDB = new WoundDB();
+	
 	public ActionHandler makeHandlerTable() {
 		return new TableLookup();
 	}
@@ -55,6 +54,109 @@ public class CombatHandler {
 
 	public ActionHandler makeHandlerRR() {
 		return new RRLookup();
+	}
+	
+	public WoundDB getWoundDB() {
+		return mWoundDB;
+	}
+	
+	public static class PendingWound {
+		public String attacker_;
+		public String defender_;
+		public int damage_;
+		public CriticalResults crits_;
+		public PendingWound(String attacker, String defender, int damage, CriticalResults res) {
+			attacker_ = attacker; defender_ = defender; damage_ = damage; crits_ = res;
+		}
+		
+		public void apply(boolean notify, String user, int uid) {
+			String update = ActiveEntities.instance().applyDamage(attacker_, defender_, damage_, crits_);
+			if (notify)
+				SimpleEventList.getInstance().postEvent(new SimpleEvent(
+						String.format("<i>[%s]:%s</i>", defender_, update), 
+						String.format("[%s] Damage applied", defender_),
+						"rmgmaction", user).setDbInvalidate(uid));
+		}
+	
+		public void applyNext(boolean notify, String user, int uid) {
+			// bump up any durations by 1
+			if (crits_.details_ != null)
+				for (EffectRecord e:crits_.details_)
+					e.bump();
+			String update = ActiveEntities.instance().applyDamage(attacker_, defender_, damage_, crits_);
+			if (notify)
+				SimpleEventList.getInstance().postEvent(new SimpleEvent(
+						String.format("<i>[%s]:%s</i>", defender_, update), 
+						String.format("[%s] Damage applied (next round)", defender_),
+						"rmgmaction", user).setDbInvalidate(uid));
+		}
+		
+		public void reportCleared(String user, int uid) {
+			SimpleEventList.getInstance().postEvent(new SimpleEvent(
+					"", 
+					String.format("[%s] Damage canceled", defender_),
+					"rmhidden", user).setDbInvalidate(uid));
+		}
+	}
+	
+	public class WoundDB implements ActionHandler {
+		HashMap<Integer,PendingWound> pendingWounds_ = new HashMap();
+		int nextWound_ = 0;
+		
+		public int submit(PendingWound p) {
+			if (Global.USE_AFFIRMATIVE_TRACKER) {
+				synchronized(this) {
+					nextWound_++;
+					pendingWounds_.put(nextWound_, p);
+					return nextWound_;
+				}
+			} else {
+				p.apply(false, null, -1);
+				return -1;
+			}
+		}
+		
+		public void reset() {
+			synchronized(this) {
+				pendingWounds_.clear();
+			}
+		}
+		
+		@Override
+		public void handleAction(String action, UserInfo user, HttpServletRequest request, HttpServletResponse response)
+		{
+			if (user.mLevel < RMUserSecurity.kLoginLeader)
+				return;
+			
+			//now, next, cancel, edit
+			final String op = WebLib.getStringParam(request, "dispatch", null);
+			if (op == null) {
+				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+				return;
+			}
+			
+			final int uid = WebLib.getIntParam(request, "uid", -1); 
+			PendingWound p = null;
+			synchronized(this) {
+				p = pendingWounds_.remove(uid);
+			}
+			if (p == null) {
+				// wound already dispatched, just ignore
+				return;
+			}
+			
+			if (op.equals("now")) {
+				p.apply(true, user.mUsername, uid);
+			} else if (op.equals("next")) {
+				p.applyNext(true, user.mUsername, uid);
+			} else if (op.equals("cancel") || op.equals("edit")) {
+				// do nothing, we already removed it, yay.. edit is client side
+				p.reportCleared(user.mUsername, uid);
+			} else {
+				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+				return;
+			}
+		}
 	}
 	
 	public class TableLookup implements ActionHandler
@@ -163,8 +265,12 @@ public class CombatHandler {
 					if (dam.iRankLimit > 0) {
 						rankExplain = String.format(" [R%d]", rankLimit + 1);
 					}
+					int woundOpts = -1;
 					if (dam.iDamage > 0) {
-						ActiveEntities.instance().applyDamage(attacker, defender, dam.iDamage, null);
+						if (Global.USE_AFFIRMATIVE_TRACKER)
+							woundOpts = mWoundDB.submit(new PendingWound(attacker, defender, dam.iDamage, null));
+						else
+							ActiveEntities.instance().applyDamage(attacker, defender, dam.iDamage, null);
 					}
 					
 					String header = String.format("[%s] Attack%s [%s] : %s = %s%s", attacker==null?"???":attacker,
@@ -172,7 +278,7 @@ public class CombatHandler {
 							defender==null?"???":defender,
 							explain, summation, rankExplain);
 					SimpleEventList.getInstance().postEvent(new SimpleEvent(msg, 
-							header,	"rmattack", user.mUsername));
+							header,	"rmattack", user.mUsername).setDbOpt(woundOpts).setTargetName(defender));
 				}
 				
 				JSONObject p = new JSONObject();
@@ -238,17 +344,25 @@ public class CombatHandler {
 				String resHtml = innerHtml;
 				if (validity < VALIDITY_PRACTICE) {
 					// apply the effects
-					String defStatus = ActiveEntities.instance().applyDamage(attacker, defender, 0, cres);
-					if (Global.USE_COMBAT_TRACKER && !defStatus.isEmpty()) {
-						innerHtml += "<br><i>[" + defender + "]:" + defStatus + "</i>";
+					int woundOpts = -1;
+					if (Global.USE_COMBAT_TRACKER) {
+						if (Global.USE_AFFIRMATIVE_TRACKER) {
+							woundOpts = mWoundDB.submit(new PendingWound(attacker, defender, 0, cres));
+						} else {
+							String defStatus = ActiveEntities.instance().applyDamage(attacker, defender, 0, cres);
+							if (!defStatus.isEmpty()) {
+								innerHtml += "<br><i>[" + defender + "]:" + defStatus + "</i>";
+							}
+						}
 					}
 					String header = String.format("[%s] %sCritical%s [%s] : %s : (%d)", attacker==null?"???":attacker,
 							critMod,validity==VALIDITY_COMPUTER?"":"*",
 							defender==null?"???":defender,
 							crits, dice.expressedRoll());
-					SimpleEventList.getInstance().postEvent(new SimpleEvent(innerHtml, 
+					SimpleEvent eve = new SimpleEvent(innerHtml, 
 							header,
-							"rmattack", user.mUsername));
+							"rmattack", user.mUsername).setDbOpt(woundOpts).setTargetName(defender);
+					SimpleEventList.getInstance().postEvent(eve);
 				}
 				
 				JSONObject p = new JSONObject();

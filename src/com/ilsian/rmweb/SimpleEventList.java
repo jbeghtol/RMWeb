@@ -61,6 +61,15 @@ public 	class SimpleEventList extends LinkedList<SimpleEvent> {
 							entry.put("header", eve.mHeader);
 							entry.put("type", eve.mType);
 							entry.put("user", eve.mUser);
+							if (eve.mDbIndex >= 0) {
+								entry.put("dbopt", eve.mDbIndex);
+							}
+							if (eve.mDbInvalidate >= 0) {
+								entry.put("dbclear", eve.mDbInvalidate);
+							}
+							if (eve.mTargetName != null) {
+								entry.put("target", eve.mTargetName);
+							}
 							list.put(entry);
 						}
 					}

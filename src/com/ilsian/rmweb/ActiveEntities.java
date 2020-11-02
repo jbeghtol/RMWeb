@@ -188,6 +188,10 @@ public class ActiveEntities extends HashMap<String, ActiveEntity> implements Act
 			SkillResolve.General checkResult = SkillResolve.General.resolve( new Dice.Open(res.roll_, res.total_) );
 			Integer stunReduce = STUN_REDUCE.get(checkResult);
 			int reduce = stunReduce==null?0:stunReduce;
+			if (Global.USE_AFFIRMATIVE_TRACKER) {
+				// UGH!  This is sort of ugly to handle.. maybe its not worth it?
+			}
+			
 			res.detail_ = "Total = " + res.total_ + " " + checkResult + " (" + (stunReduce==null?"No Effect":String.format("%d rounds", stunReduce)) + ")";
 			
 			// perform actual stun reduction
@@ -316,7 +320,7 @@ public class ActiveEntities extends HashMap<String, ActiveEntity> implements Act
 		return summary.toString();
 	}
 	
-	public String advanceRound() {
+	public String advanceRound(boolean applyTime) {
 		final StringBuilder summary = new StringBuilder();
 		ModelSync.modelUpdate(ModelSync.Model.ENTITIES, () -> {
 			currentStage = 0;
@@ -324,7 +328,7 @@ public class ActiveEntities extends HashMap<String, ActiveEntity> implements Act
 			for (ActiveEntity entry:this.values()) {
 				entry.mLastInit = -1;
 				entry.mLastInitExplain = "";
-				if (entry.mEffects.applyRound()) {
+				if (applyTime && entry.mEffects.applyRound()) {
 					if (Global.USE_COMBAT_TRACKER) {
 						// We could add this to the status - all entities who change from a round inc
 						if (summary.length() > 0)
@@ -348,6 +352,24 @@ public class ActiveEntities extends HashMap<String, ActiveEntity> implements Act
 				if (entry.mUid == uid) {
 					entry.mLastInitPhase = phase;
 					return true;
+				}
+			}
+			return false;
+		});
+	}
+
+	public void resetPhaseInitiative(int uid, int phase) {
+		ModelSync.modelUpdate(ModelSync.Model.ENTITIES, () -> {
+			for (ActiveEntity entry:this.values()) {
+				if (entry.mUid == uid) {
+					if (entry.mLastInitPhase != phase) {
+						entry.mLastInitPhase = phase;
+						entry.mLastInitSort = (entry.mLastInitPhase - 1) * -100 + entry.mLastInit;
+						return true;
+					} else {
+						// no change
+						return false;
+					}
 				}
 			}
 			return false;
@@ -409,7 +431,7 @@ public class ActiveEntities extends HashMap<String, ActiveEntity> implements Act
 			if (ent != null) {
 				ent.mEffects.updateFromForm(request);
 				eves.add(String.format("<i>[%s]:%s</i>", ent.mName, ent.mEffects.getDetail()));
-				eves.add(String.format("[%s] wounds updated", ent.mName));
+				eves.add(String.format("[%s] Wounds updated", ent.mName));
 				return true;
 			}
 			return false;
@@ -427,13 +449,15 @@ public class ActiveEntities extends HashMap<String, ActiveEntity> implements Act
 			SimpleEventList.getInstance().postEvent(new SimpleEvent("Today is a good day to die.", "[GM] Round " + currentRound + " begins!", "rmgmaction", user.mUsername));
 		}
 		else if (action.equals("nextround") && user.mLevel >= RMUserSecurity.kLoginLeader) {
-			String summary = advanceRound();
+			String summary = advanceRound(!WebLib.getBoolParam(request, "noeffects", false));
 			groupSkillCheck("combatawareness");
 			SimpleEventList.getInstance().postEvent(new SimpleEvent(summary.length() == 0?"Choose a phase and declare your actions.":summary, "[GM] Round " + currentRound + " declarations/updates", "rmgmaction", user.mUsername));
 		} else if (action.equals("setphase")) {
 			// has params: uid - entitiy uid, phase - next init phase in -1,0,1
 			// TODO: Security! Client can lie, so we should check controllers for the uid, but skip isnt that good of a hacker so LATER
 			setInitPhase(Integer.parseInt(request.getParameter("uid")), Integer.parseInt(request.getParameter("phase")));
+		} else if (action.equals("alterphase")) {
+			resetPhaseInitiative(Integer.parseInt(request.getParameter("uid")), Integer.parseInt(request.getParameter("phase")));
 		} else if (action.equals("skillcheck") && user.mLevel >= RMUserSecurity.kLoginLeader) {
 			groupSkillCheck(request.getParameter("skill"));
 		} else if (action.equals("skillsingle")) {

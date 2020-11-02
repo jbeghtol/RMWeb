@@ -3,6 +3,7 @@
 <#include "PageBegin.ftl">
 
 <#include "EditWounds.ftl">
+<#include "LogEntry.ftl">
 
 <script id="tmplActive" type="text/html">
 <table id="activetable" class="table table-dense table-striped nomargin">
@@ -18,9 +19,9 @@
 
 <script id="tmplActiveRow" type="text/html">
 <tr>
-<td><span class="rmexecute" data-template-bind='[{"attribute": "title", "value": "initexplain"}]' data-content="phaseicon" />
+<td><span onclick="changePhase(this)" class="rmexecute" data-template-bind='[{"attribute": "title", "value": "initexplain"},{"attribute": "entity", "value": "uid"}]' data-content="phaseicon" />
 <span class="rmdeclare" data-content="stageselect" title="Snap, Normal, Deliberate" /></td>
-<td onclick="editWounds(this)" data-content-prepend="name" data-template-bind='[{"attribute": "title", "value": "effects.detail", "attribute": "entity", "value": "uid"}]' ><span data-content="effects.brief" /></td> 
+<td onclick="editWounds(this)" data-content-prepend="name" data-template-bind='[{"attribute": "title", "value": "effects.detail"},{"attribute": "entity", "value": "uid"}]' ><span data-content="effects.brief" /></td> 
 <td data-template-bind='[{"attribute": "title", "value": "explain"}]' class="rmresult" data-content="result" />
 <td class="dropdown">
 <#if rm.permit gte 3>
@@ -180,11 +181,26 @@ function refreshView()
                            setElementHtml("rmlog", "");
                        }
                    }
+                   /*
                    for (var i=0;i<data.log.events.length; i++) {
                        var logline = "<div class=\"rmevent\"><div class=\"" + data.log.events[i].type 
-                           + "\">" + data.log.events[i].header + "<span style=\"float:right;\"><i class=\"glyphicon glyphicon-user\"></i>&nbsp;" + data.log.events[i].user + "&nbsp;</span></div><div class=\"eventresultbox\">" + data.log.events[i].event + "</div></div>";
+                           + "\">" + data.log.events[i].header 
+                           + "<span style=\"float:right;\"><i class=\"glyphicon glyphicon-user\"></i>&nbsp;" + data.log.events[i].user
+                           + "&nbsp;</span><span style=\"float:right;\">" + (data.log.events[i].dbopt?data.log.events[i].dbopt:'') + "</span></div><div class=\"eventresultbox\">" + data.log.events[i].event + "</div></div>";
                        $( "#rmlog" ).append(logline);
                    }
+                   */
+                   // use a template, much nicer
+                   $('#rmlog').loadTemplate( $('#tmplLogEvent'), data.log.events, { append: true } );
+                   
+                   // but, special handler to clear db links that have been used
+                   for (var i=0;i<data.log.events.length; i++) {
+                        if (data.log.events[i].dbclear) {
+                            // this invalidates some DB link event, find it and remove its links
+                            $('#rmlog').find('span[db_uid=' + data.log.events[i].dbclear + ']').hide();
+                        }
+                   }
+                   
                    var d = $('#rmlog');
                    d.scrollTop(d.prop("scrollHeight"));
                }
@@ -298,6 +314,15 @@ function findActiveEntity(uid) {
     return null;
 }
 
+function findActiveEntityByName(name) {
+    for (var i=0; i<allActives.length; i++) {
+        if (allActives[i].name == name) {
+            return allActives[i];
+        }
+    }
+    return null;
+}
+
 function rollInitiative()
 {
     $.ajax({type: "POST", url: "gui?action=rollinit"});
@@ -305,7 +330,32 @@ function rollInitiative()
 
 function advanceRound()
 {
-    $.ajax({type: "POST", url: "gui?action=nextround"});
+    $.confirm({ 
+        escapeKey: 'cancel',
+        title: "Round Advance",
+        content: "Apply time effects for wounds?",
+        columnClass: 'medium',
+        type: 'blue',
+        animation: 'opacity',
+        animationSpeed: 100,
+        scrollToPreviousElement: false,
+        buttons: {
+            conf: {
+                text: 'UPDATE WOUNDS',
+                keys: ['enter'],
+                action: function() { doAdvanceRound('false'); }
+            },
+            cancel: {
+                text: 'INITIATIVE ONLY',
+                action: function() { doAdvanceRound('true'); }
+            }
+        }
+    });
+}
+
+function doAdvanceRound(noef) 
+{
+    $.ajax({type: "POST", url: "gui?action=nextround&noeffects=" + noef});
 }
 
 function request_archive()
@@ -352,11 +402,67 @@ function toggleEntityVisibility(element)
     $.ajax({type: "POST", url: "gui?action=toggleVisible&uid=" + uid});
 }
 
+function alterInitiativePhase(uid, phase)
+{
+    $.ajax({type: "POST", url: "gui?action=alterphase&uid=" + uid + "&phase=" + phase });
+}
+
+function changePhase(element)
+{
+// right now, everyone can do this
+<#if rm.permit gte 0>
+    var ent = element.getAttribute('entity');
+    $.confirm({ 
+        escapeKey: 'cancel',
+        title: "Change Phase",
+        content: "Change phase but keep initiative?",
+        columnClass: 'medium',
+        type: 'blue',
+        animation: 'opacity',
+        animationSpeed: 100,
+        scrollToPreviousElement: false,
+        buttons: {
+            conf: {
+                text: 'NORMAL',
+                keys: ['enter'],
+                action: function() { alterInitiativePhase(ent,0); }
+            },
+            alt: {
+                text: 'SNAP',
+                action: function() { alterInitiativePhase(ent, -1); }
+            },
+            alt2: {
+                text: 'DELIBERATE',
+                action: function() { alterInitiativePhase(ent,1); }
+            },
+            cancel: {
+                text: 'CANCEL'
+            }
+        }
+    });
+</#if>
+}
+
 function editWounds(element)
 {
     var ent = findActiveEntity(element.getAttribute('entity'));
     var contents = expandTemplate('#tmplEditWounds', ent );
     rm_edit_wounds_dialog(contents, ent.name);
+}
+
+function applyPendingWounds(element, action)
+{
+    var uid = element.getAttribute('db_uid');
+    $.ajax({type: "POST", url: "gui?action=pendingWound&uid=" + uid + "&dispatch=" + action});
+    
+    if (action == "edit") {
+        var target = element.getAttribute('defender');
+        if (target) {
+            var ent = findActiveEntityByName(target);
+            var contents = expandTemplate('#tmplEditWounds', ent );
+            rm_edit_wounds_dialog(contents, ent.name);
+        }      
+    }
 }
 
 function deleteEntity(element)
@@ -457,6 +563,11 @@ function callbackInit() {
                 return 'glyphicon glyphicon-eye-open';
             else
                 return 'glyphicon glyphicon-eye-close';
+        },
+        DBOptionFormatter: function (value, template) {
+            if (value)
+                return 'rmdbopt';
+            return 'rmhidden';
         }
     });
     doRMInit();

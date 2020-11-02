@@ -300,3 +300,16 @@ see: https://stackoverflow.com/questions/18023493/bootstrap-3-dropdown-sub-menu-
     margin: 3px;
     padding: 2px;
 }
+
+.rmdbopt {
+    display:block;
+}
+.rmdbopt>a {
+  color: #FFFFFF;  
+}
+
+.rmhidden {
+    display:none;
+}
+
+            

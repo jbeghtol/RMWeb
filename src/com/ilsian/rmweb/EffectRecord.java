@@ -139,6 +139,16 @@ public class EffectRecord {
 		modifiers_.add(new TimedModifier(val, dur));
 	}
 	
+	public void bump() {
+		if (stun_>0) stun_++;
+		if (noParry_>0) noParry_++;
+		if (mustParry_>0) mustParry_++;
+		// NOT bleeding - that doesn't increase
+		for (TimedModifier tm:modifiers_) {
+			if (tm.duration_>0) tm.duration_++;
+		}
+	}
+	
 	public void merge(EffectRecord eff, boolean defender) {
 		if (defender) {
 			// add all penalties

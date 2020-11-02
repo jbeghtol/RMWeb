@@ -210,6 +210,8 @@ public class RMServlet extends AppServlet {
 			if (mActiveList != null)
 				mActiveList.resetRounds();
 			
+			mCombatHandler.getWoundDB().reset();
+			
 			response.setStatus(HttpServletResponse.SC_OK);
 		}
 	};
@@ -351,6 +353,7 @@ public class RMServlet extends AppServlet {
 		addPostHandler("delete", mActiveList);
 		addPostHandler("deletegroup", mActiveList);
 		addPostHandler("updateWounds", mActiveList);
+		addPostHandler("alterphase", mActiveList);
 		
 		addPostHandler("cleanslate", cleanSlateHandler);
 		
@@ -361,6 +364,7 @@ public class RMServlet extends AppServlet {
 		addPostHandler("lookupCritical", mCombatHandler.makeHandlerCritical());
 		addPostHandler("BAR", mCombatHandler.makeHandlerBAR());
 		addPostHandler("RR", mCombatHandler.makeHandlerRR());
+		addPostHandler("pendingWound", mCombatHandler.getWoundDB());
 		
 		addFtlHandler("EditWounds.ftl", new TemplateResourceHandler("EditWounds.ftl").setMinSecurity(RMUserSecurity.kLoginGM));
 	}

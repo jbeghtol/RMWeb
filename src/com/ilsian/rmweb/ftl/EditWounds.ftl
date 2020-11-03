@@ -9,7 +9,7 @@
 <td><input name="bleed" type="number" id="wnd_bleed" class="shortnum" data-template-bind='[{"attribute": "value", "value": "effects.w.bleed"}]' /></td>
 <td><input name="stun" type="number" id="wnd_stun" class="shortnum" data-template-bind='[{"attribute": "value", "value": "effects.w.stun"}]' /></td>
 <td><input name="noparry" type="number" id="wnd_noparry" class="shortnum" data-template-bind='[{"attribute": "value", "value": "effects.w.noparry"}]' /></td>
-<td><input name="mustparry" "type="number" id="wnd_mustparry" class="shortnum" data-template-bind='[{"attribute": "value", "value": "effects.w.mustparry"}]' /></td>
+<td><input name="mustparry" type="number" id="wnd_mustparry" class="shortnum" data-template-bind='[{"attribute": "value", "value": "effects.w.mustparry"}]' /></td>
 </tr>
 <tr><th>Bonus</th><th>Duration</th><th></th><th>Penalty</th><th>Duration</th></tr>
 <tr><td><input name="bonus" type="number" id="wnd_bonus" class="shortnum" data-template-bind='[{"attribute": "value", "value": "effects.w.bonus"}]' /></td><td><input name="bonusdur" type="number" id="wnd_bonusdur" class="shortnum" data-template-bind='[{"attribute": "value", "value": "effects.w.bonusdur"}]' /></td>

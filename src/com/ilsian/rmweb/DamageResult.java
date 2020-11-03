@@ -38,7 +38,7 @@ public class DamageResult {
 	}
 	
 	public boolean checkReduceCriticals(int reduceCrits, int largeClass, String critColumnLg) {
-		if (reduceCrits == 0 && largeClass == 0) {
+		if (iCriticals.isEmpty() || (reduceCrits == 0 && largeClass == 0)) {
 			// crits good as-is
 			return false;
 		}

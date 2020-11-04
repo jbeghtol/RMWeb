@@ -106,7 +106,7 @@ public class EffectRecord {
 			}
 		}
 
-		return String.format("Damage: %d, Bleed: %d, Stun: %d, NoParry: %d, MustParry: %d, Bonus: %s Penalty: %s",
+		return String.format("Damage: %d, Bleed: %d, Stun: %d, NoParry: %d, MustParry: %d, Bonus: %s, Penalty: %s",
 				damage_,bleeding_,stun_,noParry_,mustParry_, bonus==0?"0":String.format("+%d (%d)", bonus, bonusDur),  penalty==0?"0":String.format("%d (%d)", penalty, penaltyDur));
 	}
 	

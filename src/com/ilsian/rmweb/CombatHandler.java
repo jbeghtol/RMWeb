@@ -213,6 +213,8 @@ public class CombatHandler {
 			final int parry = WebLib.getIntParam(request, "parry", 0);
 			final int db = WebLib.getIntParam(request, "db", 0);
 			final int mods = WebLib.getIntParam(request, "mods", 0);
+			final int att_cond = WebLib.getIntParam(request, "att_cond", 0);
+			final int def_cond = WebLib.getIntParam(request, "def_cond", 0);
 			
 			final int userRoll = WebLib.getIntParam(request, "roll", -1000);
 			
@@ -234,8 +236,8 @@ public class CombatHandler {
 				roll.manual(userRoll);
 			}
 			
-			int summation = ob + mods - db - parry + roll.total_;
-			String explain = String.format("%d + %d - %d - %d + %s", ob, mods, db, parry, roll, summation);
+			int summation = ob + att_cond + mods - db - parry + def_cond + roll.total_;
+			String explain = String.format("%d + %d + %d - %d - %d + %d + %s", ob, att_cond, mods, db, parry, def_cond, roll, summation);
 			
 			try {
 				final CombatEngineSQLite engine = getEngine();
@@ -266,11 +268,13 @@ public class CombatHandler {
 						rankExplain = String.format(" [R%d]", rankLimit + 1);
 					}
 					int woundOpts = -1;
-					if (dam.iDamage > 0) {
-						if (Global.USE_AFFIRMATIVE_TRACKER)
-							woundOpts = mWoundDB.submit(new PendingWound(attacker, defender, dam.iDamage, null));
-						else
-							ActiveEntities.instance().applyDamage(attacker, defender, dam.iDamage, null);
+					if (Global.USE_COMBAT_TRACKER && !defender.isEmpty()) {
+						if (dam.iDamage > 0) {
+							if (Global.USE_AFFIRMATIVE_TRACKER)
+								woundOpts = mWoundDB.submit(new PendingWound(attacker, defender, dam.iDamage, null));
+							else
+								ActiveEntities.instance().applyDamage(attacker, defender, dam.iDamage, null);
+						}
 					}
 					
 					String header = String.format("[%s] Attack%s [%s] : %s = %s%s", attacker==null?"???":attacker,
@@ -345,7 +349,7 @@ public class CombatHandler {
 				if (validity < VALIDITY_PRACTICE) {
 					// apply the effects
 					int woundOpts = -1;
-					if (Global.USE_COMBAT_TRACKER) {
+					if (Global.USE_COMBAT_TRACKER && !defender.isEmpty()) {
 						if (Global.USE_AFFIRMATIVE_TRACKER) {
 							woundOpts = mWoundDB.submit(new PendingWound(attacker, defender, 0, cres));
 						} else {

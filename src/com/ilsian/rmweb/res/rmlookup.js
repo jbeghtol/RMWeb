@@ -205,6 +205,8 @@ function doFormAttack(validity)
     req.ranklimit = rlimit;
     req.size = $('#sizeselect').val();
     req.reducecrit = $('#specialselect').val();
+    req.att_cond = getNumeric('att_cond');
+    req.def_cond = getNumeric('def_cond');
     doAttack(req);
 }
 

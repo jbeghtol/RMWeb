@@ -237,7 +237,7 @@ public class CombatHandler {
 			}
 			
 			int summation = ob + att_cond + mods - db - parry + def_cond + roll.total_;
-			String explain = String.format("%d + %d + %d - %d - %d + %d + %s", ob, att_cond, mods, db, parry, def_cond, roll, summation);
+			String explain = String.format("%d+%d+%d-%d-%d+%d+%s", ob, att_cond, mods, db, parry, def_cond, roll, summation);
 			
 			try {
 				final CombatEngineSQLite engine = getEngine();

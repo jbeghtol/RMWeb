@@ -1,6 +1,6 @@
 <script id="tmplLogEvent" type="text/html">
 <div class="rmevent">
-<div data-class="type" data-content-prepend="header"> 
+<div data-class="type" style="overflow: hidden;" data-content-prepend="header"> 
 <span style="float:right;margin-right:2px;" data-content-append="user"><i class="glyphicon glyphicon-user"></i>&nbsp;</span>
 <#if rm.permit gte 2>
 <span style="float:right;" data-template-bind='[{"attribute": "class", "value": "dbopt", "formatter": "DBOptionFormatter"}, {"attribute": "db_uid", "value": "dbopt"}]'>

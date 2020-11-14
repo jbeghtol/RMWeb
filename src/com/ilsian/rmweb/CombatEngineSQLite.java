@@ -523,13 +523,13 @@ public class CombatEngineSQLite implements CombatLookup {
     			if (sb.length() > 0)
     				sb.append("<br>");
     			// first replace the easy ones
-    			res = res.replaceAll("\\*", "<img class=\"mod\" src=\"/res/stunned.png\" />").
-    					replaceAll("@", "<img class=\"mod\" src=\"/res/noparry.png\" />");
+    			res = res.replaceAll("\\*", EffectRecord.DISPLAY_STUN).
+    					replaceAll("@", EffectRecord.DISPLAY_NO_PARRY);
     			
         		final Matcher m = mBloodPattern.matcher(res);
     			if (m.matches())
     			{
-    				res = m.group(1) + "<img class=\"mod\" src=\"/res/blood.png\" />" + m.group(2);
+    				res = m.group(1) + EffectRecord.DISPLAY_BLOOD + m.group(2);
     			}
     			sb.append(res);
     		}

@@ -7,6 +7,12 @@
 	<#assign appcontext=context>
 </#macro>
 
+<#------------------------
+  FORM RM WEB HELPERS
+-------------------------->
+<#macro playerskill skill skillname>
+    <a class="btn btn-primary" href="#" onclick="playerSkillCheck('${skill}', this)">${skillname}</a>
+</#macro>
 
 <#------------------------
   FORM LAYOUT MACROS

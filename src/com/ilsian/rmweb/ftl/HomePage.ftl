@@ -3,6 +3,7 @@
 <#include "PageBegin.ftl">
 
 <#include "EditWounds.ftl">
+<#include "PlayerPopup.ftl">
 <#include "LogEntry.ftl">
 
 <script id="tmplActive" type="text/html">
@@ -33,6 +34,9 @@
   </a>
 </#if>
   <a data-template-bind='[{"attribute": "entity", "value": "uid"}]' href="#" class="btn btn-xs" onclick="playerSkillCheck('-', this)"><i class="glyphicon glyphicon-certificate"></i></a>
+  <a data-template-bind='[{"attribute": "entity", "value": "uid"}]' href="#" class="btn btn-xs" onclick="playerPopup(this)"><i class="glyphicon glyphicon-tasks"></i></a>
+<#if false>
+  <!-- This was the old dropdown code, now removed by if -->
   <a class="btn btn-xs" data-toggle="dropdown" href="#"><i class="glyphicon glyphicon-tasks"></i></a>
   <ul class="dropdown-menu pull-left" role="menu" data-content-prepend="actionpopup">
     <li><a data-template-bind='[{"attribute": "entity", "value": "uid"}]' href="#" onclick="playerLoadDefense(this)">Load as Defender</a></li>
@@ -44,6 +48,7 @@
     <li><a data-template-bind='[{"attribute": "entity", "value": "uid"}]' href="#" onclick="playerSkillCheck('breakstun', this)">Break Stun</a></li>
     <li><a data-template-bind='[{"attribute": "entity", "value": "uid"}]' href="#" onclick="playerSkillCheck('_', this)">[Custom]</a></li>
   </ul>
+</#if>
 </td>
 </tr>
 </script>
@@ -396,6 +401,51 @@ function playerSkillCheck(skillname, element)
     }
 }
 
+function expandTemplateWithList(idsel, data, idlist, listtmpl, list)
+{
+    var div = $('<div/>').loadTemplate($(idsel), data);
+    div.find(idlist).loadTemplate(listtmpl, list);
+    return div.html();
+}
+
+function playerPopup(element) 
+{
+    var uid = element.getAttribute('entity');
+    var ent = findActiveEntity(uid);
+    var tempweapons = JSON.parse(JSON.stringify(ent.weapons));
+    for (var i=0;i<tempweapons.length; i++) {
+        tempweapons[i].index = i;
+    }
+    tempweapons.push( {index: -1, name: 'Spell/BAR'});
+    
+    var contents = expandTemplateWithList('#tmplPlayerPopup', ent, '#popupWeapons', '#tmplPlayerWeapons', tempweapons);
+    //console.log("POPUP:" + uid + "," + ent.name + "," + contents);
+    $.confirm({ 
+        escapeKey: 'cancel',
+        title: ent.name,
+        content: contents,
+        columnClass: 'medium',
+        type: 'blue',
+        animation: 'opacity',
+        animationSpeed: 0,
+        scrollToPreviousElement: false,
+        onOpen: function () {
+            var cb = this.$$cancel;
+            // set each anchor's entity, easier in jquery
+            this.$content.find('a').attr("entity",uid);
+            // and add the close action to each anchor
+            this.$content.find('a').click(function() {
+                cb.trigger('click');
+            });
+        },
+        buttons: {
+            cancel: {
+                text: 'CLOSE'
+            }
+        }
+        });
+}
+
 function toggleEntityVisibility(element)
 {
     var uid = element.getAttribute('entity');
@@ -501,6 +551,12 @@ function changeGroupActivation(element, toLoad, loadHidden)
         $.ajax({type: "POST", url: "gui?action=deactivatepeer&uid=" + uid});
 }
 
+function playerLoadAttack2(element)
+{
+    var weaponIndex = element.getAttribute('weapon');
+    playerLoadAttack(element, weaponIndex);
+}
+
 function playerLoadAttack(element, weaponindex)
 {
     var uid = element.getAttribute('entity');
@@ -508,11 +564,30 @@ function playerLoadAttack(element, weaponindex)
     if (ent) {
         setInputValueById("attacker", ent.name);
         setInputValueById("sp_attacker", ent.name);
-        setInputValueById("ob", ent.weapons[weaponindex].ob);
-        setSelectOptionById("weaponselect", ent.weapons[weaponindex].uid);
-        // NOTE: This will be an issue for the old combat view
-        setSelectOptionById("rankselect", ent.weapons[weaponindex].rank);
-        console.log("Loading attack for: " + ent.name + ", weapon: " + ent.weapons[weaponindex].name);
+        if (weaponindex >= 0) {
+            setInputValueById("ob", ent.weapons[weaponindex].ob);
+            setSelectOptionById("weaponselect", ent.weapons[weaponindex].uid);
+            setSelectOptionById("rankselect", ent.weapons[weaponindex].rank);
+            console.log("Loading attack for: " + ent.name + ", weapon: " + ent.weapons[weaponindex].name);
+        }
+    }
+}
+
+function playerLoadDefense2(element)
+{
+    var weaponIndex = element.getAttribute('weapon');
+    var uid = element.getAttribute('entity');
+    var ent = findActiveEntity(uid);
+    if (ent) {
+        setInputValueById("defender", ent.name);
+        setInputValueById("sp_defender", ent.name);
+        setInputValueById("db", ent.db);
+        setSelectOptionById("armorselect", ent.at);
+        console.log("Loading defense for uid: " + uid);
+        if (weaponIndex < 0)
+            $('#spellview').click();
+        else
+            $('#combatview').click();
     }
 }
 

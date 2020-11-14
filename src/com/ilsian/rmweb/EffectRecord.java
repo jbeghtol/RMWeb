@@ -13,10 +13,12 @@ import com.ilsian.tomcat.WebLib;
 
 public class EffectRecord {
 	
-	static final String DISPLAY_STUN = "<img class=\"mod\" src=\"/res/stunned.png\" />";
-	static final String DISPLAY_NO_PARRY = "<img class=\"mod\" src=\"/res/noparry.png\" />";
-	static final String DISPLAY_BLOOD = "<img class=\"mod\" src=\"/res/blood.png\" />";
-		
+	static final String DISPLAY_STUN = Global.EMOJI_CRITS?"&#x1F635":"<img class=\"mod\" src=\"/res/stunned.png\" />";
+	static final String DISPLAY_NO_PARRY = Global.EMOJI_CRITS?"&#x1F6AB":"<img class=\"mod\" src=\"/res/noparry.png\" />";
+	static final String DISPLAY_BLOOD = Global.EMOJI_CRITS?"&#x1FA78":"<img class=\"mod\" src=\"/res/blood.png\" />";
+	static final String DISPLAY_MUST_PARRY = Global.EMOJI_CRITS?"&#x1f1f2":"";
+	static final String DISPLAY_EFFECT = Global.EMOJI_CRITS?"":"";
+	
 	public int damage_ = 0;
 	public int stun_ = 0;
 	public int noParry_ = 0;
@@ -33,6 +35,12 @@ public class EffectRecord {
 			sb.append(DISPLAY_NO_PARRY);
 		if (bleeding_>0)
 			sb.append(DISPLAY_BLOOD);
+		if (mustParry_>0)
+			sb.append(DISPLAY_MUST_PARRY);
+		
+		if (damage_ > 0 || !modifiers_.isEmpty()) {
+			sb.append(DISPLAY_EFFECT);
+		}
 		
 		if (sb.length() == 1) {
 			return "";

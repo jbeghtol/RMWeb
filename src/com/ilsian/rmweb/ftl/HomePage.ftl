@@ -564,6 +564,7 @@ function playerLoadAttack(element, weaponindex)
     if (ent) {
         setInputValueById("attacker", ent.name);
         setInputValueById("sp_attacker", ent.name);
+        setInputValueById("sp_level_att", ent.level);
         if (weaponindex >= 0) {
             setInputValueById("ob", ent.weapons[weaponindex].ob);
             setSelectOptionById("weaponselect", ent.weapons[weaponindex].uid);
@@ -582,6 +583,10 @@ function playerLoadDefense2(element)
         setInputValueById("defender", ent.name);
         setInputValueById("sp_defender", ent.name);
         setInputValueById("db", ent.db);
+        setInputValueById("sp_level_def", ent.level);
+        setSelectOptionById("sizeselect", ent.size);
+        setSelectOptionById("specialselect", ent.special);
+        
         setSelectOptionById("armorselect", ent.at);
         console.log("Loading defense for uid: " + uid);
         if (weaponIndex < 0)

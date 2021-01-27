@@ -46,11 +46,11 @@ Special<select id="specialselect">
 <tr>
 <td class="att">
 <span class="add-on">OB-A</span><input type="number" id="ob" class="shortnum" />
-<span class="add-on">Cond.</span><input type="number" id="att_cond" class="shortnum" />
+<span class="add-on">Cond.</span><input type="number" id="att_cond" class="shortnum" disabled />
 </td>
 <td class="def">
 <span class="add-on">OB-D</span><input type="number" id="parry" class="shortnum" />
-<span class="add-on">Cond.</span><input type="number" id="def_cond" class="shortnum" />
+<span class="add-on">Cond.</span><input type="number" id="def_cond" class="shortnum" disabled />
 </td>
 </tr>
 

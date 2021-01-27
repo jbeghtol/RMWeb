@@ -46,6 +46,7 @@ public class RMServlet extends AppServlet {
 			rm.put("user", user.mUsername);
 		rm.put("permit", user.mLevel);
 		rm.put("hideback", true);
+		rm.put("cond_mods", Global.CONDITION_MODS);
 		
 		// add any other rm data members
 		return hmap;

@@ -19,7 +19,7 @@
 </script>
 
 <script id="tmplActiveRow" type="text/html">
-<tr>
+<tr data-template-bind='[{"attribute": "class", "value": "tag", "formatter": "GroupRowFormatter"}]' >
 <td><span onclick="changePhase(this)" class="rmexecute" data-template-bind='[{"attribute": "title", "value": "initexplain"},{"attribute": "entity", "value": "uid"}]' data-content="phaseicon" />
 <span class="rmdeclare" data-content="stageselect" title="Snap, Normal, Deliberate" /></td>
 <td onclick="editWounds(this)" data-content-prepend="name" data-template-bind='[{"attribute": "title", "value": "effects.detail"},{"attribute": "entity", "value": "uid"}]' ><span data-content="effects.brief" /></td> 
@@ -237,6 +237,9 @@ function refreshView()
                         }
                         // button to get a popup of actions
                         data.active.records[i].actionpopup = makeActionPopup(data.active.records[i], optdisable);
+                        
+                        // finally, if this entity is currently loaded in our combat window, update those to match new info
+                        updateCombatMods(data.active.records[i]);
                     }
                
                     // apply our pref sort - alphabet for pre, init order after
@@ -571,7 +574,35 @@ function playerLoadAttack(element, weaponindex)
             setSelectOptionById("rankselect", ent.weapons[weaponindex].rank);
             console.log("Loading attack for: " + ent.name + ", weapon: " + ent.weapons[weaponindex].name);
         }
+        updateCombatMods(ent);
     }
+}
+
+function updateCombatMods(ent)
+{
+<#if rm.cond_mods>
+    if (ent.name == $('#attacker').val()) {
+        // attacker has been updated
+        //setInputValueById("att_cond", ent.effects.w.bonus + ent.effects.w.penalty);
+        var c = document.getElementById('att_cond');
+        c.value = ent.effects.w.bonus + ent.effects.w.penalty;
+        var expl = ent.effects.w.bonus + " + " + ent.effects.w.penalty;
+        c.setAttribute('title', expl);
+    } 
+    if (ent.name == $('#defender').val()) {
+        // defender has been updated
+        var c = document.getElementById('def_cond');
+        var expl = "";
+        if (ent.effects.w.stun > 0 || ent.effects.w.noparry > 0) {
+            c.value = 20;
+            expl = "Defender stunned, attacker at +20";
+        } else {
+            c.value = 0;
+            expl = "Defender normal, attacker +0";
+        }
+        c.setAttribute('title', expl);
+    } 
+</#if>
 }
 
 function playerLoadDefense2(element)
@@ -588,6 +619,7 @@ function playerLoadDefense2(element)
         setSelectOptionById("specialselect", ent.special);
         
         setSelectOptionById("armorselect", ent.at);
+        updateCombatMods(ent);
         console.log("Loading defense for uid: " + uid);
         if (weaponIndex < 0)
             $('#spellview').click();
@@ -648,6 +680,13 @@ function callbackInit() {
             if (value)
                 return 'rmdbopt';
             return 'rmhidden';
+        },
+        GroupRowFormatter: function (value, template) {
+            if (value.toLowerCase() == 'players') {
+                return 'rmrowpc';
+            } else {
+                return 'rmrownpc';
+            }
         }
     });
     doRMInit();

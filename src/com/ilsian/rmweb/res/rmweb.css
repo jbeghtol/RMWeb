@@ -199,6 +199,10 @@ li.selected {
 	background-color: #00000020 !important;
 }
 
+tr.rmrownpc>td {
+    color: #FF0000;
+}
+
 .rmresult {
     text-align: center;
 }

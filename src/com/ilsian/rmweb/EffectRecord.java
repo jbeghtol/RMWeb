@@ -20,7 +20,8 @@ public class EffectRecord {
 	static final String DISPLAY_EFFECT = Global.EMOJI_CRITS?"":"";
 	static final String DISPLAY_DEAD = Global.EMOJI_CRITS?"&#x2620":"";
 	
-	//public int hits_ = 50; // total hitpoints
+	static final String DISPLAY_WOUNDS_FORMAT = "<i class=\"glyphicon glyphicon-heart-empty %s\"></i>";
+	
 	public int damage_ = 0;
 	public int stun_ = 0;
 	public int noParry_ = 0;
@@ -33,6 +34,12 @@ public class EffectRecord {
 		StringBuilder sb = new StringBuilder(" ");
 		if (currHits <= damage_) {
 			sb.append(DISPLAY_DEAD);
+		} else if (damage_ > ((currHits*3)/4)) {
+			// taken 3/4 or more damage
+			sb.append(String.format(DISPLAY_WOUNDS_FORMAT, "bad"));
+		} else if (damage_ > 0) {
+			// taken some damage
+			sb.append(String.format(DISPLAY_WOUNDS_FORMAT, "neutral"));
 		}
 		addHighlights(sb);
 		if (sb.length() == 1) {

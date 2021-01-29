@@ -61,6 +61,8 @@ public class EntityEngineSQLite {
 		public int mLevel;
 		public int mSize;
 		public int mSpecial;
+		// more new
+		public int mHits;
 		// new
 		public boolean mVisible = true;
 		public Weapon [] mWeapons = new Weapon[4];
@@ -86,6 +88,7 @@ public class EntityEngineSQLite {
 			jact.put("size", mSize);
 			jact.put("special", mSpecial);
 			jact.put("visibility", mVisible);
+			jact.put("hits",  mHits);
 			JSONArray wlist = new JSONArray();
 			for (int i=0;i<mWeapons.length; i++) {
 				if (mWeapons[i] != null) {
@@ -102,10 +105,10 @@ public class EntityEngineSQLite {
 			// add the effects
 			JSONObject jeff = new JSONObject();
 			if (Global.USE_COMBAT_TRACKER)
-				jeff.put("brief", mEffects.getHighlights());
+				jeff.put("brief", mEffects.getHighlights(mHits));
 			else
 				jeff.put("brief", "");
-			jeff.put("detail", mEffects.getDetail());
+			jeff.put("detail", mEffects.getDetail(mHits));
 			jeff.put("w", mEffects.asJSON());
 			jact.put("effects", jeff);
 			
@@ -113,13 +116,14 @@ public class EntityEngineSQLite {
 		}
 	};
 	
-	static final int SCHEMA_VERSION = 2;
+	static final int SCHEMA_VERSION = 3;
 	
 	// These ACTUALLY define the schema
 	static final String [] STRING_KEYS = { "name", "tag", "controllers", "weapon1", "weapon2", "weapon3", "weapon4" };
 	static final String [] BOOL_KEYS = { "public" };
-	static final String [] INT_KEYS = { "at", "db", "fs", "ob1", "ob2", "ob3", "ob4", "observation", "combatawareness", "alertness", "breakstun", "powerperception",
-		"level", "size", "special" // new or v2
+	static final String [] INT_KEYS = { "at", "db", "fs", "ob1", "ob2", "ob3", "ob4", "observation", "combatawareness", "alertness", "breakstun", "powerperception"
+		,"level", "size", "special" // new or v2
+		,"hits" // new for v3
 		};
 	
 	static final HashMap<String,String> SKILL_MAP;
@@ -194,6 +198,13 @@ public class EntityEngineSQLite {
 					for (int ikey=13; ikey<=14; ikey++) {
 						// these INT_KEYS added, default 0
 						s.executeUpdate("ALTER TABLE entities ADD COLUMN " + INT_KEYS[ikey] + " int default 0");
+						logger.info("Added column: " + INT_KEYS[ikey] );
+					}
+					break;
+				case 2: // changes from 2 to 3
+					for (int ikey=15; ikey<=15; ikey++) {
+						// add hits, default to... 50?
+						s.executeUpdate("ALTER TABLE entities ADD COLUMN " + INT_KEYS[ikey] + " int default 50");
 						logger.info("Added column: " + INT_KEYS[ikey] );
 					}
 					break;
@@ -524,6 +535,8 @@ public class EntityEngineSQLite {
 				actor.mSize = rs.getInt(valIndex++);
 			} else if (intkey.equals("special")) {
 				actor.mSpecial = rs.getInt(valIndex++);
+			} else if (intkey.equals("hits")) {
+				actor.mHits = rs.getInt(valIndex++);
 			} else if (SKILL_MAP.containsKey(intkey)) {
 				Skill sk = new Skill();
 				sk.mDisplayName = SKILL_MAP.get(intkey);

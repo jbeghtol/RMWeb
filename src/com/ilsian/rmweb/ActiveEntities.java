@@ -336,7 +336,7 @@ public class ActiveEntities extends HashMap<String, ActiveEntity> implements Act
 						summary.append("<i>[");
 						summary.append(entry.mName);
 						summary.append("]: ");
-						summary.append(entry.mEffects.getDetail());
+						summary.append(entry.mEffects.getDetail(entry.mHits));
 						summary.append("</i>");
 					}
 				}
@@ -430,7 +430,7 @@ public class ActiveEntities extends HashMap<String, ActiveEntity> implements Act
 			ActiveEntity ent = this.get(WebLib.getStringParam(request, "name", "--"));
 			if (ent != null) {
 				ent.mEffects.updateFromForm(request);
-				eves.add(String.format("<i>[%s]:%s</i>", ent.mName, ent.mEffects.getDetail()));
+				eves.add(String.format("<i>[%s]:%s</i>", ent.mName, ent.mEffects.getDetail(ent.mHits)));
 				eves.add(String.format("[%s] Wounds updated", ent.mName));
 				return true;
 			}

@@ -18,7 +18,9 @@ public class EffectRecord {
 	static final String DISPLAY_BLOOD = Global.EMOJI_CRITS?"&#x1FA78":"<img class=\"mod\" src=\"/res/blood.png\" />";
 	static final String DISPLAY_MUST_PARRY = Global.EMOJI_CRITS?"&#x1f1f2":"";
 	static final String DISPLAY_EFFECT = Global.EMOJI_CRITS?"":"";
+	static final String DISPLAY_DEAD = Global.EMOJI_CRITS?"&#x2620":"";
 	
+	//public int hits_ = 50; // total hitpoints
 	public int damage_ = 0;
 	public int stun_ = 0;
 	public int noParry_ = 0;
@@ -27,8 +29,20 @@ public class EffectRecord {
 	
 	public boolean duplicate_ = false;
 	
-	public String getHighlights() {
+	public String getHighlights(int currHits) {
 		StringBuilder sb = new StringBuilder(" ");
+		if (currHits <= damage_) {
+			sb.append(DISPLAY_DEAD);
+		}
+		addHighlights(sb);
+		if (sb.length() == 1) {
+			return "";
+		}
+		return sb.toString();
+	}
+	
+	protected void addHighlights(StringBuilder sb)
+	{
 		if (stun_>0)
 			sb.append(DISPLAY_STUN);
 		if (noParry_>0)
@@ -41,15 +55,6 @@ public class EffectRecord {
 		if (damage_ > 0 || !modifiers_.isEmpty()) {
 			sb.append(DISPLAY_EFFECT);
 		}
-		
-		if (sb.length() == 1) {
-			return "";
-		}
-		return sb.toString();
-	}
-	
-	public String getDetail() {
-		return toString();
 	}
 	
 	public void updateFromForm(HttpServletRequest req) {
@@ -99,6 +104,10 @@ public class EffectRecord {
 	}
 	
 	public String toString() {
+		return getDetail(-1);
+	}
+	public String getDetail(int currHits) {
+		
 		int bonus = 0;
 		int penalty = 0;
 		int bonusDur = 0;
@@ -113,8 +122,8 @@ public class EffectRecord {
 				penaltyDur = Math.max(penaltyDur, tm.duration_);
 			}
 		}
-
-		return String.format("Damage: %d, Bleed: %d, Stun: %d, NoParry: %d, MustParry: %d, Bonus: %s, Penalty: %s",
+		final String header = (currHits >=0 && currHits <= damage_)?"DEAD ":"";
+		return String.format("%sDamage: %d, Bleed: %d, Stun: %d, NoParry: %d, MustParry: %d, Bonus: %s, Penalty: %s", header,
 				damage_,bleeding_,stun_,noParry_,mustParry_, bonus==0?"0":String.format("+%d (%d)", bonus, bonusDur),  penalty==0?"0":String.format("%d (%d)", penalty, penaltyDur));
 	}
 	

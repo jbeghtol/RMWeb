@@ -1,6 +1,10 @@
 <script id="tmplPlayerPopup" type="text/html">
 <table class="table table-dense table-striped">
+<#if rm.permit gte 2>
+<tr><th>Level</th><td><span data-content-append="level" />&nbsp;(Hits: <span data-content-append="hits" />)</td></tr>
+<#else>
 <tr><th>Level</th><td data-content-append="level" /></tr>
+</#if>
 <tr><th>AT(DB)</th><td><span data-content-append="at" />&nbsp;(<span data-content="db"></span>)</td></tr>
 <tr><th>Cond</th><td data-content-prepend="effects.detail" >&nbsp;
 <#if rm.permit gte 2>

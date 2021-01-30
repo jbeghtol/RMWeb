@@ -16,11 +16,12 @@ public class EffectRecord {
 	static final String DISPLAY_STUN = Global.EMOJI_CRITS?"&#x1F635":"<img class=\"mod\" src=\"/res/stunned.png\" />";
 	static final String DISPLAY_NO_PARRY = Global.EMOJI_CRITS?"&#x1F6AB":"<img class=\"mod\" src=\"/res/noparry.png\" />";
 	static final String DISPLAY_BLOOD = Global.EMOJI_CRITS?"&#x1FA78":"<img class=\"mod\" src=\"/res/blood.png\" />";
-	static final String DISPLAY_MUST_PARRY = Global.EMOJI_CRITS?"&#x1f1f2":"";
+	//static final String DISPLAY_MUST_PARRY = Global.EMOJI_CRITS?"&#x1f1f2":""; // old 'M' for mustparry
+	static final String DISPLAY_MUST_PARRY = Global.EMOJI_CRITS?"&#x2694":""; // new, crossed swords for mustparry
 	static final String DISPLAY_EFFECT = Global.EMOJI_CRITS?"":"";
-	static final String DISPLAY_DEAD = Global.EMOJI_CRITS?"&#x2620":"";
-	
-	static final String DISPLAY_WOUNDS_FORMAT = "<i class=\"glyphicon glyphicon-heart-empty %s\"></i>";
+	static final String DISPLAY_DEAD = Global.EMOJI_CRITS?"&#x1F480":"";
+	static final String DISPLAY_WOUNDED = Global.EMOJI_CRITS?"&#x1F494":"";
+	static final String DISPLAY_SEVERELY_WOUNDED = Global.EMOJI_CRITS?"&#x1F5A4":"";
 	
 	public int damage_ = 0;
 	public int stun_ = 0;
@@ -36,10 +37,10 @@ public class EffectRecord {
 			sb.append(DISPLAY_DEAD);
 		} else if (damage_ > ((currHits*3)/4)) {
 			// taken 3/4 or more damage
-			sb.append(String.format(DISPLAY_WOUNDS_FORMAT, "bad"));
+			sb.append(DISPLAY_SEVERELY_WOUNDED);
 		} else if (damage_ > 0) {
 			// taken some damage
-			sb.append(String.format(DISPLAY_WOUNDS_FORMAT, "neutral"));
+			sb.append(DISPLAY_WOUNDED);
 		}
 		addHighlights(sb);
 		if (sb.length() == 1) {

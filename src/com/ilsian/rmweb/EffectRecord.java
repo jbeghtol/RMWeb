@@ -19,9 +19,10 @@ public class EffectRecord {
 	//static final String DISPLAY_MUST_PARRY = Global.EMOJI_CRITS?"&#x1f1f2":""; // old 'M' for mustparry
 	static final String DISPLAY_MUST_PARRY = Global.EMOJI_CRITS?"&#x2694":""; // new, crossed swords for mustparry
 	static final String DISPLAY_EFFECT = Global.EMOJI_CRITS?"":"";
-	static final String DISPLAY_DEAD = Global.EMOJI_CRITS?"&#x1F480":"";
-	static final String DISPLAY_WOUNDED = Global.EMOJI_CRITS?"&#x1F494":"";
+	static final String DISPLAY_INJURED = Global.EMOJI_CRITS?"&#x1F49A":"";
+	static final String DISPLAY_WOUNDED = Global.EMOJI_CRITS?"&#x1F49B":"";
 	static final String DISPLAY_SEVERELY_WOUNDED = Global.EMOJI_CRITS?"&#x1F5A4":"";
+	static final String DISPLAY_DEAD = Global.EMOJI_CRITS?"&#x1F480":"";
 	
 	public int damage_ = 0;
 	public int stun_ = 0;
@@ -35,12 +36,15 @@ public class EffectRecord {
 		StringBuilder sb = new StringBuilder(" ");
 		if (currHits <= damage_) {
 			sb.append(DISPLAY_DEAD);
-		} else if (damage_ > ((currHits*3)/4)) {
+		} else if (damage_ >= ((currHits*3)/4)) {
 			// taken 3/4 or more damage
 			sb.append(DISPLAY_SEVERELY_WOUNDED);
+		} else if (damage_ >= ((currHits)/2)) {
+			// taken 1/2 or more damage
+			sb.append(DISPLAY_WOUNDED);
 		} else if (damage_ > 0) {
 			// taken some damage
-			sb.append(DISPLAY_WOUNDED);
+			sb.append(DISPLAY_INJURED);
 		}
 		addHighlights(sb);
 		if (sb.length() == 1) {

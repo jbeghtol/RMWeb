@@ -368,5 +368,6 @@ public class RMServlet extends AppServlet {
 		addPostHandler("pendingWound", mCombatHandler.getWoundDB());
 		
 		addFtlHandler("EditWounds.ftl", new TemplateResourceHandler("EditWounds.ftl").setMinSecurity(RMUserSecurity.kLoginGM));
+		addFtlHandler("EditGlobals.ftl", new TemplateResourceHandler("EditGlobals.ftl").setInteraction(new SettingsAgent(), true).setMinSecurity(RMUserSecurity.kLoginGM));
 	}
 }

@@ -48,7 +48,7 @@
 <#macro settingblock_bool name="UNK" formname="" value="">
 <label class="contol-label" >${name}</label>
 <div class="form-group">	
-	<select class="form-control" name="${formname}"><option value="0">Off</option><option value="1" <#if value>selected</#if>>On</option></select>
+	<select class="form-control" name="${formname}"><option value="false">Off</option><option value="true" <#if value>selected</#if>>On</option></select>
 </div>
 </#macro>
 

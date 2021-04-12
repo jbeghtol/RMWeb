@@ -713,6 +713,7 @@ $(document).ready(callbackInit);
     <ul class="dropdown-menu">
       <#if rm.permit gte 3>
       <li><a onclick="request_archive()" href="#">Clean Slate</a></li>
+      <li><a href="gui?ftl=EditGlobals" href="#">Settings</a></li>
       </#if>
       <li><a href="/gui?action=logout">Sign Out</a></li>
     </ul>

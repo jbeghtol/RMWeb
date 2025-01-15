@@ -2,6 +2,9 @@ package com.ilsian.rmweb;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.nio.charset.Charset;
 import java.sql.*;
 
 import org.apache.commons.csv.CSVFormat;
@@ -340,7 +343,19 @@ public class EntityEngineSQLite {
 		}
 	}
 
+	public void syncEntities(String links) throws Exception {
+		URL url = new URL(links);
+        CSVParser parser = CSVParser.parse(new InputStreamReader(url.openStream(), Charset.forName("UTF-8")), CSVFormat.RFC4180);
+        StringBuilder info = new StringBuilder();
+        updateDataFromImport(parser, info);
+	}
+	
 	protected void updateDataFromImport(File csvFile, StringBuilder info) throws Exception {
+		CSVParser parser = CSVParser.parse(csvFile, java.nio.charset.Charset.forName("UTF-8"), CSVFormat.RFC4180);
+		updateDataFromImport(parser, info);
+	}
+	
+	protected void updateDataFromImport(CSVParser parser, StringBuilder info) throws Exception {
 		int updated = 0;
 		int inserted = 0;
 		
@@ -348,7 +363,7 @@ public class EntityEngineSQLite {
 		PreparedStatement ps_add = iConnection.prepareStatement(createInsertStatement());
 		PreparedStatement ps_update = iConnection.prepareStatement(createUpateStatement());
 		PreparedStatement ps_insert;
-		CSVParser parser = CSVParser.parse(csvFile, java.nio.charset.Charset.forName("UTF-8"), CSVFormat.RFC4180);
+		//CSVParser parser = CSVParser.parse(csvFile, java.nio.charset.Charset.forName("UTF-8"), CSVFormat.RFC4180);
 		HashMap<String, Integer> headerMap = new HashMap();
 		for (CSVRecord csvRecord : parser) {
 			if (csvRecord.getRecordNumber()==1) {
@@ -639,4 +654,5 @@ public class EntityEngineSQLite {
 			return false;
 		}
 	}
+	
 }

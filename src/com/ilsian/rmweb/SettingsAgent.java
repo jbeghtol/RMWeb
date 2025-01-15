@@ -21,6 +21,7 @@ public class SettingsAgent implements TemplateInteraction {
 		Global.CONDITION_MODS = WebLib.getBoolParam(request, "condition_mods", Global.CONDITION_MODS);
 		Global.USE_COMBAT_TRACKER = WebLib.getBoolParam(request, "combat_tracker", Global.USE_COMBAT_TRACKER);
 		Global.USE_AFFIRMATIVE_TRACKER = WebLib.getBoolParam(request, "affirmative_tracker", Global.USE_AFFIRMATIVE_TRACKER);
+		Global.ENTITY_LINKS = WebLib.getStringParam(request, "entity_links", Global.ENTITY_LINKS);
 		Global.save();
 		response.sendRedirect(response.encodeRedirectURL("/gui"));		
 	}
@@ -31,6 +32,7 @@ public class SettingsAgent implements TemplateInteraction {
 		data.put("condition_mods", Global.CONDITION_MODS);
 		data.put("combat_tracker", Global.USE_COMBAT_TRACKER);
 		data.put("affirmative_tracker", Global.USE_AFFIRMATIVE_TRACKER);
+		data.put("entity_links", Global.ENTITY_LINKS);
 		return data;
 	}
 

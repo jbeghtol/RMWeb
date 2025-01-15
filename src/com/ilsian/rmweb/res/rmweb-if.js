@@ -313,6 +313,10 @@ function prompt_quickroll(callback)
  
 }
 
+function rm_sync_entities(signalId) {
+    
+}
+
 function rm_file_upload_dialog(signalId) {
     // let the dialog do its thing
     $.confirm({ 

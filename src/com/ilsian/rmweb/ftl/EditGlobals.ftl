@@ -11,6 +11,7 @@
 <@settingblock_bool name="Combat Tracker" formname="combat_tracker" value=combat_tracker />
 <@settingblock_bool name="Tracker Requires Accept" formname="affirmative_tracker" value=affirmative_tracker />
 <@settingblock_bool name="Condition Mods" formname="condition_mods" value=condition_mods />
+<@settingblock_string name="Entity Links" formname="entity_links" value=entity_links />
 <@settingblock_commit />
 </div>
 </body>

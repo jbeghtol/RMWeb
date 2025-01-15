@@ -122,6 +122,14 @@ public class ActiveEntities extends HashMap<String, ActiveEntity> implements Act
 		}
 	}
 	
+	public void syncEntities(UserInfo user) {
+		try {
+			EntityEngineSQLite.getInstance().syncEntities(Global.ENTITY_LINKS);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
 	public void deleteEntityGroup(int uid) {
 		try {
 			// first, remove them all from active just in case
@@ -498,6 +506,8 @@ public class ActiveEntities extends HashMap<String, ActiveEntity> implements Act
 			deleteEntityGroup(WebLib.getIntParam(request, "uid", -1));
 		} else if (action.equals("updateWounds") && user.mLevel >= RMUserSecurity.kLoginGM) {
 			updateWounds(request, user);
+		} else if (action.equals("syncentities") && user.mLevel >= RMUserSecurity.kLoginGM) {
+			syncEntities(user);
 		}
 	}
 

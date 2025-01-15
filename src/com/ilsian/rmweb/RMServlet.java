@@ -355,6 +355,7 @@ public class RMServlet extends AppServlet {
 		addPostHandler("deletegroup", mActiveList);
 		addPostHandler("updateWounds", mActiveList);
 		addPostHandler("alterphase", mActiveList);
+		addPostHandler("syncentities", mActiveList);
 		
 		addPostHandler("cleanslate", cleanSlateHandler);
 		

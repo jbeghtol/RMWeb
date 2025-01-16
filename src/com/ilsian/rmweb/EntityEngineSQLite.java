@@ -119,7 +119,7 @@ public class EntityEngineSQLite {
 		}
 	};
 	
-	static final int SCHEMA_VERSION = 3;
+	static final int SCHEMA_VERSION = 4;
 	
 	// These ACTUALLY define the schema
 	static final String [] STRING_KEYS = { "name", "tag", "controllers", "weapon1", "weapon2", "weapon3", "weapon4" };
@@ -211,6 +211,12 @@ public class EntityEngineSQLite {
 						logger.info("Added column: " + INT_KEYS[ikey] );
 					}
 					break;
+				case 3: // changes from 3 to 4
+					// Added user and settings tables
+					s.executeUpdate(createUsersStatement());
+					s.executeUpdate(createSettingsStatement());
+					logger.info("Created users and settings tables.");
+					break;
 			}
 			currVersion++;
 		}
@@ -247,6 +253,58 @@ public class EntityEngineSQLite {
 		}
 	}
 	
+	public int loginGetRole(String user, String pass, int default_role)
+	{
+		try (PreparedStatement lookup = iConnection.prepareStatement("SELECT role,hashpass FROM users where login=?")) {
+			lookup.setString(1, user);
+			ResultSet rs = lookup.executeQuery();
+			if (rs.next()) {
+				if (PasswordHasher.verifyPassword(rs.getString("hashpass"), pass)) {
+					return rs.getInt("role");
+				} else {
+					logger.warning("Rejected invalid password for user " + user);
+				}
+			}
+		} catch (SQLException sqe) {
+			logger.warning("Failed to get login role:" + sqe);
+		}
+		return default_role;
+	}
+	
+	public boolean hasRole(int role)
+	{
+		logger.info("Checking hasRole");
+		try (PreparedStatement lookup = iConnection.prepareStatement("SELECT login FROM users where role=?")) {
+			lookup.setInt(1, role);
+			ResultSet rs = lookup.executeQuery();
+			return rs.next();
+		} catch (SQLException sqe) {
+			logger.warning("Failed to check hasRole:" + sqe);
+		}
+
+		return false;
+	}
+	
+	public void addUpdateUser(String login, String pass, int role) {
+	    try (PreparedStatement pstmt = iConnection.prepareStatement(
+	            "INSERT OR REPLACE INTO users (login, hashpass, role) VALUES (?, ?, ?)")) {
+	        pstmt.setString(1, login);
+	        pstmt.setString(2, PasswordHasher.hashPassword(pass));
+	        pstmt.setInt(3, role);
+	        pstmt.executeUpdate();
+	    } catch (SQLException e) {
+	        logger.warning("Error adding/updating user: " + e.getMessage());
+	    }
+	}
+	
+	public String createUsersStatement() {
+		return "create table users (login text primary key, hashpass text, role int default 1)";
+	}
+	
+	public String createSettingsStatement() {
+		return "create table settings ( name text primary key, value text)";
+	}
+	
 	public String createSchemeStatement() {
 		StringBuilder sbuild = new StringBuilder();
 		sbuild.append("create table entities ( _id integer primary key ");
@@ -262,7 +320,7 @@ public class EntityEngineSQLite {
 		sbuild.append(")");
 		return sbuild.toString();
 	}
-	
+
 	public String createInsertStatement() {
 		StringBuilder sbuild = new StringBuilder();
 		sbuild.append("INSERT INTO entities ( ");
@@ -333,9 +391,13 @@ public class EntityEngineSQLite {
 		try {
 			Statement st = iConnection.createStatement();
 			st.executeUpdate(createSchemeStatement());
-			System.err.println("Created table!");
+			System.err.println("Created entities table!");
+			st.executeUpdate(createUsersStatement());
+			logger.info("Created users table!");
+			st.executeUpdate(createSettingsStatement());
+			logger.info("Created settings table!");
 			st.close();
-		
+			writeCurrentSchemaVersion();
 		} catch (Exception sqe) {
 			System.err.println("Did not create table!");
 			if (sqe.toString().indexOf("already exists")<0)

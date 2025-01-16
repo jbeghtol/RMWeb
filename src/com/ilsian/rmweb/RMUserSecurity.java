@@ -3,6 +3,7 @@ package com.ilsian.rmweb;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
@@ -19,6 +20,7 @@ import com.ilsian.tomcat.UserSecurity;
  */
 public class RMUserSecurity implements UserSecurity {
 
+	static Logger logger = Logger.getLogger("com.ilsian.rmweb.RMUserSecurity");
 	static final boolean ALLOW_ANY_PASS = true;
 	
 	private static final String [] _ROLE_NAMES = { "Invalid", "Player", "Leader", "GM", "Admin" };
@@ -57,6 +59,22 @@ public class RMUserSecurity implements UserSecurity {
 		for (RMAccount acc:_ACCOUNTS) {
 			_ACCESS.put(acc.mLogin, acc);
 		}
+	}
+	
+	boolean mSetupNeeded;
+	public RMUserSecurity() {
+		mSetupNeeded = false;
+		try {
+			if (!EntityEngineSQLite.getInstance().hasRole(kLoginAdmin)) {
+				mSetupNeeded = true;
+			}
+		} catch (Exception exc) {
+			logger.warning("Exception checking first time: " + exc);
+		}
+	}
+	
+	String firstTimeSetupNeededArg() {
+		return mSetupNeeded ? "&setup":"";
 	}
 	
 	/**
@@ -100,7 +118,7 @@ public class RMUserSecurity implements UserSecurity {
 			{
 				// other URL requests are saved in our session, then user is redirected to the Login page
 				session.setAttribute(Webspace.LOGIN_TARGET, targetURL.toString());
-				response.sendRedirect(response.encodeRedirectURL("/gui?ftl=" + getLoginFTL()));		
+				response.sendRedirect(response.encodeRedirectURL("/gui?ftl=" + getLoginFTL() + firstTimeSetupNeededArg()));		
 			}	
 		}
 		return currUser;
@@ -160,22 +178,39 @@ public class RMUserSecurity implements UserSecurity {
 		}
 		else
 		{
-			response.sendRedirect("/gui?ftl=" + getLoginFTL() + "&fail=password");
+			response.sendRedirect("/gui?ftl=" + getLoginFTL() + "&fail=password" + firstTimeSetupNeededArg());
 		}
 	}
 
 
 	int validatePermission(String user, String password)
 	{
-		RMAccount acc = _ACCESS.get(user);
-		if (acc == null)
-			return kLoginInvalid;
-		
-		if ( (ALLOW_ANY_PASS && acc.mRoll < kLoginGM) || password.equals(acc.mPass)) {
-			return acc.mRoll;
+		int dbRole = kLoginInvalid;
+		try {
+			final EntityEngineSQLite ei = EntityEngineSQLite.getInstance();
+			if (mSetupNeeded) {
+				// bootstrap, create the first account as ADMIN
+				ei.addUpdateUser(user, password, kLoginAdmin);
+				logger.info("Created initial admin account as: " + user);
+				mSetupNeeded = false;
+				return kLoginAdmin;
+			}
+			dbRole = ei.loginGetRole(user, password, kLoginInvalid);
+		} catch (Exception dbExc) {
+			logger.warning("Failed DB Verification.  Login fail:" + dbExc);
 		}
-
-		return kLoginInvalid;
+		
+		return dbRole;
+//		
+//		RMAccount acc = _ACCESS.get(user);
+//		if (acc == null)
+//			return kLoginInvalid;
+//		
+//		if ( (ALLOW_ANY_PASS && acc.mRoll < kLoginGM) || password.equals(acc.mPass)) {
+//			return acc.mRoll;
+//		}
+//
+//		return kLoginInvalid;
 	}
 	
 	boolean setUserSession(HttpServletRequest req, HttpServletResponse res, String user, String hashpass)

@@ -15,6 +15,9 @@
 <#if urlparams.fail??>
 <div class="alert alert-danger">
 <strong>Login failed!<strong> Password verification failed.  Please try again.
+<#elseif urlparams.setup??>
+<div class="alert alert-danger">
+<strong>ADMIN SETUP</strong><br>Enter your preferred administrator login and password.
 <#else>
 <div class="alert alert-info">
 <strong>Login Required!</strong> Please login to access Rolemaster Web.

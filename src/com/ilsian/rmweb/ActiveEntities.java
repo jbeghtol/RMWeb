@@ -15,6 +15,7 @@ import org.json.JSONObject;
 import com.ilsian.rmweb.CombatEngineSQLite.CriticalResults;
 import com.ilsian.rmweb.EntityEngineSQLite.ActiveEntity;
 import com.ilsian.rmweb.EntityEngineSQLite.Skill;
+import com.ilsian.rmweb.SkillResolve.General;
 import com.ilsian.tomcat.ActionHandler;
 import com.ilsian.tomcat.UserInfo;
 import com.ilsian.tomcat.WebLib;
@@ -122,6 +123,14 @@ public class ActiveEntities extends HashMap<String, ActiveEntity> implements Act
 		}
 	}
 	
+	public void syncEntities(UserInfo user) {
+		try {
+			EntityEngineSQLite.getInstance().syncEntities(Global.ENTITY_LINKS);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
 	public void deleteEntityGroup(int uid) {
 		try {
 			// first, remove them all from active just in case
@@ -161,7 +170,7 @@ public class ActiveEntities extends HashMap<String, ActiveEntity> implements Act
 	static final int [] STUN_MOD_TABLE = { 0, 0, -10, -20, -20, -30, -30, -30, -50, -50, -70  };
 	static final HashMap<SkillResolve.General, Integer> STUN_REDUCE;
 	static {
-		STUN_REDUCE = new HashMap();
+		STUN_REDUCE = new HashMap<General, Integer>();
 		STUN_REDUCE.put(SkillResolve.General.NEAR_SUCCESS, -1);
 		STUN_REDUCE.put(SkillResolve.General.SUCCESS, -2);
 		STUN_REDUCE.put(SkillResolve.General.ABSOLUTE_SUCCESS, -3);
@@ -498,6 +507,8 @@ public class ActiveEntities extends HashMap<String, ActiveEntity> implements Act
 			deleteEntityGroup(WebLib.getIntParam(request, "uid", -1));
 		} else if (action.equals("updateWounds") && user.mLevel >= RMUserSecurity.kLoginGM) {
 			updateWounds(request, user);
+		} else if (action.equals("syncentities") && user.mLevel >= RMUserSecurity.kLoginGM) {
+			syncEntities(user);
 		}
 	}
 

@@ -1,8 +1,7 @@
 package com.ilsian.rmweb;
 
 import java.io.IOException;
-import java.sql.SQLException;
-import java.util.HashMap;
+import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
@@ -19,6 +18,7 @@ import com.ilsian.tomcat.UserSecurity;
  */
 public class RMUserSecurity implements UserSecurity {
 
+	static Logger logger = Logger.getLogger("com.ilsian.rmweb.RMUserSecurity");
 	static final boolean ALLOW_ANY_PASS = true;
 	
 	private static final String [] _ROLE_NAMES = { "Invalid", "Player", "Leader", "GM", "Admin" };
@@ -28,35 +28,21 @@ public class RMUserSecurity implements UserSecurity {
 	public static final int kLoginGM = 3;
 	public static final int kLoginAdmin = 4;
 	
-	static class RMAccount {
-		public String mLogin;
-		public String mPass;
-		public int mRoll;
-		public RMAccount(String n, String p, int r) {
-			mLogin = n;
-			mPass = p;
-			mRoll = r;
+
+	boolean mSetupNeeded;
+	public RMUserSecurity() {
+		mSetupNeeded = false;
+		try {
+			if (!EntityEngineSQLite.getInstance().hasRole(kLoginAdmin)) {
+				mSetupNeeded = true;
+			}
+		} catch (Exception exc) {
+			logger.warning("Exception checking first time: " + exc);
 		}
-	};
+	}
 	
-	static final RMAccount [] _ACCOUNTS = { 
-		new RMAccount("greg", "ucsd", kLoginGM),
-		new RMAccount("justin", "justin", kLoginLeader),
-		new RMAccount("skip", "skip", kLoginPlayer),
-		new RMAccount("mike", "mike", kLoginLeader),
-		new RMAccount("john", "john", kLoginPlayer),
-		new RMAccount("brent", "brent", kLoginPlayer),
-		new RMAccount("steve", "steve", kLoginPlayer),
-		new RMAccount("kirk", "kirk", kLoginPlayer),
-		new RMAccount("admin", "fordebug", kLoginAdmin)
-	};
-	
-	static final HashMap<String, RMAccount> _ACCESS;
-	static {
-		_ACCESS = new HashMap<String, RMAccount>();
-		for (RMAccount acc:_ACCOUNTS) {
-			_ACCESS.put(acc.mLogin, acc);
-		}
+	String firstTimeSetupNeededArg() {
+		return mSetupNeeded ? "&setup":"";
 	}
 	
 	/**
@@ -100,7 +86,7 @@ public class RMUserSecurity implements UserSecurity {
 			{
 				// other URL requests are saved in our session, then user is redirected to the Login page
 				session.setAttribute(Webspace.LOGIN_TARGET, targetURL.toString());
-				response.sendRedirect(response.encodeRedirectURL("/gui?ftl=" + getLoginFTL()));		
+				response.sendRedirect(response.encodeRedirectURL("/gui?ftl=" + getLoginFTL() + firstTimeSetupNeededArg()));		
 			}	
 		}
 		return currUser;
@@ -160,22 +146,30 @@ public class RMUserSecurity implements UserSecurity {
 		}
 		else
 		{
-			response.sendRedirect("/gui?ftl=" + getLoginFTL() + "&fail=password");
+			response.sendRedirect("/gui?ftl=" + getLoginFTL() + "&fail=password" + firstTimeSetupNeededArg());
 		}
 	}
 
 
 	int validatePermission(String user, String password)
 	{
-		RMAccount acc = _ACCESS.get(user);
-		if (acc == null)
-			return kLoginInvalid;
-		
-		if ( (ALLOW_ANY_PASS && acc.mRoll < kLoginGM) || password.equals(acc.mPass)) {
-			return acc.mRoll;
+		int dbRole = kLoginInvalid;
+		try {
+			final EntityEngineSQLite ei = EntityEngineSQLite.getInstance();
+			if (mSetupNeeded) {
+				// bootstrap, create the first account as ADMIN
+				ei.addUpdateUser(user, password, kLoginAdmin);
+				logger.info("Created initial admin account as: " + user);
+				mSetupNeeded = false;
+				return kLoginAdmin;
+			}
+			// Validate via DB, if user exists PW must match, otherwise user may be permitted as player w/o existing in the db
+			dbRole = ei.loginGetRole(user, password, kLoginInvalid, Global.ALLOW_UNKNOWN_PLAYERS?kLoginPlayer:kLoginInvalid);
+		} catch (Exception dbExc) {
+			logger.warning("Failed DB Verification.  Login fail:" + dbExc);
 		}
-
-		return kLoginInvalid;
+		
+		return dbRole;
 	}
 	
 	boolean setUserSession(HttpServletRequest req, HttpServletResponse res, String user, String hashpass)

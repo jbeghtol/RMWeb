@@ -18,9 +18,11 @@ public class SettingsAgent implements TemplateInteraction {
 			HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
+		Global.ALLOW_UNKNOWN_PLAYERS = WebLib.getBoolParam(request, "allow_unknown", Global.ALLOW_UNKNOWN_PLAYERS);
 		Global.CONDITION_MODS = WebLib.getBoolParam(request, "condition_mods", Global.CONDITION_MODS);
 		Global.USE_COMBAT_TRACKER = WebLib.getBoolParam(request, "combat_tracker", Global.USE_COMBAT_TRACKER);
 		Global.USE_AFFIRMATIVE_TRACKER = WebLib.getBoolParam(request, "affirmative_tracker", Global.USE_AFFIRMATIVE_TRACKER);
+		Global.ENTITY_LINKS = WebLib.getStringParam(request, "entity_links", Global.ENTITY_LINKS);
 		Global.save();
 		response.sendRedirect(response.encodeRedirectURL("/gui"));		
 	}
@@ -28,9 +30,11 @@ public class SettingsAgent implements TemplateInteraction {
 	@Override
 	public HashMap buildTemplateData() {
 		final HashMap data = new HashMap();
+		data.put("allow_unknown", Global.ALLOW_UNKNOWN_PLAYERS);
 		data.put("condition_mods", Global.CONDITION_MODS);
 		data.put("combat_tracker", Global.USE_COMBAT_TRACKER);
 		data.put("affirmative_tracker", Global.USE_AFFIRMATIVE_TRACKER);
+		data.put("entity_links", Global.ENTITY_LINKS);
 		return data;
 	}
 

@@ -57,6 +57,7 @@
 <table id="alltable" class="table table-dense table-striped nomargin">
 <thead><tr><th>Auto</th><th>Name</th><th>Load</th><th>Remove&nbsp;
 <button class="btn btn-primary btn-xs" title="Upload updates to entities" onclick="rm_file_upload_dialog('sigEntities')">Import <i class="glyphicon glyphicon-floppy-open"></i></button>
+<button class="btn btn-primary btn-xs" title="Sync Entity Links" onclick="rm_sync_entities('sigEntities')">Sync <i class="glyphicon glyphicon-floppy-open"></i></button>
 </th></tr></thead>
 <tbody id="allrows"></tbody></table>
 </script>
@@ -116,6 +117,9 @@ function checkController(clist, name)
 <#if rm.permit gte 2>
     return true;
 </#if>
+    if (clist == '') {
+        return true;
+    }
     var list = clist.split(',');
     for (var i=0; i<list.length; i++) {
         if (name == list[i])
@@ -516,6 +520,11 @@ function applyPendingWounds(element, action)
             rm_edit_wounds_dialog(contents, ent.name);
         }      
     }
+}
+
+function rm_sync_entities(element)
+{
+    $.ajax({type: "POST", url: "gui?action=syncentities", success: function(data) { $('#sigEntities').change(); } });
 }
 
 function deleteEntity(element)

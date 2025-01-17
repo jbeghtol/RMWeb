@@ -2,6 +2,9 @@ package com.ilsian.rmweb;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.nio.charset.Charset;
 import java.sql.*;
 
 import org.apache.commons.csv.CSVFormat;
@@ -22,10 +25,14 @@ public class EntityEngineSQLite {
 	static Logger logger = Logger.getLogger("com.ilsian.rmweb.EntityEngineSQLite");
 	static EntityEngineSQLite instance_;
 	
-	public static EntityEngineSQLite getInstance() throws Exception {
+	public static EntityEngineSQLite getInstance() {
 		if (instance_ == null) {
 			instance_ = new EntityEngineSQLite();
-			instance_.open();
+			try {
+				instance_.open();
+			} catch (Exception exc) {
+				logger.warning("Failed to connect database:" + exc);
+			}
 		}
 		return instance_;
 	}
@@ -116,7 +123,7 @@ public class EntityEngineSQLite {
 		}
 	};
 	
-	static final int SCHEMA_VERSION = 3;
+	static final int SCHEMA_VERSION = 4;
 	
 	// These ACTUALLY define the schema
 	static final String [] STRING_KEYS = { "name", "tag", "controllers", "weapon1", "weapon2", "weapon3", "weapon4" };
@@ -208,6 +215,12 @@ public class EntityEngineSQLite {
 						logger.info("Added column: " + INT_KEYS[ikey] );
 					}
 					break;
+				case 3: // changes from 3 to 4
+					// Added user and settings tables
+					s.executeUpdate(createUsersStatement());
+					s.executeUpdate(createSettingsStatement());
+					logger.info("Created users and settings tables.");
+					break;
 			}
 			currVersion++;
 		}
@@ -244,6 +257,88 @@ public class EntityEngineSQLite {
 		}
 	}
 	
+	public int loginGetRole(String user, String pass, int roleOnFail, int roleOnNoUser)
+	{
+		try (PreparedStatement lookup = iConnection.prepareStatement("SELECT role,hashpass FROM users where login=?")) {
+			lookup.setString(1, user);
+			ResultSet rs = lookup.executeQuery();
+			if (rs.next()) {
+				if (PasswordHasher.verifyPassword(rs.getString("hashpass"), pass)) {
+					return rs.getInt("role");
+				} else {
+					logger.warning("Rejected invalid password for user " + user);
+				}
+			}
+			else {
+				return roleOnNoUser;
+			}
+		} catch (SQLException sqe) {
+			logger.warning("Failed to get login role:" + sqe);
+		}
+		return roleOnFail;
+	}
+	
+	public boolean hasRole(int role)
+	{
+		logger.info("Checking hasRole");
+		try (PreparedStatement lookup = iConnection.prepareStatement("SELECT login FROM users where role=?")) {
+			lookup.setInt(1, role);
+			ResultSet rs = lookup.executeQuery();
+			return rs.next();
+		} catch (SQLException sqe) {
+			logger.warning("Failed to check hasRole:" + sqe);
+		}
+
+		return false;
+	}
+	
+	public void addUpdateUser(String login, String pass, int role) {
+	    try (PreparedStatement pstmt = iConnection.prepareStatement(
+	            "INSERT OR REPLACE INTO users (login, hashpass, role) VALUES (?, ?, ?)")) {
+	        pstmt.setString(1, login);
+	        pstmt.setString(2, PasswordHasher.hashPassword(pass));
+	        pstmt.setInt(3, role);
+	        pstmt.executeUpdate();
+	    } catch (SQLException e) {
+	        logger.warning("Error adding/updating user: " + e.getMessage());
+	    }
+	}
+	
+	public HashMap<String,String> getSettingMap() {
+		HashMap<String,String> setMap = new HashMap<String,String>();
+		try (PreparedStatement lookup = iConnection.prepareStatement("SELECT name,value FROM settings")) {
+			ResultSet rs = lookup.executeQuery();
+			while (rs.next()) {
+				setMap.put(rs.getString(1), rs.getString(2));
+			}
+		} catch (SQLException sqe) {
+			logger.warning("Failed to read settings:" + sqe);
+		}
+		return setMap;
+	}
+	
+	public void putSettingMap(HashMap<String,String> settings) {
+		try (PreparedStatement pst = iConnection.prepareStatement("INSERT OR REPLACE INTO settings (name, value) VALUES (?, ?)")) {
+			for (Map.Entry<String, String> entry : settings.entrySet()) {
+			    pst.setString(1, entry.getKey());
+			    pst.setString(2, entry.getValue());
+			    pst.addBatch();
+			}
+
+			pst.executeBatch();
+		} catch (SQLException sqe) {
+			logger.warning("Failed to store settings:" + sqe);
+		}
+	}
+	
+	public String createUsersStatement() {
+		return "create table users (login text primary key, hashpass text, role int default 1)";
+	}
+	
+	public String createSettingsStatement() {
+		return "create table settings ( name text primary key, value text)";
+	}
+	
 	public String createSchemeStatement() {
 		StringBuilder sbuild = new StringBuilder();
 		sbuild.append("create table entities ( _id integer primary key ");
@@ -259,7 +354,7 @@ public class EntityEngineSQLite {
 		sbuild.append(")");
 		return sbuild.toString();
 	}
-	
+
 	public String createInsertStatement() {
 		StringBuilder sbuild = new StringBuilder();
 		sbuild.append("INSERT INTO entities ( ");
@@ -330,9 +425,13 @@ public class EntityEngineSQLite {
 		try {
 			Statement st = iConnection.createStatement();
 			st.executeUpdate(createSchemeStatement());
-			System.err.println("Created table!");
+			System.err.println("Created entities table!");
+			st.executeUpdate(createUsersStatement());
+			logger.info("Created users table!");
+			st.executeUpdate(createSettingsStatement());
+			logger.info("Created settings table!");
 			st.close();
-		
+			writeCurrentSchemaVersion();
 		} catch (Exception sqe) {
 			System.err.println("Did not create table!");
 			if (sqe.toString().indexOf("already exists")<0)
@@ -340,7 +439,19 @@ public class EntityEngineSQLite {
 		}
 	}
 
+	public void syncEntities(String links) throws Exception {
+		URL url = new URL(links);
+        CSVParser parser = CSVParser.parse(new InputStreamReader(url.openStream(), Charset.forName("UTF-8")), CSVFormat.RFC4180);
+        StringBuilder info = new StringBuilder();
+        updateDataFromImport(parser, info);
+	}
+	
 	protected void updateDataFromImport(File csvFile, StringBuilder info) throws Exception {
+		CSVParser parser = CSVParser.parse(csvFile, java.nio.charset.Charset.forName("UTF-8"), CSVFormat.RFC4180);
+		updateDataFromImport(parser, info);
+	}
+	
+	protected void updateDataFromImport(CSVParser parser, StringBuilder info) throws Exception {
 		int updated = 0;
 		int inserted = 0;
 		
@@ -348,7 +459,7 @@ public class EntityEngineSQLite {
 		PreparedStatement ps_add = iConnection.prepareStatement(createInsertStatement());
 		PreparedStatement ps_update = iConnection.prepareStatement(createUpateStatement());
 		PreparedStatement ps_insert;
-		CSVParser parser = CSVParser.parse(csvFile, java.nio.charset.Charset.forName("UTF-8"), CSVFormat.RFC4180);
+		//CSVParser parser = CSVParser.parse(csvFile, java.nio.charset.Charset.forName("UTF-8"), CSVFormat.RFC4180);
 		HashMap<String, Integer> headerMap = new HashMap();
 		for (CSVRecord csvRecord : parser) {
 			if (csvRecord.getRecordNumber()==1) {
@@ -639,4 +750,5 @@ public class EntityEngineSQLite {
 			return false;
 		}
 	}
+	
 }

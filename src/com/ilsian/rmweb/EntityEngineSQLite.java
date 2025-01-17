@@ -25,10 +25,14 @@ public class EntityEngineSQLite {
 	static Logger logger = Logger.getLogger("com.ilsian.rmweb.EntityEngineSQLite");
 	static EntityEngineSQLite instance_;
 	
-	public static EntityEngineSQLite getInstance() throws Exception {
+	public static EntityEngineSQLite getInstance() {
 		if (instance_ == null) {
 			instance_ = new EntityEngineSQLite();
-			instance_.open();
+			try {
+				instance_.open();
+			} catch (Exception exc) {
+				logger.warning("Failed to connect database:" + exc);
+			}
 		}
 		return instance_;
 	}
@@ -253,7 +257,7 @@ public class EntityEngineSQLite {
 		}
 	}
 	
-	public int loginGetRole(String user, String pass, int default_role)
+	public int loginGetRole(String user, String pass, int roleOnFail, int roleOnNoUser)
 	{
 		try (PreparedStatement lookup = iConnection.prepareStatement("SELECT role,hashpass FROM users where login=?")) {
 			lookup.setString(1, user);
@@ -265,10 +269,13 @@ public class EntityEngineSQLite {
 					logger.warning("Rejected invalid password for user " + user);
 				}
 			}
+			else {
+				return roleOnNoUser;
+			}
 		} catch (SQLException sqe) {
 			logger.warning("Failed to get login role:" + sqe);
 		}
-		return default_role;
+		return roleOnFail;
 	}
 	
 	public boolean hasRole(int role)
@@ -295,6 +302,33 @@ public class EntityEngineSQLite {
 	    } catch (SQLException e) {
 	        logger.warning("Error adding/updating user: " + e.getMessage());
 	    }
+	}
+	
+	public HashMap<String,String> getSettingMap() {
+		HashMap<String,String> setMap = new HashMap<String,String>();
+		try (PreparedStatement lookup = iConnection.prepareStatement("SELECT name,value FROM settings")) {
+			ResultSet rs = lookup.executeQuery();
+			while (rs.next()) {
+				setMap.put(rs.getString(1), rs.getString(2));
+			}
+		} catch (SQLException sqe) {
+			logger.warning("Failed to read settings:" + sqe);
+		}
+		return setMap;
+	}
+	
+	public void putSettingMap(HashMap<String,String> settings) {
+		try (PreparedStatement pst = iConnection.prepareStatement("INSERT OR REPLACE INTO settings (name, value) VALUES (?, ?)")) {
+			for (Map.Entry<String, String> entry : settings.entrySet()) {
+			    pst.setString(1, entry.getKey());
+			    pst.setString(2, entry.getValue());
+			    pst.addBatch();
+			}
+
+			pst.executeBatch();
+		} catch (SQLException sqe) {
+			logger.warning("Failed to store settings:" + sqe);
+		}
 	}
 	
 	public String createUsersStatement() {

@@ -1,8 +1,6 @@
 package com.ilsian.rmweb;
 
 import java.io.IOException;
-import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
@@ -30,37 +28,7 @@ public class RMUserSecurity implements UserSecurity {
 	public static final int kLoginGM = 3;
 	public static final int kLoginAdmin = 4;
 	
-	static class RMAccount {
-		public String mLogin;
-		public String mPass;
-		public int mRoll;
-		public RMAccount(String n, String p, int r) {
-			mLogin = n;
-			mPass = p;
-			mRoll = r;
-		}
-	};
-	
-	static final RMAccount [] _ACCOUNTS = { 
-		new RMAccount("greg", "ucsd", kLoginGM),
-		new RMAccount("justin", "justin", kLoginLeader),
-		new RMAccount("skip", "skip", kLoginPlayer),
-		new RMAccount("mike", "mike", kLoginLeader),
-		new RMAccount("john", "john", kLoginPlayer),
-		new RMAccount("brent", "brent", kLoginPlayer),
-		new RMAccount("steve", "steve", kLoginPlayer),
-		new RMAccount("kirk", "kirk", kLoginPlayer),
-		new RMAccount("admin", "fordebug", kLoginAdmin)
-	};
-	
-	static final HashMap<String, RMAccount> _ACCESS;
-	static {
-		_ACCESS = new HashMap<String, RMAccount>();
-		for (RMAccount acc:_ACCOUNTS) {
-			_ACCESS.put(acc.mLogin, acc);
-		}
-	}
-	
+
 	boolean mSetupNeeded;
 	public RMUserSecurity() {
 		mSetupNeeded = false;
@@ -195,22 +163,13 @@ public class RMUserSecurity implements UserSecurity {
 				mSetupNeeded = false;
 				return kLoginAdmin;
 			}
-			dbRole = ei.loginGetRole(user, password, kLoginInvalid);
+			// Validate via DB, if user exists PW must match, otherwise user may be permitted as player w/o existing in the db
+			dbRole = ei.loginGetRole(user, password, kLoginInvalid, Global.ALLOW_UNKNOWN_PLAYERS?kLoginPlayer:kLoginInvalid);
 		} catch (Exception dbExc) {
 			logger.warning("Failed DB Verification.  Login fail:" + dbExc);
 		}
 		
 		return dbRole;
-//		
-//		RMAccount acc = _ACCESS.get(user);
-//		if (acc == null)
-//			return kLoginInvalid;
-//		
-//		if ( (ALLOW_ANY_PASS && acc.mRoll < kLoginGM) || password.equals(acc.mPass)) {
-//			return acc.mRoll;
-//		}
-//
-//		return kLoginInvalid;
 	}
 	
 	boolean setUserSession(HttpServletRequest req, HttpServletResponse res, String user, String hashpass)

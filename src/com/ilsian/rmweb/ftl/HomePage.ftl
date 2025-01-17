@@ -117,6 +117,9 @@ function checkController(clist, name)
 <#if rm.permit gte 2>
     return true;
 </#if>
+    if (clist == '') {
+        return true;
+    }
     var list = clist.split(',');
     for (var i=0; i<list.length; i++) {
         if (name == list[i])

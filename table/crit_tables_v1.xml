@@ -1,0 +1,778 @@
+<criticals>
+  <table name="Krush Critical Table" code="K">
+    <critical severity="A" low_range="1" high_range="5" result="If you just wanted to be friends, you should have said something earlier. Like before the fight. +0H "/>
+    <critical severity="A" low_range="6" high_range="10" result="Nice caressing move, but you're trying to Krush him, not get better acquainted. +0H "/>
+    <critical severity="A" low_range="11" high_range="15" result="Your foe eludes your swing for the fence. He's fast but you have the initiative. +3H "/>
+    <critical severity="A" low_range="16" high_range="20" result="You have him worried. He backs off 5 feet and you have the initiative. He's playing catch-up. +2H,1x "/>
+    <critical severity="A" low_range="21" high_range="35" result="He bobs and weaves but it does him no good. You slam him backwards. +3H,1x,1(+5) "/>
+    <critical severity="A" low_range="36" high_range="45" result="Your kick to his shin sets him up. Initiative yours. With greaves: +9H No greaves: +6H,(-5) "/>
+    <critical severity="A" low_range="46" high_range="50" result="He thought he was golden as he ducked under your blow, but you hit him in the back. +4H,1x(-25) "/>
+    <critical severity="A" low_range="51" high_range="55" result="Solid blow to his chest. He's leaning to one side in pain. He would cry out if he could breathe. +5H,1x (-25) "/>
+    <critical severity="A" low_range="56" high_range="60" result="Blow to his gut makes him drop what he was carrying. He backs off to regain his breath. +5H,1x (-25) "/>
+    <critical severity="A" low_range="61" high_range="65" result="You attack the limbs that hold his weapons. An inspired tactic! W greaves: +8H,1x W/o greaves: +5H,1* "/>
+    <critical severity="A" low_range="66" high_range="66" result="Shatter his shield side shoulder bones. His arm is useless and he drops shield if he has one. +8H,2*@ "/>
+    <critical severity="A" low_range="67" high_range="70" result="Solid attack to his chest knocks the breath out of him. You must have done this before. +8H,3*,1@ "/>
+    <critical severity="A" low_range="71" high_range="75" result="He tries but fails to jump up and over your attempt to krush his lower leg. +5H,2*@,(-20) "/>
+    <critical severity="A" low_range="76" high_range="80" result="Way to Krush! Shield destroyed if he has one, and his arm broken if he doesn't have one. "/>
+    <critical severity="A" low_range="81" high_range="85" result="Your energetic attack crashes into his side sending him reeling 5 feet to your right. +10H,2*@,(-20) "/>
+    <critical severity="A" low_range="86" high_range="90" result="Slipping to his side and rear you strike his lower back. Muscles and cartilage crushed. +12H,3*@,(-25) "/>
+    <critical severity="A" low_range="91" high_range="95" result="Unimaginatively you break his nose. There's blood all over his face. Nose guard: +10H,2*@ W/o: +15H,3*@ "/>
+    <critical severity="A" low_range="96" high_range="99" result="Blow to his head just plain kills him (without helm), and knocks him down if he has one. +20H,6* "/>
+    <critical severity="A" low_range="100" high_range="100" result="Brutal krushing blow to his jaw drives bone slivers through his brain. He's real dead. +50H,1(+20) "/>
+    <critical severity="B" low_range="1" high_range="5" result="Guess you should have paid more attention in weapons' class. Ignorance is not bliss. +0H "/>
+    <critical severity="B" low_range="6" high_range="10" result="This time he stays in one place long enough for you to land a solid blow to his torso. +2H "/>
+    <critical severity="B" low_range="11" high_range="15" result="He's onto your attack pattern and frantically evades your assault. You still have initiative. +3H "/>
+    <critical severity="B" low_range="16" high_range="20" result="Becoming worried about his chances for survival, he backs away 5 feet from you. +4H,1x(-10) "/>
+    <critical severity="B" low_range="21" high_range="35" result="That shield strike got his attention and gave him something to be worried about. Wake-up call! +4H,1x(-20) "/>
+    <critical severity="B" low_range="36" high_range="45" result="Slamming into his left calf leaves him a cramp and the initiative to you. Greaves: +9H,2x No greaves: +6H,2(-20) "/>
+    <critical severity="B" low_range="46" high_range="50" result="His wild, evasive maneuver leaves him open to your blow to his back. Dumb move. +6H,1x (-25) "/>
+    <critical severity="B" low_range="51" high_range="55" result="He cringes backwards before your assault. He steps back 5 paces to defend himself. +6H,2x "/>
+    <critical severity="B" low_range="56" high_range="60" result="Clever strike penetrates under his shield arm and traumatizes his thigh muscle. Bone bruised! +6H,1x,(-5) "/>
+    <critical severity="B" low_range="61" high_range="65" result="Your blow against his forearm really hurts him. He'll be feeling this for some time. +9H,1*,(-10) "/>
+    <critical severity="B" low_range="66" high_range="66" result="You want him to drop his weapon, so you break his elbow. That always works for you. 3*@ "/>
+    <critical severity="B" low_range="67" high_range="70" result="That strike to his chest makes his internals hurt. He's stumbling and trying to find his breath. +10H,2*@,(-10) "/>
+    <critical severity="B" low_range="71" high_range="75" result="You strike his right Achilles tendon. Like picking wings off a fly. That was cold. +10H,2*,1@,1(-35) "/>
+    <critical severity="B" low_range="76" high_range="80" result="Your blow to his shield arm connects with his arm. His hand is useless. He drops his shield. +6H,1* "/>
+    <critical severity="B" low_range="81" high_range="85" result="Everyone heard that blow make contact with his ribs. Snap, crackle, pop. Yes, it is painful. +12H,2*@,(-25) "/>
+    <critical severity="B" low_range="86" high_range="90" result="He gives you an opening and pays for it. Put him on the ground with torn tendons. 4*@,(-30) "/>
+    <critical severity="B" low_range="91" high_range="95" result="If he had no helm, your krushing blow puts him into a coma for 3 weeks, if he lives that long. +20H,12* "/>
+    <critical severity="B" low_range="96" high_range="99" result="Absolutely krushing blow to chest sends ribcage into his heart. Down and dead in 6 rounds. 1(+20) "/>
+    <critical severity="B" low_range="100" high_range="100" result="That whiplashed his neck back so hard that he's paralyzed from the shoulders on down. +25H,15* "/>
+    <critical severity="C" low_range="1" high_range="5" result="Hey, get real. You're not on the practice ground with your buddies here. +1H "/>
+    <critical severity="C" low_range="6" high_range="10" result="Krushing someone only starts with making contact. You've got to have impact too. +3H "/>
+    <critical severity="C" low_range="11" high_range="15" result="Shield side strike hurts him and gives you the initiative. That one made him ring aloud. +7H "/>
+    <critical severity="C" low_range="16" high_range="20" result="Your blow to his waist sends him spinning away from you. He'll have to recover. +6H,1x (-20) "/>
+    <critical severity="C" low_range="21" high_range="35" result="He's momentarily disoriented by your strike to his head. How did you do that? +5H,1* "/>
+    <critical severity="C" low_range="36" high_range="45" result="Blow to lower leg gains you the initiative while he tries to shake it off and regain his balance. +9H,2(-25) "/>
+    <critical severity="C" low_range="46" high_range="50" result="His “clever” move exposes his back to you. You have the initiative for 2 rounds. +5H,1*@ "/>
+    <critical severity="C" low_range="51" high_range="55" result="That blow to his chest was so solid and forceful that his armor doesn't help him. +5H,1*,(-10) "/>
+    <critical severity="C" low_range="56" high_range="60" result="Solid hit to his legs damages his right leg. He's hurting now. +6H,1x-(-5),1(+10) "/>
+    <critical severity="C" low_range="61" high_range="65" result="Stepping into him you intercept his swing and disarm him. His weapon falls behind you. +8H,1* "/>
+    <critical severity="C" low_range="66" high_range="66" result="Wanting to kick him in the head, you break his knee first and he goes down hard. Next? +9H,3*@,(-90) "/>
+    <critical severity="C" low_range="67" high_range="70" result="Krushing blow to his chest opens up the proverbial can of “trouble” for him. +10H,3*,2@,(-10) "/>
+    <critical severity="C" low_range="71" high_range="75" result="Sideways blow is so hard that his knees are twisted from the impact. He's barely on his feet. +10H,2*@,(-40) "/>
+    <critical severity="C" low_range="76" high_range="80" result="Krunch! If his weapon arm was armored, the arm is useless until he removes crushed metal. +9H,1*@,(-50) "/>
+    <critical severity="C" low_range="81" high_range="85" result="He cries out as he sees it coming. Then he's silent except for his ribs snapping and cracking. +12H,3*@,(-40) "/>
+    <critical severity="C" low_range="86" high_range="90" result="Krushing blow to chest slams him onto his back and onto ground. Bones break and muscles tear. +20H,6*,(-50) "/>
+    <critical severity="C" low_range="91" high_range="95" result="Truly krushing. Thigh bone sticking out and artery severed. Down and dead in 12 rounds. +9H "/>
+    <critical severity="C" low_range="96" high_range="99" result="Blow to his abdomen krushes it like a grape. Internal damage kills in 6 rds of inactivity. "/>
+    <critical severity="C" low_range="100" high_range="100" result="High velocity blow to his forehead pops his eyes out. Oh, his helm falls off too. +30H,24*@ "/>
+    <critical severity="D" low_range="1" high_range="5" result="Good contact but his “clothing” absorbs most of the force from the inadequate blow. +2H "/>
+    <critical severity="D" low_range="6" high_range="10" result="He's dancing back and forth, and almost, but not quite, evades your entire attack. +4H "/>
+    <critical severity="D" low_range="11" high_range="15" result="If that had hit his throat he's be gurgling his last words. He is trying to stay out of your reach. +5H,1x(-10) "/>
+    <critical severity="D" low_range="16" high_range="20" result="Your glancing blow tore skin from his face giving you a souvenir and the initiative. +5H,(-5) "/>
+    <critical severity="D" low_range="21" high_range="35" result="His airborne maneuver partially avoids your attack but he's stumbling clumsily. +4H,1*@ "/>
+    <critical severity="D" low_range="36" high_range="45" result="You keep him occupied with a bruising blow to his calf muscle. Initiative to you. +10H,(-10) "/>
+    <critical severity="D" low_range="46" high_range="50" result="Precise blow to his shoulder blade connects. He drops his guard and reels away from you. +10H,1*@ "/>
+    <critical severity="D" low_range="51" high_range="55" result="His ribs hurt so much that he can barely raise his arms. He definitely can't even learn over. +10H,(-15) "/>
+    <critical severity="D" low_range="56" high_range="60" result="You miss your target but strike his thigh making him stumble and drop something. +6H,1*,(-10) "/>
+    <critical severity="D" low_range="61" high_range="65" result="Blow to forearm just tears his clothing and bruises him. He's not even bleeding. +10H,1*@,(-10) "/>
+    <critical severity="D" low_range="66" high_range="66" result="Way to Krush! Without a helm he's just plain dead. With one he's unconscious for 4 hrs. +20H "/>
+    <critical severity="D" low_range="67" high_range="70" result="Just a blow to his shoulder but it hurts. The shoulder's connected to the… W/armor: +6H,1*@ W/o armor: 2*@,(-20) "/>
+    <critical severity="D" low_range="71" high_range="75" result="You heard his leg break. Major cartilage damage is the least of his future problems. +12H,2*@,(-50) "/>
+    <critical severity="D" low_range="76" high_range="80" result="His weapon is now 5 feet to the right of his useless arm. Oh, tendons damaged too. +8H,1*@ "/>
+    <critical severity="D" low_range="81" high_range="85" result="Unexpected blow to his side flattens him. You can taste victory, and blood, in the air. +15H,3*@,1(+10) "/>
+    <critical severity="D" low_range="86" high_range="90" result="Good grief! With throat armor he's paralyzed from the neck down. If not he's dead in 2 rds. +25H "/>
+    <critical severity="D" low_range="91" high_range="95" result="The shield on his shattered arm just hangs there. Dies from shock and blood loss in 9 rds. "/>
+    <critical severity="D" low_range="96" high_range="99" result="His chest krushed, he looks plaintively into your eyes as he falls and dies in 3 rounds. 1(+25) "/>
+    <critical severity="D" low_range="100" high_range="100" result="Krushing blow to his heart ruptures it. He's dead and you are one dangerous life-taker. +25H "/>
+    <critical severity="E" low_range="1" high_range="5" result="He's mainly unhappy that you tore loose some of his fancy costume accessories. +3H "/>
+    <critical severity="E" low_range="6" high_range="10" result="You didn't hit him hard but he's off his balance and you have the initiative now. +6H "/>
+    <critical severity="E" low_range="11" high_range="15" result="He blocks your strike with his arm but it's hurt instead. He should have slipped the punch. +6H,1*,1(+5) "/>
+    <critical severity="E" low_range="16" high_range="20" result="That blow was strong enough to sweep aside his guard. He's now unbalanced. 1*@,1(+10) "/>
+    <critical severity="E" low_range="21" high_range="35" result="Snap, crackle, pop are the sounds of ribs breaking. Initiative is to you now. +6H,(-10) "/>
+    <critical severity="E" low_range="36" high_range="45" result="The minor fracture to his upper leg will heal if he lives. You have the initiative for now. +12H,(-10) "/>
+    <critical severity="E" low_range="46" high_range="50" result="Krushing strike glances off his lower back as he slips part of the punch. Uses weapon to balance. +15H,1*@ "/>
+    <critical severity="E" low_range="51" high_range="55" result="Chest blow knocks the wind out of him. He thinks he can survive if he gets his breath back. +15H,2*,(-15) "/>
+    <critical severity="E" low_range="56" high_range="60" result="It's just a blow to his thigh but he's hurting and messed up as far as moving goes. +10H,1*@,(-10) "/>
+    <critical severity="E" low_range="61" high_range="65" result="The sound of your titanic blow against his weapon hurts ears. He drops it and reels away. +10H,1*,(-15) "/>
+    <critical severity="E" low_range="66" high_range="66" result="Yuck! His head is no longer recognizable. Helm ruined. There's blood all over you. +15H,1(+10) "/>
+    <critical severity="E" low_range="67" high_range="70" result="You break his shield if he has one. If not he will wish he did because his arm is now broken. +5H,(-25) "/>
+    <critical severity="E" low_range="71" high_range="75" result="You redefine Krushing as you shatter his hipbone. He has fallen and he can't get up. +15H,3*,(-75) "/>
+    <critical severity="E" low_range="76" high_range="80" result="The elbow can be used as a weapon even after it's broken. Lucky him. Arm is useless. +9H,2*@ "/>
+    <critical severity="E" low_range="81" high_range="85" result="You wince at the sound of your blow to his armpit crushing ribs and organs. Dead in 3 rounds. +30H "/>
+    <critical severity="E" low_range="86" high_range="90" result="He can't breathe and dies gurgling in 12 rds. Well, his neck is broken and jugular severed. "/>
+    <critical severity="E" low_range="91" high_range="95" result="Slipping behind him you krush his vertebrae into a vital organ. Down and dead in 6 rounds. +25H "/>
+    <critical severity="E" low_range="96" high_range="99" result="If visored, he's dead in 10 rds. Without one he's killed instantly. You have half a round left. +30H,1(+20) "/>
+    <critical severity="E" low_range="100" high_range="100" result="That Krushed his hip. He goes down and tries to stand. Down again. Dies in 6 rounds. +35H,2*,6(-30) "/>
+  </table>
+  <table name="Grappling Critical Table" code="G">
+    <critical severity="A" low_range="1" high_range="5" result="Dodging like the wind, he evades your best efforts to nail him. It's a matter of time now. +0H "/>
+    <critical severity="A" low_range="6" high_range="10" result="You are dumbfounded as he pulls away from your grasp. You were robbed. +0H "/>
+    <critical severity="A" low_range="11" high_range="15" result="Pressing him closely you disrupt his combat stance gaining the initiative for you. +0H "/>
+    <critical severity="A" low_range="16" high_range="20" result="He wrenches free of your sissy grip on him. Still you have initiative next round. Try harder. +0H "/>
+    <critical severity="A" low_range="21" high_range="35" result="You nearly had his arm where you wanted it. Hold on next time. Your initiative next round. +3H "/>
+    <critical severity="A" low_range="36" high_range="45" result="You grip his “love handles” but he brushes off your attack. Initiative still to you. 1x "/>
+    <critical severity="A" low_range="46" high_range="50" result="Jam up his weapon arm. He violently frees it and takes up a dramatic defensive stance. 1x "/>
+    <critical severity="A" low_range="51" high_range="55" result="Get in close and seize his hair. He never expected that. He scrambles loose. 1x (-20) "/>
+    <critical severity="A" low_range="56" high_range="60" result="The clever fellow spins away and comes back to face you. Unfortunately he's unbalanced. +3H,1* "/>
+    <critical severity="A" low_range="61" high_range="65" result="He shakes his arm free preparing for your next assault and favoring a bruised bicep. +3H,1x(-20) "/>
+    <critical severity="A" low_range="66" high_range="66" result="Grappling his weapon you disarm him. He can't get it back. He knows this is bad. +3H,2* "/>
+    <critical severity="A" low_range="67" high_range="70" result="You try to set him up, striking his chest. He evades it and takes up a defensive stance. 2x (-20) "/>
+    <critical severity="A" low_range="71" high_range="75" result="Grabbing and holding his clothes you shut down his attempts to attack you. +5H,2(-50) "/>
+    <critical severity="A" low_range="76" high_range="80" result="Seize his shield arm. If he has one, you pull it down. Without a shield you immobilize his arm. +2H,4(-50) "/>
+    <critical severity="A" low_range="81" high_range="85" result="Grip his neck till his face turns beet red. He gets loose but can hardly breathe. +5H,2*,2(-25) "/>
+    <critical severity="A" low_range="86" high_range="90" result="Deftly seizing his leg in the air, you pull it up and take the initiative for 6 rounds. Elegantly done. +3H,3* "/>
+    <critical severity="A" low_range="91" high_range="95" result="Grappling his leg you force him to the ground. He falls on his weapon, but does break free. +4H,2*@ "/>
+    <critical severity="A" low_range="96" high_range="99" result="Tangle him up and immobilize him for 12 rounds. You're both prone but you're on top. +6H,3*@ "/>
+    <critical severity="A" low_range="100" high_range="100" result="With you holding onto his legs that way he falls and knocks himself out for 5 rounds. +9H,1(+20) "/>
+    <critical severity="B" low_range="1" high_range="5" result="You need to connect with your attack and follow through. You weren't ready. +0H "/>
+    <critical severity="B" low_range="6" high_range="10" result="You had him and you lost him. Hold on and follow through next time. Think bigger. +2H "/>
+    <critical severity="B" low_range="11" high_range="15" result="He's hurting a bit. He walked into your attack before you could set up your grappling move. +2H "/>
+    <critical severity="B" low_range="16" high_range="20" result="Grappling with him you give him a modest blow. He begins to think you may be a threat to him. 1x "/>
+    <critical severity="B" low_range="21" high_range="35" result="You have his shield arm but his swing at your head loosens your grip. He keeps his distance. 1x (-20) "/>
+    <critical severity="B" low_range="36" high_range="45" result="He looses your grapple but you bash him away. He's unbalanced and you have the initiative. +4H,1x "/>
+    <critical severity="B" low_range="46" high_range="50" result="He breaks free but he's staggering. You thought you had him at last. Life isn't fair. Next time? 5H,1* "/>
+    <critical severity="B" low_range="51" high_range="55" result="He slips free but your grip tears his clothes. He falls backward away from you. +7H,1* "/>
+    <critical severity="B" low_range="56" high_range="60" result="Your foe evades by spinning away but loses his brilliantly conceived counterattack. 1*x "/>
+    <critical severity="B" low_range="61" high_range="65" result="Somehow he breaks your grip on his waist and stumbles out of the way and your reach. 2* "/>
+    <critical severity="B" low_range="66" high_range="66" result="Give his weapon arm a violent twist, and he drops his weapon and strains his wrist. 2*,(-25) "/>
+    <critical severity="B" low_range="67" high_range="70" result="Seizing his neck in your grasp you force it ominously backward. He doesn't have long…. 1(-10),1(-20),1(-30),etc. "/>
+    <critical severity="B" low_range="71" high_range="75" result="His hard knee strike breaks your grip. Still he is not recovering the initiative. +4H,3(-50) "/>
+    <critical severity="B" low_range="76" high_range="80" result="Your entangling attack neutralizes his shield arm. If he has a shield he's ,30 till he drops it. (-40) "/>
+    <critical severity="B" low_range="81" high_range="85" result="Grapple his waist and unbalance him. His profanity is pedestrian and initiative is to you. 6(-50) "/>
+    <critical severity="B" low_range="86" high_range="90" result="Grappling his leg you sent him down to the ground. He pulls a leg muscle twisting free. 2*@,(-10) "/>
+    <critical severity="B" low_range="91" high_range="95" result="You twist him till his legs cross and he falls dropping his weapon and crawling toward it. 2*@,4(-25) "/>
+    <critical severity="B" low_range="96" high_range="99" result="Taking his arm in your hand you flip him to the ground. Leg is fractured and he's immobilized. (-40) "/>
+    <critical severity="B" low_range="100" high_range="100" result="Your vicious yet subtle hold on his throat will render him unconscious in 4 rounds unless he…. +10H,1*,(-40) "/>
+    <critical severity="C" low_range="1" high_range="5" result="Use your fingernails to tear a nasty wound in your foe. It is not a sissy move! Whatever works. +1H "/>
+    <critical severity="C" low_range="6" high_range="10" result="He tries to grip you but can't quite connect. You have the initiative. He is not ready. +3H "/>
+    <critical severity="C" low_range="11" high_range="15" result="Your grip is faulty, but he hurts himself evading it. You have the initiative. He does not. +4H "/>
+    <critical severity="C" low_range="16" high_range="20" result="Gamely recovering his wits and poise he sweeps his weapon at your feet. 1x "/>
+    <critical severity="C" low_range="21" high_range="35" result="Collision with foe sends him stumbling back 5 feet. Good job. +2H,1* "/>
+    <critical severity="C" low_range="36" high_range="45" result="Your moves and countermoves are almost funny but finally have some effect. 1*x "/>
+    <critical severity="C" low_range="46" high_range="50" result="You have his waist in your grip but he is gradually working his way free. 3(-25) "/>
+    <critical severity="C" low_range="51" high_range="55" result="Lifting up his leg you have him, but somehow he slips away. He's off balance and recovering. 1*@ "/>
+    <critical severity="C" low_range="56" high_range="60" result="You were about to tear his thigh muscles apart when he slips free. Lower next time. +3H,1*@ "/>
+    <critical severity="C" low_range="61" high_range="65" result="You have his waist in your grip, but he is slipping free. You can still take him. +3H,3(-50) "/>
+    <critical severity="C" low_range="66" high_range="66" result="He takes you to the ground with him. You regain your footing but he is down for 1 round. +5H "/>
+    <critical severity="C" low_range="67" high_range="70" result="Grappling his shield arm, he drops his shield if he has one. He's ,50 until he drops it. Without shield: 3(-40) "/>
+    <critical severity="C" low_range="71" high_range="75" result="You have him by the waist and at your advantage. He still hopes to get free. 2*@,(-50) "/>
+    <critical severity="C" low_range="76" high_range="80" result="You hold his weapon arm in your grasp. He is unable to use it but he tries to knee you. 2*@,(-50) "/>
+    <critical severity="C" low_range="81" high_range="85" result="Squeeze him so hard he bruises all over. This never happens to him. What should he do? +3H,3*@,(-5) "/>
+    <critical severity="C" low_range="86" high_range="90" result="Holding him immobile you stomp on his foot. When he falls his shoulder breaks. +10H,6*,(-40) "/>
+    <critical severity="C" low_range="91" high_range="95" result="Taking his weapon arm, you break it without hesitation. He falls, knocking himself out. +15H,4*@,8(-95) "/>
+    <critical severity="C" low_range="96" high_range="99" result="Using “sticky legs” you send him to the ground breaking weapon arm and knocking him out. +20H,10*@,(-30) "/>
+    <critical severity="C" low_range="100" high_range="100" result="You have his head in your hands. Jerk it around. Without neck armor he dies. Armor: +5H,5*@,(-75) "/>
+    <critical severity="D" low_range="1" high_range="5" result="You give him a nudge with your elbow but can't catch hold of your evasive foe. +2H "/>
+    <critical severity="D" low_range="6" high_range="10" result="Your much-anticipated moment of martial arts grace cruelly eludes you. Fame beckoned. +4H "/>
+    <critical severity="D" low_range="11" high_range="15" result="Twist his helm if he has one. In either case, you have his head and the initiative. With helm: 1* "/>
+    <critical severity="D" low_range="16" high_range="20" result="A rough push still counts for something. You have the initiative for 2 rounds. "/>
+    <critical severity="D" low_range="21" high_range="35" result="That was violent but not on target. He backs out of your grip shaking his head at the close call. +3H,1* "/>
+    <critical severity="D" low_range="36" high_range="45" result="Striking his shield arm you immobilize him for 6 rounds, if he has no shield. With shield: +3H "/>
+    <critical severity="D" low_range="46" high_range="50" result="Your grip on his hand makes him think it's broken. You have initiative for 4 rounds. 3(-30) "/>
+    <critical severity="D" low_range="51" high_range="55" result="He tries frantically to break your hold on his waist garments. He knows this is bad. 3(-50) "/>
+    <critical severity="D" low_range="56" high_range="60" result="Shake him like a baby's rattle. Foe is shaken up but frees himself. For the moment anyway. +6H,3* "/>
+    <critical severity="D" low_range="61" high_range="65" result="Your bear hug leaves foe helpless to escape your affectionate embrace. Arms pinned. 2*@,x(-20) "/>
+    <critical severity="D" low_range="66" high_range="66" result="Gripping his leg you flip him to the ground. He's prone, pinned and immobile for 2 rounds. +6H "/>
+    <critical severity="D" low_range="67" high_range="70" result="He's still twisting around but he needs time to recover his wits and footing. +7H,2@ "/>
+    <critical severity="D" low_range="71" high_range="75" result="You hold him fast and twist his soft parts. What will you do next to this sad victim? 1*@,3(-70) "/>
+    <critical severity="D" low_range="76" high_range="80" result="Entangling him you try to use his own weapon arm to beat him senseless. +4H "/>
+    <critical severity="D" low_range="81" high_range="85" result="Deflecting his knee you send him to the ground. His shield breaks his fall and his arm. He's prone. +5H,2*@,(-10) "/>
+    <critical severity="D" low_range="86" high_range="90" result="Holding him immobile by his arms he is helpless to fight back. Do your worst to him. +10H,9*@ "/>
+    <critical severity="D" low_range="91" high_range="95" result="Grappling his legs you topple him over. He hits his head and loses interest in resisting you. R+10H,30*@ "/>
+    <critical severity="D" low_range="96" high_range="99" result="You have quite a grip on his neck. Without neck armor he dies in 6 rounds. Disarmed too. With neck armor: 3*@ "/>
+    <critical severity="D" low_range="100" high_range="100" result="Go ahead and fracture his head in your grip. Without a helm he is in a coma for 30 days. With helmet: +3H,9*@ "/>
+    <critical severity="E" low_range="1" high_range="5" result="You would have torn his head off if his hair hadn't come out by the roots in your grasp. +3H "/>
+    <critical severity="E" low_range="6" high_range="10" result="Your promising attack didn't work out. Have patience. You still have initiative next round. +5H "/>
+    <critical severity="E" low_range="11" high_range="15" result="Your attack miscarries but you do have his complete attention. +6H,1x "/>
+    <critical severity="E" low_range="16" high_range="20" result="He evades your grasp with a violent evasive maneuver. +3H,1* "/>
+    <critical severity="E" low_range="21" high_range="35" result="With your clumsiness and his luck he escapes your steely grasp. You have Initiative for 2 rounds. 1* "/>
+    <critical severity="E" low_range="36" high_range="45" result="He tries to break free from your grip on his leg, but is disoriented. He can barely find you. 1*@ "/>
+    <critical severity="E" low_range="46" high_range="50" result="Colliding with your foe allows him to break your grip and stumble away. You blew it. 2*@ "/>
+    <critical severity="E" low_range="51" high_range="55" result="He drops his shield and screams in pain as you twist his arm. Try not to laugh at him. +5H,2*@ "/>
+    <critical severity="E" low_range="56" high_range="60" result="Your grip on his leg unbalances him. He wishes he could shake you off. 1*@,3(-25) "/>
+    <critical severity="E" low_range="61" high_range="65" result="If he has a shield he uses it to fend you off. Without a shield, he'll wish he had one. Without shield: +7H,3*@ "/>
+    <critical severity="E" low_range="66" high_range="66" result="Take him to the ground by the neck. Tear his muscles and tendons. Out of it for 3 rounds. +3H,1* "/>
+    <critical severity="E" low_range="67" high_range="70" result="He frustrates your nicely timed trip by making a safe landing. 2*@,1(-75) "/>
+    <critical severity="E" low_range="71" high_range="75" result="The genius evades you by falling at your feet. Smile indulgently before hurting him. +9H,2*@ "/>
+    <critical severity="E" low_range="76" high_range="80" result="Single-mindedly attack his grappled weapon arm until he's disarmed. Internal damage done. 3*,(-40) "/>
+    <critical severity="E" low_range="81" high_range="85" result="He is helpless in your strong, grappling hold. He's so tied up that he might even surrender. 10(-75) "/>
+    <critical severity="E" low_range="86" high_range="90" result="Help him fall to the ground breaking his weapon. With chest armor a “D” Krush. +3H,1* "/>
+    <critical severity="E" low_range="91" high_range="95" result="He falls like a rag doll breaking both arms and an ankle. Mercifully he's unconscious. +20H,(-95) "/>
+    <critical severity="E" low_range="96" high_range="99" result="His legs flail as you strangle him. He's dead after 9 rounds of pathetic writhing. +3H,1* "/>
+    <critical severity="E" low_range="100" high_range="100" result="Keeping it short and sweet you crush his windpipe and tear his head off. What's to say? 1(+25) "/>
+  </table>
+  <table name="Martial Arts Strikes Critical Table" code="M">
+    <critical severity="A" low_range="1" high_range="5" result="Your ancient master would be so ashamed of you. Weak. +0H "/>
+    <critical severity="A" low_range="6" high_range="10" result="You strike but only tap him as if you wanted to get his attention. He notices you, barely. +1H "/>
+    <critical severity="A" low_range="11" high_range="15" result="You know how important position is and you have it. Take the initiative. +3H "/>
+    <critical severity="A" low_range="16" high_range="20" result="You strike at an opening in his sideward defense. You have the initiative. Are you ready to use it? +4H "/>
+    <critical severity="A" low_range="21" high_range="35" result="Having tagged him with a light but precise strike, you are setting him up for your next attack. +5H,1x "/>
+    <critical severity="A" low_range="36" high_range="45" result="That strike to his chest hurt him. He sees the next one coming and tries to block it. +6H,1x(-10) "/>
+    <critical severity="A" low_range="46" high_range="50" result="Your foe is confused by your attempts to harm him. He steps back to parry your next one. +6H,1x (-25) "/>
+    <critical severity="A" low_range="51" high_range="55" result="You unbalance him and, oh, you've bent his hip in an odd way. What did you do to him? +3H,1* "/>
+    <critical severity="A" low_range="56" high_range="60" result="That fist to the chest was SOLID. He's hurt and rattled too. It will all add up. +5H,1* "/>
+    <critical severity="A" low_range="61" high_range="65" result="That foot stomp to his foot went awry, but your bruise his toes. Well, mashed them. +5H,5(-20) "/>
+    <critical severity="A" low_range="66" high_range="66" result="You almost fell him with precise strike to his Achilles tendon. He's on his feet but in pain. +7H,2*,(-50) "/>
+    <critical severity="A" low_range="67" high_range="70" result="Your spear hand to his side is more pretentious than devastating but it does hurt him. +2H,2* "/>
+    <critical severity="A" low_range="71" high_range="75" result="Vicious combination. Knife hand and spear hand together. He rolls a weapon fumble. 1* "/>
+    <critical severity="A" low_range="76" high_range="80" result="Your blow to his arm breaks his shield if he has one. Otherwise, his arm is broken. +6H,1* "/>
+    <critical severity="A" low_range="81" high_range="85" result="That precise kick to his weapon arm disarms him, but it does little damage. He's set up. +3H "/>
+    <critical severity="A" low_range="86" high_range="90" result="You're in the flow now with an airborne kick that knocks him down. He's shaken but gets up. 3* "/>
+    <critical severity="A" low_range="91" high_range="95" result="Nerve strike to his leg buckles it. He's standing but bending over in pain and muscle spasms. +8H,2*@,6(-40) "/>
+    <critical severity="A" low_range="96" high_range="99" result="Blocking his attack you strike him in the side. He goes down hard and is disoriented. 3*@ "/>
+    <critical severity="A" low_range="100" high_range="100" result="Boxing his ears you rupture his inner ears. He just stands there as you knock him down. (-75) "/>
+    <critical severity="B" low_range="1" high_range="5" result="Concentrate on your foe. This is not the time to contemplate the beauties of nature. +0H "/>
+    <critical severity="B" low_range="6" high_range="10" result="You hope that your “ancient master” will never know of your pathetic display. +2H "/>
+    <critical severity="B" low_range="11" high_range="15" result="That blow to his shoulder forces him to step back and yield the initiative to you. "/>
+    <critical severity="B" low_range="16" high_range="20" result="Nice set up attack. You have two rounds of initiative to do your worst to him. +5H "/>
+    <critical severity="B" low_range="21" high_range="35" result="Your aim is off but he has to scramble desperately to evade your attack. +6H,1x "/>
+    <critical severity="B" low_range="36" high_range="45" result="That blow to his chest made a strange sound, but he is recovering. Wonder what broke? +7H,1x (-20) "/>
+    <critical severity="B" low_range="46" high_range="50" result="Your attack glances off his back without the dramatic results you anticipated. +5H,1* "/>
+    <critical severity="B" low_range="51" high_range="55" result="Blow to his side makes him stumble 5 feet to the left, but he recovers to face you. +6H,1* "/>
+    <critical severity="B" low_range="56" high_range="60" result="Your blow to his stomach ejects its contents into the air. What was he eating? +3H,2* "/>
+    <critical severity="B" low_range="61" high_range="65" result="Kick him in the back of his leg. He stumbles, but doesn't fall. Initiative goes to you. +7H,2* "/>
+    <critical severity="B" low_range="66" high_range="66" result="Powerful strike to his head sprains his neck and fractures his jaw. His jaw gapes openly. +4H,9*,(-50) "/>
+    <critical severity="B" low_range="67" high_range="70" result="He's confused. Which hurt more the spear hand to the chest or elbow to the ribs? +3H,3* "/>
+    <critical severity="B" low_range="71" high_range="75" result="Hammer blow his weapon arm as it misses you. He's bruised but holding onto weapon. +6H,2*,(-20) "/>
+    <critical severity="B" low_range="76" high_range="80" result="Take the opening and strike the back of his knee. Tendons damaged and balance gone. 2*,(-25) "/>
+    <critical severity="B" low_range="81" high_range="85" result="You kick his weapon arm sending his weapon flying 5 feet away, breaking it. +3H,2*,(-20) "/>
+    <critical severity="B" low_range="86" high_range="90" result="Flatten him with a wheel kick. Tendons are crushed and muscles are torn. You spin clear. 9*,(-30) "/>
+    <critical severity="B" low_range="91" high_range="95" result="You break his knee to put his head where you can kick it. He's swearing, but conscious. 4*@,(-85) "/>
+    <critical severity="B" low_range="96" high_range="99" result="Flashy kick knocks him out with broken collarbone, sprained neck and much more. 20*@,20(-100) "/>
+    <critical severity="B" low_range="100" high_range="100" result="Hand strike breaks his arm and reverse kick his backbone. Paralyzed from waist down. +5H "/>
+    <critical severity="C" low_range="1" high_range="5" result="Even your glancing blow makes a solid sound. If it had only been thrown true. +1H "/>
+    <critical severity="C" low_range="6" high_range="10" result="That wasn't solidly struck but it's nice to know you still did some damage. More later. +3H "/>
+    <critical severity="C" low_range="11" high_range="15" result="Forcefully done. He steps back to consider his position. Initiative goes to you. +5H "/>
+    <critical severity="C" low_range="16" high_range="20" result="You hit him hard. He's flailing at you trying to smother your next attack before it starts. +6H,1x "/>
+    <critical severity="C" low_range="21" high_range="35" result="Holding him with one hand you put your knee into his ribs and watch him stagger away. +6H,1* "/>
+    <critical severity="C" low_range="36" high_range="45" result="Your crafty move makes him give you an opening at his already bruised chest. +8H,1* "/>
+    <critical severity="C" low_range="46" high_range="50" result="Slipping to one side you strike him in his back. He's stumbling forward and his guard is down. 1*@ "/>
+    <critical severity="C" low_range="51" high_range="55" result="Your circular block and a focused strike to his chest sweep his defenses away. 1*@,1(+20) "/>
+    <critical severity="C" low_range="56" high_range="60" result="Whirling wheel kick sends him 10 feet in any direction you like. You're the “man”. +8H,2* "/>
+    <critical severity="C" low_range="61" high_range="65" result="Now he has a bad bone bruise on his leg. It hurts and he can't stand on it very steadily. +5H,(-25) "/>
+    <critical severity="C" low_range="66" high_range="66" result="You broke his weapon arm, and punched him in the belly so hard he passed out.. "/>
+    <critical severity="C" low_range="67" high_range="70" result="His shield arm is now broken. It wasn't that hard. This could become routine for you. "/>
+    <critical severity="C" low_range="71" high_range="75" result="Moving behind him you kick behind his knee. He fights for balance and can't defend. 2*@ "/>
+    <critical severity="C" low_range="76" high_range="80" result="Sometimes the best block is a good strike. He's disarmed with damage to his arm. 1*,(-10) "/>
+    <critical severity="C" low_range="81" high_range="85" result="With cruel precision you break his foot. He can barely stand. Nobody does that! 2*@,(-50) "/>
+    <critical severity="C" low_range="86" high_range="90" result="Tearing the Achilles tendons in his foot drops him. Now you can kick him in the head. +10H,9*,(-80) "/>
+    <critical severity="C" low_range="91" high_range="95" result="Going airborne you strike his back knocking him down. He's disarmed and in trouble. 12*@ "/>
+    <critical severity="C" low_range="96" high_range="99" result="Your kick to his solar plexus sends him stumbling back 10 feet. He falls with a crash. +30H,30*@ "/>
+    <critical severity="C" low_range="100" high_range="100" result="A combo! You sweep him to the ground and heel strike his ribcage. He'll die in 4 rounds. "/>
+    <critical severity="D" low_range="1" high_range="5" result="You impress him with your classic form but you only tagged him. More force next time. +2H "/>
+    <critical severity="D" low_range="6" high_range="10" result="He sees that one coming and slips away from most of the damage coming his way. +4H "/>
+    <critical severity="D" low_range="11" high_range="15" result="You make good contact to his side. He stumbles away from you and loses the initiative. "/>
+    <critical severity="D" low_range="16" high_range="20" result="He manages to put up a block, but falls back from the blow trying to recover himself. +8H,1x (-10) "/>
+    <critical severity="D" low_range="21" high_range="35" result="Blow to chest! Head butt followup! You take the initiative for three rounds. +3H,1* "/>
+    <critical severity="D" low_range="36" high_range="45" result="Blow to his sternum doubles him over on his knees before you. His guard is really down. +5H,1*@ "/>
+    <critical severity="D" low_range="46" high_range="50" result="Having his ribs broken like that has left him confused and pretty angry with you. +3H,2*,(-10) "/>
+    <critical severity="D" low_range="51" high_range="55" result="He'll feel that bone bruise on his thigh for some time, but he doesn't fall. +6H,(-25) "/>
+    <critical severity="D" low_range="56" high_range="60" result="You slip behind him to strike his back. He's rattled and starts to flee, but recovers his wits. +4H,3* "/>
+    <critical severity="D" low_range="61" high_range="65" result="Your precise nerve strike to his thigh leaves the limb numb. You know how to do this! 2*,6(-25) "/>
+    <critical severity="D" low_range="66" high_range="66" result="Dislocate and break his weapon arm, throw him down and kick his head in. He's knocked out. 1(+20) "/>
+    <critical severity="D" low_range="67" high_range="70" result="Driving under his ribcage to his softer parts you knock the wind out of him. 2*@ "/>
+    <critical severity="D" low_range="71" high_range="75" result="Focused strike to his collarbone breaks it collapsing his guard. Hurts him to move. 2*@,(-25) "/>
+    <critical severity="D" low_range="76" high_range="80" result="Gripping and striking behind his knee you crush tendons and cartilage. Surgical. (-75) "/>
+    <critical severity="D" low_range="81" high_range="85" result="Too bad for him you knew how to break his leg just above the knee. He's slowly falling. +5H,5*@,(-75) "/>
+    <critical severity="D" low_range="86" high_range="90" result="Without conscience you strike and crush his windpipe. 16 slow rounds to die follow. "/>
+    <critical severity="D" low_range="91" high_range="95" result="Blinding him with a finger-strike you kick him 10 feet in any direction you choose. 10*,(-100) "/>
+    <critical severity="D" low_range="96" high_range="99" result="Roundhouse kick the back of his head so hard it bounces off the ground. Dead in 9 rds. "/>
+    <critical severity="D" low_range="100" high_range="100" result="Spear hand to his solar plexus ruptures his heart. Dies instantly. That was cold. "/>
+    <critical severity="E" low_range="1" high_range="5" result="Flashy technique can't make up for lack of force. He's not impressed. +3H "/>
+    <critical severity="E" low_range="6" high_range="10" result="After that glancing blow he reevaluates his lack of respect for your martial skills. +5H "/>
+    <critical severity="E" low_range="11" high_range="15" result="You try to set him up for a killing blow by an unbalancing strike. But will it work? +7H,1* "/>
+    <critical severity="E" low_range="16" high_range="20" result="You heard your double blow to his ribs impact and crack his ribcage. It's music to you. +5H,1*,(-10) "/>
+    <critical severity="E" low_range="21" high_range="35" result="Evading his rush you strike his kidneys and bruise his back. The pain is his own fault. (-20) "/>
+    <critical severity="E" low_range="36" high_range="45" result="Your blow spins him around and you take the opportunity to strike him hard in the back. 1* "/>
+    <critical severity="E" low_range="46" high_range="50" result="Your feint opens him up for a hammer blow to the chest. Good tactic and follow through. +5H,2*,1@ "/>
+    <critical severity="E" low_range="51" high_range="55" result="Your hip strike spins him around. He's unsure how it is that he's still standing on his feet. +5H,3* "/>
+    <critical severity="E" low_range="56" high_range="60" result="Slick shoulder strike unbalances him and leaves him unable to defend himself. 2*,1@,(-10) "/>
+    <critical severity="E" low_range="61" high_range="65" result="Disarming move on his weapon arm works. It's amazing what scrolls can teach you. +3H "/>
+    <critical severity="E" low_range="66" high_range="66" result="Slapping his ears simultaneously destroys his hearing and his balance too. 24*,(-95) "/>
+    <critical severity="E" low_range="67" high_range="70" result="Nice combo. Elbow to his solar plexus and a back fist to his face. He's down and hurting. +5H,3*,2@ "/>
+    <critical severity="E" low_range="71" high_range="75" result="Mean. You deliberately strike his knee to tear the muscles and tendons. He screams. +5H,3*,(-50) "/>
+    <critical severity="E" low_range="76" high_range="80" result="Kick to his midsection doubles him over and your knee impacts his nose. Down and out! "/>
+    <critical severity="E" low_range="81" high_range="85" result="That shattered his kneecap and put him down. You did it on purpose didn't you? +15H,12*@,(-80) "/>
+    <critical severity="E" low_range="86" high_range="90" result="Kick to kidneys drops him to his knees. You grip his head and snap his neck. Dead in 9 rds, "/>
+    <critical severity="E" low_range="91" high_range="95" result="Spleen rupture! He's spitting blood. He falls and dies in 12 rounds of writhing in agony. 1(+10) "/>
+    <critical severity="E" low_range="96" high_range="99" result="Gee, it is possible to drive someone's nose into his brain! He's down and dead in 6 rds. "/>
+    <critical severity="E" low_range="100" high_range="100" result="Disarming him you take his own weapon and kill him with it. Toss his carcass 5 ft if you like. "/>
+  </table>
+  <table name="Martial Arts Sweeps Critical Table" code="m">
+    <critical severity="A" low_range="1" high_range="5" result="Your flashy acrobatics impress any bystanders, but fail to do your foe any damage at all. +0H "/>
+    <critical severity="A" low_range="6" high_range="10" result="If you hadn't torn your tights with that fancy maneuver you might have really tagged him. +1H "/>
+    <critical severity="A" low_range="11" high_range="15" result="Wise positioning has given you the superior position and the initiative next round. +1H "/>
+    <critical severity="A" low_range="16" high_range="20" result="He's waving his weapon at you as if he thinks he can ward off your attacks that way. +2H,1x "/>
+    <critical severity="A" low_range="21" high_range="35" result="You drive him backwards as he tries to hide behind his weapon. He needs time. +2H,1x(-10) "/>
+    <critical severity="A" low_range="36" high_range="45" result="That sweep looked good but was just a little kick. He steps back a bit to reconsider his position. +3H,1x(-20) "/>
+    <critical severity="A" low_range="46" high_range="50" result="He's agile. He jumps up and over your attack and strikes back in defense as he comes down. +4H,1x(-25) "/>
+    <critical severity="A" low_range="51" high_range="55" result="He's on his heels as he steps back 3 feet to avoid your leg sweep and reevaluate things. +5H,1x(-30) "/>
+    <critical severity="A" low_range="56" high_range="60" result="Your attempted throw miscarries and he breaks loose. Still, you have unbalanced him. +6H,1* "/>
+    <critical severity="A" low_range="61" high_range="65" result="You throw him down and attempt a killing blow to follow up. You miss and he gets up. +7H,1* "/>
+    <critical severity="A" low_range="66" high_range="66" result="That throw dislocated his shield shoulder. He's still on his feet but he is in pain. Oh, the pain. 3*@,(-50) "/>
+    <critical severity="A" low_range="67" high_range="70" result="With force but without the needed technique you fail to throw him, but he is unbalanced. +7H,2* "/>
+    <critical severity="A" low_range="71" high_range="75" result="Oh well. You have thrown him and given him a nasty bruise to his thigh, but he's back up. +2H,2*@,(-5) "/>
+    <critical severity="A" low_range="76" high_range="80" result="He falls on his shield side. With shield, it's broken; without shield his arm is sprained. 2*,(-10) "/>
+    <critical severity="A" low_range="81" high_range="85" result="Your attempt at a leg sweep unbalances him and it puts you in a superior position. +3H,3*,1(+25) "/>
+    <critical severity="A" low_range="86" high_range="90" result="He lands on his back but rolls over and stands up with some bruises. Still, he is hurting now. 2*@,(-20) "/>
+    <critical severity="A" low_range="91" high_range="95" result="When you threw him he landed nose first on something hard. It's broken and he's down. +7H,2*@,(-25) "/>
+    <critical severity="A" low_range="96" high_range="99" result="He lands on his head this time. Could be bad. Without a helm, he's unconscious. 9* "/>
+    <critical severity="A" low_range="100" high_range="100" result="With consummate skill you throw him down but hold him fast. Hold him immobile or finish him. "/>
+    <critical severity="B" low_range="1" high_range="5" result="How did you learn how to sweep yourself to the ground? You fall but aren't hurt. For now. +0H "/>
+    <critical severity="B" low_range="6" high_range="10" result="You have such trouble holding on to him that you forget about your clever sweep. +1H "/>
+    <critical severity="B" low_range="11" high_range="15" result="He deflects your attack but gives you the initiative for the next round. +3H "/>
+    <critical severity="B" low_range="16" high_range="20" result="He is so dazzled by your flourishing assault that he concentrates on defending himself. 1x(-10) "/>
+    <critical severity="B" low_range="21" high_range="35" result="Your grapple would have felt like a kick if it had landed. He wards you off. +3H,1x(-20) "/>
+    <critical severity="B" low_range="36" high_range="45" result="You bruise his leg with your leg sweep but he limps out of your way. +4H,3(-25) "/>
+    <critical severity="B" low_range="46" high_range="50" result="You push him to one side. He is on the defensive but recovers. +5H,1* "/>
+    <critical severity="B" low_range="51" high_range="55" result="The throw fails to put him on the ground, but you do manage to knock the wind out of him. +6H,1* "/>
+    <critical severity="B" low_range="56" high_range="60" result="Keeping his weapon in his hand despite your grip on it, you still sprain his fingers. 1*,(-10) "/>
+    <critical severity="B" low_range="61" high_range="65" result="He breaks free, badly bruised, but escapes your brutal twisting of his weapon arm. +3H,1*,(-20) "/>
+    <critical severity="B" low_range="66" high_range="66" result="You throw and pin him, face down in an immobilizing arm lock. He's disarmed as well. +9H "/>
+    <critical severity="B" low_range="67" high_range="70" result="He's reacting about a second behind your moves. You have 6 rounds of initiative. +8H "/>
+    <critical severity="B" low_range="71" high_range="75" result="He lands badly from your throw, tearing ligaments in his leg. He rises with some effort. +5H,1*@,(-10) "/>
+    <critical severity="B" low_range="76" high_range="80" result="He skillfully breaks his fall with his weapon hand but sprains two of his fingers as he lands. 2*,(-25) "/>
+    <critical severity="B" low_range="81" high_range="85" result="Sweep throws him 10 feet aside. With cape he is down. Without one he leaves his back to you. +9H,2*@ "/>
+    <critical severity="B" low_range="86" high_range="90" result="He's in trouble landing badly on his back. The impact tears his tendons and breaks bones. 2*@,(-25) "/>
+    <critical severity="B" low_range="91" high_range="95" result="That fall broke his ribs and disarmed him. He lands rolling and stands up in wrong direction. 12*@,(-30) "/>
+    <critical severity="B" low_range="96" high_range="99" result="With a single blow you disarm, knock out and kick him onto his back. You exult in victory. +20H "/>
+    <critical severity="B" low_range="100" high_range="100" result="Spectacular throw breaks his neck on impact and he dies. You embody death itself! "/>
+    <critical severity="C" low_range="1" high_range="5" result="You shred his garments in a dramatic flurry of pulling and tearing, but don't really hurt him. +1H "/>
+    <critical severity="C" low_range="6" high_range="10" result="Flowing sweep misses but you still tag him with a little punch to his exposed ribcage. +2H "/>
+    <critical severity="C" low_range="11" high_range="15" result="Stunned by your elegant moves your very confused foe loses the initiative to you. 1(+20) "/>
+    <critical severity="C" low_range="16" high_range="20" result="He desperately pushes you away but unbalances himself doing it. +3H,1x(-20) "/>
+    <critical severity="C" low_range="21" high_range="35" result="That failed sweep still registered as a hit on him. He takes a moment to recover. +4H,1* "/>
+    <critical severity="C" low_range="36" high_range="45" result="He jumps over your sweeping assault, but a glancing blow hurts him and gives you initiative. (-10) "/>
+    <critical severity="C" low_range="46" high_range="50" result="You sweep him around but fail to down him. Look for an opening while he recovers. +4H,2* "/>
+    <critical severity="C" low_range="51" high_range="55" result="Your strong attack makes him stumble, but your follow up strike misses anything vital. +6H,2* "/>
+    <critical severity="C" low_range="56" high_range="60" result="Sweeping his defensive guard aside you see an opening for a follow on move. What's next? 1*@ "/>
+    <critical severity="C" low_range="61" high_range="65" result="Having failed to throw him down, you nevertheless disarm him. Advantage yours. +3H,1* "/>
+    <critical severity="C" low_range="66" high_range="66" result="That was direct. Blow to his shins folds him up and he falls to his knees which are now broken. +15H,6*@,(-80) "/>
+    <critical severity="C" low_range="67" high_range="70" result="With grace but little power you kick him in the face and side. He backs off 5 ft. 2*,(-10) "/>
+    <critical severity="C" low_range="71" high_range="75" result="Sweeping him to the ground you grip his leg as he goes down straining his muscles. 2*@,(-25) "/>
+    <critical severity="C" low_range="76" high_range="80" result="You go the ground taking him down. He lands on his shield arm dislocating his shoulder. +6H,6x,(-40) "/>
+    <critical severity="C" low_range="81" high_range="85" result="Your sweep staggers him. He doesn't move as you move in close for superior position. 2*@,1(+30) "/>
+    <critical severity="C" low_range="86" high_range="90" result="Blow to his leg knocks him down. You will remember the sound of his vertebrae cracking. 3*@,(-50) "/>
+    <critical severity="C" low_range="91" high_range="95" result="Gripping his leg as he falls you pin him. Break his leg if you want to. Of course, you do! +9H,15@ "/>
+    <critical severity="C" low_range="96" high_range="99" result="You crack his skull on something hard. With helm he's in a coma, without dies in 1 round. "/>
+    <critical severity="C" low_range="100" high_range="100" result="Dropping his back onto your knee you paralyze him from shoulders down. No mercy in you. "/>
+    <critical severity="D" low_range="1" high_range="5" result="You forget everything you ever learned about the martial arts and barely hurt him. +2H "/>
+    <critical severity="D" low_range="6" high_range="10" result="He's serious, but he's not sure you are. You aren't showing it. How could he tell? +3H "/>
+    <critical severity="D" low_range="11" high_range="15" result="He slips away from your assault and assumes a solid defensive posture awaiting your move. +4H,1x "/>
+    <critical severity="D" low_range="16" high_range="20" result="You are so slippery that he ends up hitting and hurting himself as he tries to deal with you. +4H,1* "/>
+    <critical severity="D" low_range="21" high_range="35" result="He almost loses his footing but falls to one knee. With effort he regains his stance. +4H,1*@ "/>
+    <critical severity="D" low_range="36" high_range="45" result="He stays on his feet but his calf is badly bruised and in spasm. It's hurting him. +5H,(-20) "/>
+    <critical severity="D" low_range="46" high_range="50" result="Whew! His feet fly out from under him but he scrambles to his feet playing catch-up. +5H,1*@ "/>
+    <critical severity="D" low_range="51" high_range="55" result="Slipping inside his guard you grab him and break his ribs, but he's still standing. +6H,1*,(-20) "/>
+    <critical severity="D" low_range="56" high_range="60" result="He keeps his feet but has to drop his defensive guard to stay on his feet. +7H,1*@ "/>
+    <critical severity="D" low_range="61" high_range="65" result="Nice! He avoids your throw but you steal his weapon out of his hands when he tries to use it. 2* "/>
+    <critical severity="D" low_range="66" high_range="66" result="Falling hard, he's knocked out (with helm); otherwise paralyzed waist down. +10H,4*@,(-90) "/>
+    <critical severity="D" low_range="67" high_range="70" result="Looked easy. He lands on his shield shoulder breaking a collarbone and an arm. It's useless. +5H,2*,1(20) "/>
+    <critical severity="D" low_range="71" high_range="75" result="You just help him fall , hard. Leg fractured he writhes on the ground eluding you. +5H,2*@,(-30) "/>
+    <critical severity="D" low_range="76" high_range="80" result="He fell badly, with your kind help, on his back cracking his shoulder blade. Time to heal? +9H,2*@,(-20) "/>
+    <critical severity="D" low_range="81" high_range="85" result="He lands on his own weapons tearing tendons in wrist. Drops weapon from his useless arm. +10H "/>
+    <critical severity="D" low_range="86" high_range="90" result="He's down and in your armlock. He's stuck unless he has some technique to escape. 6*@ "/>
+    <critical severity="D" low_range="91" high_range="95" result="Masterfully you knock him out against a hard surface. He's out of it. Kill him or whatever. +10H "/>
+    <critical severity="D" low_range="96" high_range="99" result="Merciless. Thrown him down after breaking the ribs that puncture his vitals. Dead in 6 rounds. "/>
+    <critical severity="D" low_range="100" high_range="100" result="You convert his lunge into a brutal hold that breaks his back. Paralyzed neck down. "/>
+    <critical severity="E" low_range="1" high_range="5" result="You are looking good but fighting poorly. Contact is better than flashy moves. +3H "/>
+    <critical severity="E" low_range="6" high_range="10" result="Knee his thigh and unbalance him to seize the initiative from him. Just as you were taught. +4H "/>
+    <critical severity="E" low_range="11" high_range="15" result="You would have him had his garment not torn in your grip. You both know how close it was. 1*,1(+10) "/>
+    <critical severity="E" low_range="16" high_range="20" result="Combination of hard and soft moves give you an opening to take advantage of next turn. +2H,1*@ "/>
+    <critical severity="E" low_range="21" high_range="35" result="He's trying to regain his balance. Meanwhile you position yourself to see that he fails to do it. 2* "/>
+    <critical severity="E" low_range="36" high_range="45" result="Sweep drops him to one knee. He gets up. One more blow to that bruise and he'll stay down. +5H,1*,(-20) "/>
+    <critical severity="E" low_range="46" high_range="50" result="He stoops to recover his weapon. The advantage is to you and you could finish him about now. +7H,2*@ "/>
+    <critical severity="E" low_range="51" high_range="55" result="Send him stumbling 5 feet away (direction your choice). He looks ready to fall. 3* "/>
+    <critical severity="E" low_range="56" high_range="60" result="Beautiful sweep sends him reeling, but somehow he stays on his feet. +9H,3* "/>
+    <critical severity="E" low_range="61" high_range="65" result="That one threw him to land on his own weapon (worse than keys). He's disarmed and down. 3* "/>
+    <critical severity="E" low_range="66" high_range="66" result="Throw him up to 10 ft. in any direction. Choose to kill or knock him out on impact. Masterful! "/>
+    <critical severity="E" low_range="67" high_range="70" result="Lands on shield arm breaking shield if he has one; if not, he shatters his arm. With shield: +20H W/o shield: +10H,2*@, (-20) "/>
+    <critical severity="E" low_range="71" high_range="75" result="Sweep drops him onto his now fractured hip which you kick for good measure. 2*@,(-40) "/>
+    <critical severity="E" low_range="76" high_range="80" result="He is flipped over backwards and stumbles 10 ft. back. His elbow is shattered when he falls. 4*,1@ "/>
+    <critical severity="E" low_range="81" high_range="85" result="Your rush throws him 10 feet onto his face and the ground. He's trying to spit out the dirt. +5H,6*@ "/>
+    <critical severity="E" low_range="86" high_range="90" result="You toss him into a bystander within 10 ft. Both are down and confused. Easy! +9H,3*@ "/>
+    <critical severity="E" low_range="91" high_range="95" result="Sending him airborne you guide him back to ground , disarmed and unconscious. "/>
+    <critical severity="E" low_range="96" high_range="99" result="Holding him fast you kick his legs away and drop him on his head. Broken neck is fatal. 1(+25) "/>
+    <critical severity="E" low_range="100" high_range="100" result="In half a round you smash him against many hard objects. Who knows which killed him. 1(+25) "/>
+  </table>
+  <table name="Puncture Critical Table" code="P">
+    <critical severity="A" low_range="1" high_range="5" result="You failed to make your point with your point. Your efforts were, well, pointless. +0H "/>
+    <critical severity="A" low_range="6" high_range="10" result="You just pricked him a little but you have made the first hit which is at least a start. +1H "/>
+    <critical severity="A" low_range="11" high_range="15" result="He wilts under your pressing attack. He flinches and you have the initiative next round. +1H "/>
+    <critical severity="A" low_range="16" high_range="20" result="You have his attention now. He's on his heels stepping back and away from you. +1H,1x "/>
+    <critical severity="A" low_range="21" high_range="35" result="That one could have skewered his abdomen. He knows just how close it was too. +2H,1x (+10) "/>
+    <critical severity="A" low_range="36" high_range="45" result="It is but a scratch but you have drawn first blood on his calf with your attack. 1! "/>
+    <critical severity="A" low_range="46" high_range="50" result="He evades your attack but exposes his vulnerable back to your next attack. +2H,1x(-30) "/>
+    <critical severity="A" low_range="51" high_range="55" result="There's blood on his chest and perhaps the beginning of uncertainty in his eyes. 1x(-25),2! "/>
+    <critical severity="A" low_range="56" high_range="60" result="Puncture to his thigh draws blood but it's just a beginning. More will follow. You'll see to it. +2H,1*,2! "/>
+    <critical severity="A" low_range="61" high_range="65" result="That was a minor forearm wound but his grip on his weapon is numbed. Bad sign. +2H,2!,(-10) "/>
+    <critical severity="A" low_range="66" high_range="66" result="Strike to his shield shoulder renders his arm useless. He can see the end from where he is. 3*,1(+10) "/>
+    <critical severity="A" low_range="67" high_range="70" result="Your strike to his neck failed to skewer him but it's a start. He'll be thinking about that. +5H,3*,1@ "/>
+    <critical severity="A" low_range="71" high_range="75" result="Strike went to his lower leg to some effect. Greave: +5H,3x,(-10) None: +3H,1*@,(-25) "/>
+    <critical severity="A" low_range="76" high_range="80" result="You puncture his upper arm and tear his fancy outfit. He failed to color coordinate for blood. +3H,2*,3!,(-25) "/>
+    <critical severity="A" low_range="81" high_range="85" result="That deep wound into his side looked fatal, but he's still in the game. Time will tell. 6*,5!,1(+20) "/>
+    <critical severity="A" low_range="86" high_range="90" result="You take him from behind collapsing his guard as he stumbles away from you. 2*@,2!,(-20) "/>
+    <critical severity="A" low_range="91" high_range="95" result="The hole you just put in his ear won't let him hear better. ,50 to hearing. Helmet: +5H,4*,1@ None: +3H,2!,2*@ "/>
+    <critical severity="A" low_range="96" high_range="99" result="That permanently scarred his nose. His crossed eyes will get better if he lives. 3*@,3! "/>
+    <critical severity="A" low_range="100" high_range="100" result="Striking his neck you sever a vein and an artery. Blood everywhere. He's dead Jim. "/>
+    <critical severity="B" low_range="1" high_range="5" result="He shrugs off your glancing blow. There was nothing on it, but your hostile intent. +0H "/>
+    <critical severity="B" low_range="6" high_range="10" result="He feels the first bite of your blade and the first hint of fear. How could this happen to him? +2H "/>
+    <critical severity="B" low_range="11" high_range="15" result="He is beginning to wonder why he started this. Initiative goes to you next round. +3H "/>
+    <critical severity="B" low_range="16" high_range="20" result="He steps backwards to avoid the worst of your onslaught. +2H,1x(-10) "/>
+    <critical severity="B" low_range="21" high_range="35" result="He doesn't know what to do. He leaves the initiative and first move to you next round. +2H,2x "/>
+    <critical severity="B" low_range="36" high_range="45" result="Without compunction, you take a cheap shot at his tender shin. Greaves: +5H,1x None: +2H,1! "/>
+    <critical severity="B" low_range="46" high_range="50" result="Striking his back you break anything worn there. Very agile. 1*,1! "/>
+    <critical severity="B" low_range="51" high_range="55" result="Puncturing his chest you watch the blood ruin the heraldic embroidery on his tunic. +3H,2!,2x "/>
+    <critical severity="B" low_range="56" high_range="60" result="It's just a thigh wound but it does damage and there is blood. What can he do now? +3H,1*@,2! "/>
+    <critical severity="B" low_range="61" high_range="65" result="Changing tactics you forearm strike him and shake him up. He tries to recover his wits. +2H,1*,2!,(-10) "/>
+    <critical severity="B" low_range="66" high_range="66" result="The bad news is that his (now broken) elbow blocked your attack. Shield arm useless. +3H,4*,2x "/>
+    <critical severity="B" low_range="67" high_range="70" result="Your strike to his neck draws blood but fails to kill , immediately anyway. Next? 2*,3!,(-5) "/>
+    <critical severity="B" low_range="71" high_range="75" result="That slashed through his calf muscle. He nearly falls to the ground. What is “hamstrung?” +3H,2*@,(-40) "/>
+    <critical severity="B" low_range="76" high_range="80" result="Strike to his shield side. If he has a shield your weapon is stuck in it for a round. Bad news. 3*,3!,(-30) "/>
+    <critical severity="B" low_range="81" high_range="85" result="In a terrifying display of violence you rip open his side. Was all that stuff really in there? +6H,3*@,5!,(-25) "/>
+    <critical severity="B" low_range="86" high_range="90" result="Strike to his head kills him unless he has a helm. If he does have one he is on his knees. +6H,2*@ "/>
+    <critical severity="B" low_range="91" high_range="95" result="Quick strike to his hip does extra damage if his hip isn't armored. Armor: +7H,1*,(-10) None: +5H,*,3!,(-25) "/>
+    <critical severity="B" low_range="96" high_range="99" result="Nothing fancy. Just a puncture through his cheek and throat. Drops now and dies in 9 rounds. 1(+20) "/>
+    <critical severity="B" low_range="100" high_range="100" result="You'll never forget this strike through his eye and his instant death. He never knew what… Allies +10 for 1 round "/>
+    <critical severity="C" low_range="1" high_range="5" result="He gracefully dances away from the worst of your attack. Big deal. +1H "/>
+    <critical severity="C" low_range="6" high_range="10" result="Careful. That put a nick in your weapon as well one in your foe. Don't block with the edge. +3H "/>
+    <critical severity="C" low_range="11" high_range="15" result="He evades you but puts himself out of position. You have the initiative next round. +5H "/>
+    <critical severity="C" low_range="16" high_range="20" result="That blow to his midsection severed his belt if he's wearing one. Lucky him. +3H,1x(-20) "/>
+    <critical severity="C" low_range="21" high_range="35" result="Strike to his head knocks off his helm and dents it if he was wearing one. 1*,1! "/>
+    <critical severity="C" low_range="36" high_range="45" result="That slash to his calf muscle is bleeding slowly but steadily. That was no accident. 2! "/>
+    <critical severity="C" low_range="46" high_range="50" result="You penetrate behind him and strike his back sending him reeling, but his guard is still up. 2*,1! "/>
+    <critical severity="C" low_range="51" high_range="55" result="Strike toward his chest. If he has a shield it's out of position for the rest of the round. +3H,2*,2! "/>
+    <critical severity="C" low_range="56" high_range="60" result="You strike his thigh or whatever is amoring it. Armor: +8H,1*@,1! None: +5H,2*,2!,(-10) "/>
+    <critical severity="C" low_range="61" high_range="65" result="That strike went to his right forearm. Greaves: +5H,2*@ None: +3H,2*,2!,(-10) "/>
+    <critical severity="C" low_range="66" high_range="66" result="Cruelly executed! You have shattered his knee. He falls down for 3 rounds almost helpless. 2*@,(-90) "/>
+    <critical severity="C" low_range="67" high_range="70" result="Your strike to his neck has left him alive but frantic to stay that way. He's rattled. 4*,2@,1(+15) "/>
+    <critical severity="C" low_range="71" high_range="75" result="Strike deeply to his lower leg. If he has leg armor it's torn away. +5H,2*@,(-50) "/>
+    <critical severity="C" low_range="76" high_range="80" result="Your strike cut through the muscle in his shield arm. If he has a shield he drops it. 6*,3!,(-25) "/>
+    <critical severity="C" low_range="81" high_range="85" result="That horrible sound was your weapon tearing into his ribs. The blood you recognize right off. +6H,3*@,5!,(-25) "/>
+    <critical severity="C" low_range="86" high_range="90" result="Head strike! Without a helm he is just dead. If he has a helm it's gone. That was a surprise. +6H,2*@ "/>
+    <critical severity="C" low_range="91" high_range="95" result="Awesome strike to his chest. Even with plate armor he drops and dies in 9 rounds., instantly if not. "/>
+    <critical severity="C" low_range="96" high_range="99" result="You tear right through his neck severing his spine.He's paralyzed from the neck down. "/>
+    <critical severity="C" low_range="100" high_range="100" result="That won't improve his hearing despite going through both ears. He's dead anyway. 6(+20) "/>
+    <critical severity="D" low_range="1" high_range="5" result="That smarted a little but mostly it just bounced off him. Lucky him? +2H "/>
+    <critical severity="D" low_range="6" high_range="10" result="You made contact but there was nothing on the blow. No harm done to him unfortunately. +4H "/>
+    <critical severity="D" low_range="11" high_range="15" result="He's bobbing and weaving, evading your attack as he maneuvers for a better position. +2H,1x "/>
+    <critical severity="D" low_range="16" high_range="20" result="You make a precision strike to his waist. Now you have the initiative for 1 round. (-10) "/>
+    <critical severity="D" low_range="21" high_range="35" result="Your sharp edge tears equipment from his waist at the right side, and nicked him as well. 1*,2! "/>
+    <critical severity="D" low_range="36" high_range="45" result="You almost punctured his groin. Did you intend to do that? Armor: +4H,1* None: 3! "/>
+    <critical severity="D" low_range="46" high_range="50" result="Neatly skewer his weapon arm to his side. making him vulnerable. +6H,1*@ "/>
+    <critical severity="D" low_range="51" high_range="55" result="That strike to his chest leaves him bruised and bleeding. Vital spot? +5H,1x,3!,(-15) "/>
+    <critical severity="D" low_range="56" high_range="60" result="The puncture to his abdomen hurts and will be messy without armor. Armor: +5H,2@ None: +3H,1*@,3! "/>
+    <critical severity="D" low_range="61" high_range="65" result="You have numbed his weapon arm with your blow. He needs time he doesn't have. +3H,2*,3!,(-10) "/>
+    <critical severity="D" low_range="66" high_range="66" result="That did it. Without a helm he's dead. With helm he's down and out for 6 rounds. +10H "/>
+    <critical severity="D" low_range="67" high_range="70" result="Your energetic attack sweeps aside his defenses with blows to both arms. +3H,2*@,(-20) "/>
+    <critical severity="D" low_range="71" high_range="75" result="Ruthless blow to his lower leg tears through muscle and cartilage. He falls prone to ground. +6H,2*@,(-50) "/>
+    <critical severity="D" low_range="76" high_range="80" result="A strike to his shield arm renders the arm useless for any purpose. +12H,6*,3! "/>
+    <critical severity="D" low_range="81" high_range="85" result="Blood is spraying everywhere from that abdominal wound you just inflicted. Scary! +10H,3*@,6!,(-20) "/>
+    <critical severity="D" low_range="86" high_range="90" result="Somehow you skewer both his kidneys at once. He's down for 2 hours before dying. +9H "/>
+    <critical severity="D" low_range="91" high_range="95" result="Hey, just spill his guts all over the floor. He, somehow, fights for 6 rounds before dying. "/>
+    <critical severity="D" low_range="96" high_range="99" result="Punctured through his chest and out the other side. He drops and dies in 6 rounds. It's over. "/>
+    <critical severity="D" low_range="100" high_range="100" result="Elegant puncture through his brain kills him and leaves you with half a round. 1(+20) "/>
+    <critical severity="E" low_range="1" high_range="5" result="Use the puncturing end of your weapon for better effect next time. He'll get the point. +3H "/>
+    <critical severity="E" low_range="6" high_range="10" result="You do some damage unbalancing him. You have the initiative and his attention. +5H "/>
+    <critical severity="E" low_range="11" high_range="15" result="You have scared him. He's on his heels and backing away. You press your attack. +3H,1x "/>
+    <critical severity="E" low_range="16" high_range="20" result="Your blows make his armor ring aloud as it vibrates from the impact. 1*,1(+20) "/>
+    <critical severity="E" low_range="21" high_range="35" result="He now has a wound in his side and a hole in anything carried on that side of his body. +2H,2!,(-10) "/>
+    <critical severity="E" low_range="36" high_range="45" result="Your strike to his upper leg rips and tears through his flesh. Armor: +3H,1x None: +2H,3! "/>
+    <critical severity="E" low_range="46" high_range="50" result="Striking his side you tear open up his armor and expose his skin. Armor: +8H,1*,1! None: +4H,1*@,4! "/>
+    <critical severity="E" low_range="51" high_range="55" result="He ducks evading your attack but you strike him down to one knee. Finish him now. +5H,1*@,(-10) "/>
+    <critical severity="E" low_range="56" high_range="60" result="He stumbles to your right 10 feet from the effects of your blow to his side. +6H,1*@,5! "/>
+    <critical severity="E" low_range="61" high_range="65" result="Nasty puncture to his forearm leaves a gaping wound. He learns the meaning of pain. +5H,2*,3!,(-15) "/>
+    <critical severity="E" low_range="66" high_range="66" result="He dies naturally. After skewering both his lungs what else could happen? Dies in 6 rounds. 1(+10) "/>
+    <critical severity="E" low_range="67" high_range="70" result="You open up his arm severing muscles and tendons. His arm is useless now. 6*,3! "/>
+    <critical severity="E" low_range="71" high_range="75" result="That went through his leg. He drops to the ground gripping his leg as he screams. 3*@,(-75) "/>
+    <critical severity="E" low_range="76" high_range="80" result="Your strike to his weapon arm broke it. His arm is useless now. Your arm isn't. +10H,3*@ "/>
+    <critical severity="E" low_range="81" high_range="85" result="With a severed artery in his back, he drops helplessly to his knees and dies in 12 rounds. "/>
+    <critical severity="E" low_range="86" high_range="90" result="Skewered deeply under the collarbone, you put him on the ground and he's dead in 12 rounds. "/>
+    <critical severity="E" low_range="91" high_range="95" result="That went bloodily through his arm and out the other side. He dies in 12 rounds. 12* "/>
+    <critical severity="E" low_range="96" high_range="99" result="Pierced through the heart he reels 10 ft. before dying. Your weapon is stuck in him. "/>
+    <critical severity="E" low_range="100" high_range="100" result="He finally saw your point: through his eye! He's dead instantly. No witty exit line for him. 1(+25) "/>
+  </table>
+  <table name="Slash Critical Table" code="S">
+    <critical severity="A" low_range="1" high_range="5" result="That was singularly uninspiring. Now stop embarrassing your friends. +0H "/>
+    <critical severity="A" low_range="6" high_range="10" result="You displayed nice technical form with that slash, but it just didn't slash much of anything. +1H "/>
+    <critical severity="A" low_range="11" high_range="15" result="His face felt the air displaced by your slash. Initiative goes to you next round. +1H "/>
+    <critical severity="A" low_range="16" high_range="20" result="Your edge bites him just a little under the arm. He recoils questioning how that happened. +1H,1x "/>
+    <critical severity="A" low_range="21" high_range="35" result="You're getting his attention now. He evades you, but he's on the defensive. +2H,1x,1(+10) "/>
+    <critical severity="A" low_range="36" high_range="45" result="That little flourish of your edge drew blood from his thigh. You smell blood in the air. 1! "/>
+    <critical severity="A" low_range="46" high_range="50" result="Deftly penetrating his defenses, you slash his back making him strike wildly at you. +2H,1x(-30) "/>
+    <critical severity="A" low_range="51" high_range="55" result="That strike to his chest draws blood and sends him stumbling back out of position now. +2H,1x(-25),1! "/>
+    <critical severity="A" low_range="56" high_range="60" result="You just manage to slash him enough to draw blood from his thigh. It does hurt. +3H,1x,2! "/>
+    <critical severity="A" low_range="61" high_range="65" result="Feinting high but striking low you slash the underside of his extended leg. +3H,2!,(-10) "/>
+    <critical severity="A" low_range="66" high_range="66" result="You exert force as well as precision. His shield shoulder is broken. Arm useless. Initiative is yours. +9H,3*,1@,1(+10) "/>
+    <critical severity="A" low_range="67" high_range="70" result="A strike near his throat rattles him quite a bit. He didn't know you could do that. +6H,3*,1@ "/>
+    <critical severity="A" low_range="71" high_range="75" result="Those slashed tendons in his lower leg are bleeding. How did it happen? +4H,2*,2!,(-30) "/>
+    <critical severity="A" low_range="76" high_range="80" result="He almost evades your strike but still gets slashed in the upper arm. Blood is flowing. +5H,2*@,3!,(-25) "/>
+    <critical severity="A" low_range="81" high_range="85" result="Your edge meets his chest as he moves toward you. Stunned and bleeding badly. +6H,5*,6!,1(+20) "/>
+    <critical severity="A" low_range="86" high_range="90" result="You slash his arm as he edges away from you. You leave him stunned and bleeding. +8H,2*@,2!,(-10) "/>
+    <critical severity="A" low_range="91" high_range="95" result="If no helmet he just lost an ear with hearing at -50. Stunning head blow. Helmet: +3H,2*@ None: +3H,3*,1@,3! "/>
+    <critical severity="A" low_range="96" high_range="99" result="That slash to his face leaves him with a permanent scar , if he lives long enough. +2H,6*,2!,(-30) "/>
+    <critical severity="A" low_range="100" high_range="100" result="You sever his carotid artery and jugular vein leaving him dead after 6 blood spraying rounds. "/>
+    <critical severity="B" low_range="1" high_range="5" result="A textbook demonstration of how not to hurt someone. Foe is grateful for the lesson. +0H "/>
+    <critical severity="B" low_range="6" high_range="10" result="Use the edge next time you slash. The flat of your weapon only bruises him a little. +2H "/>
+    <critical severity="B" low_range="11" high_range="15" result="He slips away from you this time, but you take the initiative during the next round. +3H "/>
+    <critical severity="B" low_range="16" high_range="20" result="He's cut in his side but he's still very much in the fight. The game is still going on. +2H,1x(-10) "/>
+    <critical severity="B" low_range="21" high_range="35" result="You shake him with a nasty blow to his side under the ribcage. He recovers clumsily. +2H,1x(-20) "/>
+    <critical severity="B" low_range="36" high_range="45" result="Successful blow to his shin. This could be a bleeder without armor. Greaves: +2H,1x None: +2H,1! "/>
+    <critical severity="B" low_range="46" high_range="50" result="You're taking a toll on him now, even though he evaded major damage to his back. +4H,1x(-30) "/>
+    <critical severity="B" low_range="51" high_range="55" result="He's staggering after that blow to his chest. Armor: +4H,1x None: +3H,2x,1!,(-5) "/>
+    <critical severity="B" low_range="56" high_range="60" result="That was just a minor wound to his thigh, but he's bleeding and parrying defensively. +4H,2x,2! "/>
+    <critical severity="B" low_range="61" high_range="65" result="There's blood from his forearm and he looks uncomprehendingly at you. How did it happen? +8H,*,2!,(-10) "/>
+    <critical severity="B" low_range="66" high_range="66" result="Your blow to his elbow breaks it, leaving it useless, and his weapon on the ground. +8H,4*,2@ "/>
+    <critical severity="B" low_range="67" high_range="70" result="Dramatic beheading strike fails but draws blood and stuns him. He's uncertain now. +7H,2*,3!,(-5) "/>
+    <critical severity="B" low_range="71" high_range="75" result="He's having trouble standing. Your stroke to his calf muscle is probably responsible. +6H,3*,1@,(-40) "/>
+    <critical severity="B" low_range="76" high_range="80" result="That cut to his shield arm is going to slow him down. You're still full speed. +6H,2*@,3!,(-30) "/>
+    <critical severity="B" low_range="81" high_range="85" result="Striking deeply with your, edge opens up his leg. That's a real bleeder he's got there. +7H,2*@,6! "/>
+    <critical severity="B" low_range="86" high_range="90" result="He evades most of your killing blow, but only by going prone facing the wrong direction. +10H,3*@,3! "/>
+    <critical severity="B" low_range="91" high_range="95" result="He's staggering after that flat blow to his hip. No blood but he'll need time to recover. +7H,3*,1@,(-20),1(+10) "/>
+    <critical severity="B" low_range="96" high_range="99" result="Impatiently, you tear through his skull and brain. He falls and dies in 6 rounds. +20H "/>
+    <critical severity="B" low_range="100" high_range="100" result="Tiring of all this back and forth stuff you simply disembowel him. Instant kill. "/>
+    <critical severity="C" low_range="1" high_range="5" result="You tapped him with that blow letting him know you're there. Knock harder! +1H "/>
+    <critical severity="C" low_range="6" high_range="10" result="At least you have his attention. Use the edge when you slash. It works better. +3H "/>
+    <critical severity="C" low_range="11" high_range="15" result="Your blow to his ribs gets his attention and gains the initiative for you next round. +6H "/>
+    <critical severity="C" low_range="16" high_range="20" result="Taking him in the ribs causes him to go backwards 5 feet. He's thinking defense. +4H,1x(-20) "/>
+    <critical severity="C" low_range="21" high_range="35" result="That broke a rib and stunned him for a few moments giving you an opportunity. +3H,1* "/>
+    <critical severity="C" low_range="36" high_range="45" result="Slashing across his ribcage draws blood and his attention. He's bleeding now. +2H,2! "/>
+    <critical severity="C" low_range="46" high_range="50" result="Striking his twisting back you twist your weapon to open him up. There's blood and pain. +3H,1*@,1! "/>
+    <critical severity="C" low_range="51" high_range="55" result="Your ambitious blow to his chest isn't mortal as you hoped, but he's bleeding and defensive. +4H,1x,2!,(-10) "/>
+    <critical severity="C" low_range="56" high_range="60" result="Missing his torso, you strike his thigh delivering a wound he may remember. +5H,1*,2! "/>
+    <critical severity="C" low_range="61" high_range="65" result="He backs away too slowly, exposing his knee to be shattered by your blow. He's down. +4H,1*,3!,(-10) "/>
+    <critical severity="C" low_range="66" high_range="66" result="He backs away from your swing, but you shatter his knee. He is down and defensive. +6H,3@,(-90) "/>
+    <critical severity="C" low_range="67" high_range="70" result="His forearm bleeds and he stands stunned and astonished for a brief time. Opportunity? +8H,4*,2@,1(+10) "/>
+    <critical severity="C" low_range="71" high_range="75" result="You cut through his garments and cut away his armor at the neck. He's amazed he's alive. +7H,2*@,(-45) "/>
+    <critical severity="C" low_range="76" high_range="80" result="Quickly and precisely you slash through his shield arm. He would parry if he still could. +9H,6*,4! "/>
+    <critical severity="C" low_range="81" high_range="85" result="Executing a clever move you know opens his side up just below the ribs. +8H,2*@,4!,(-20) "/>
+    <critical severity="C" low_range="86" high_range="90" result="Somehow you slip behind him to strike his back. He falls and then has trouble getting up. +9H,4*@,(-10) "/>
+    <critical severity="C" low_range="91" high_range="95" result="You sever his leg at the thigh. He falls and dies in 6 rounds. He can only watch himself die. +20H "/>
+    <critical severity="C" low_range="96" high_range="99" result="He looks around for his severed shield arm. Where did it go? He dies after 12 rounds. +18H,12*@ "/>
+    <critical severity="C" low_range="100" high_range="100" result="He's blinded now and falls on his back. He isn't even thinking about getting up. +5H,30*@ "/>
+    <critical severity="D" low_range="1" high_range="5" result="Your little tap on his shoulder gets his attention but little else. He knows you're there. +2H "/>
+    <critical severity="D" low_range="6" high_range="10" result="You take advantage of an opening to give him a little blow to the ribs. Not much harm done. +4H "/>
+    <critical severity="D" low_range="11" high_range="15" result="He's parrying your weapon and the air in general, but takes some modest damage. +3H,1x "/>
+    <critical severity="D" low_range="16" high_range="20" result="Moving closer you slash his ribs and take the initiative next round for your own. 2H,(-10) "/>
+    <critical severity="D" low_range="21" high_range="35" result="Striking to his arm and chest you stun him and move into position for your next round. +3H,1*@ "/>
+    <critical severity="D" low_range="36" high_range="45" result="He deflects the cut to his chest but gets a slashed upper arm. That blood is red. +3H,2! "/>
+    <critical severity="D" low_range="46" high_range="50" result="Lunging slash bites his lower back. He twists away, but is unbalanced and bleeding. +3H,1*@,2! "/>
+    <critical severity="D" low_range="51" high_range="55" result="You're hurting him with this slash to his shoulder He's bleeding but still on guard against you. +5H,1x,3!,(-15) "/>
+    <critical severity="D" low_range="56" high_range="60" result="You stun him by twisting your weapon in his wound. Of course, he's bleeding as well. +6H,2*,2! "/>
+    <critical severity="D" low_range="61" high_range="65" result="Blood from his forearm and he's stunned for a bit. He wasn't expecting this kind of fight. +4H,2*,3!,(-10) "/>
+    <critical severity="D" low_range="66" high_range="66" result="The flat of your weapon leaves him unconscious for 6 hours. If he had no helm, he's dead now. +15H "/>
+    <critical severity="D" low_range="67" high_range="70" result="Missing his head you slash his shoulder. Lucky for him, he's only stunned. +5H,3*,(-20),1(+10) "/>
+    <critical severity="D" low_range="71" high_range="75" result="That blow to his lower leg is staggering him. He won't be worth much until he recovers. 3*,2@1(-50) "/>
+    <critical severity="D" low_range="76" high_range="80" result="The fool uses his arm to parry the flat of your weapon. His arm is limp and useless now. +10H,4*,2@ "/>
+    <critical severity="D" low_range="81" high_range="85" result="That slashed open his innards. He examines his exposed guts as if he could read them. +10H,4*,2@,8!,(-20) "/>
+    <critical severity="D" low_range="86" high_range="90" result="He could use a hand because he has lost his own. Dies in 6 rounds of shock from bleeding. +6H,6*@ "/>
+    <critical severity="D" low_range="91" high_range="95" result="You sever his weapon arm and continue into his side. He falls in shock and dies in 12 rounds. +15H,9*@ "/>
+    <critical severity="D" low_range="96" high_range="99" result="Slicing deep below his ribs and into his vital organs you kill him in 3 rounds. He's down and out. +20H "/>
+    <critical severity="D" low_range="100" high_range="100" result="You slash through his ribs and into his heart, killing him instantly. It's that easy. +12H "/>
+    <critical severity="E" low_range="1" high_range="5" result="You'll exhaust yourself before little taps like this add up to enough to down your foe. +3H "/>
+    <critical severity="E" low_range="6" high_range="10" result="You unbalance him and are in good position with the initiative yours for next round. +5H "/>
+    <critical severity="E" low_range="11" high_range="15" result="You swat his weapon aside and press your attack. He is parrying but backing away. +4H,1x "/>
+    <critical severity="E" low_range="16" high_range="20" result="Blow to his ribs makes him drop his guard in pain. He barely keeps his weapon in hand. 1*@,1(+10) "/>
+    <critical severity="E" low_range="21" high_range="35" result="You draw a little blood from his side as he stumbles away from you about 10 feet. +3H,1!,(-10) "/>
+    <critical severity="E" low_range="36" high_range="45" result="The harm done by your blow to his leg depends on his leg armor. Greaves: +5H None: +3H,3! "/>
+    <critical severity="E" low_range="46" high_range="50" result="You slash into his stomach doubling him over in pain. Can you see his internal organs? +4H,1*@,3! "/>
+    <critical severity="E" low_range="51" high_range="55" result="Yes, that is blood pouring from his chest. Experience tells you this is a good sign. +6H,2*,4!,(-10) "/>
+    <critical severity="E" low_range="56" high_range="60" result="Cutting deeply into his thigh you sever a vein and the bleeding out process begins. +8H,2*,5! "/>
+    <critical severity="E" low_range="61" high_range="65" result="He shouldn't have tried to disarm you that way. You open up his forearm. More bleeding. +6H,2*,3!,(-15) "/>
+    <critical severity="E" low_range="66" high_range="66" result="Where did his severed arm go? He doesn't care anymore. Falls and dies in 12 rounds. +12H,1(+10) "/>
+    <critical severity="E" low_range="67" high_range="70" result="The bleeding isn't as bad as the severed tendons in his shoulder. His arm is useless. 4*,2! "/>
+    <critical severity="E" low_range="71" high_range="75" result="The severed muscles and tendons in his leg don't support him. He falls unless supported. +8H,6*,(-70) "/>
+    <critical severity="E" low_range="76" high_range="80" result="Adding insult to injury you sever two of his fingers and break his shield arm as well. +12H,3*@ "/>
+    <critical severity="E" low_range="81" high_range="85" result="He stares at his severed hand for a moment before falling. Dies from shock in 12 rounds. +5H,12*@ "/>
+    <critical severity="E" low_range="86" high_range="90" result="He's unconscious and dies in 9 rounds. His severed leg is probably the reason for that. +15H,1(+10) "/>
+    <critical severity="E" low_range="91" high_range="95" result="He had a spine after all, but now it's severed and permanently paralyzed from the neck down. +20H "/>
+    <critical severity="E" low_range="96" high_range="99" result="Whatever brain he once had is destroyed now and quite visible. Instant death for him. "/>
+    <critical severity="E" low_range="100" high_range="100" result="You slash through his groin organs. You can watch him die in 24 rounds. or politely look away. +10H,12*@ "/>
+  </table>
+  <table name="Subdual Critical Table" code="s">
+    <critical severity="A" low_range="1" high_range="5" result="Remember, to subdue him you're probably going to have to hurt him at least a little. +0H "/>
+    <critical severity="A" low_range="6" high_range="10" result="You try to set him up with a strategic punch, but pull it instead. He won't break that easily. +0H "/>
+    <critical severity="A" low_range="11" high_range="15" result="Your punch gets his attention but just barely. It's going to take quite a bit more than this. +1H "/>
+    <critical severity="A" low_range="16" high_range="20" result="He deflects your assault without much trouble or damage to himself. Are you serious? +1H,1x "/>
+    <critical severity="A" low_range="21" high_range="35" result="You tag him but can't seem to deal with a moving target. Perhaps he could hold still. +1H,1x "/>
+    <critical severity="A" low_range="36" high_range="45" result="You move in close and get his attention with a blow gaining the initiative next round. +2H "/>
+    <critical severity="A" low_range="46" high_range="50" result="Your blow to his chest makes him vulnerable next round. You're getting the idea now. +2H,3(-10) "/>
+    <critical severity="A" low_range="51" high_range="55" result="You have bruised his arm, but even better you finally have his entire attention. +2H,1* "/>
+    <critical severity="A" low_range="56" high_range="60" result="You just graze his head, but convince him that you're going to be a continuing problem. +3H,6(-10) "/>
+    <critical severity="A" low_range="61" high_range="65" result="He evades your probing offense by stepping 5 feet to one side. Still he is “stunned.” +3H,1* "/>
+    <critical severity="A" low_range="66" high_range="66" result="You're getting the hang of this. Strike to his collarbone hurts and disables him briefly. +9H,2*@,4(-10) "/>
+    <critical severity="A" low_range="67" high_range="70" result="Your blow rudely takes the wind out of him. He's on the defensive now and not happy. +3H,3(-20) "/>
+    <critical severity="A" low_range="71" high_range="75" result="Muscle spasms occupy him for a time after you strike him in the side near the kidney. +4H,2* "/>
+    <critical severity="A" low_range="76" high_range="80" result="That blow to his shield arm may have broken some things. Shield: +8H,2(-20) None: +4H,2*@ "/>
+    <critical severity="A" low_range="81" high_range="85" result="You immobilize him for a moment with a setup blow and a strong follow-up grapple. +5H,1*@,1(+10) "/>
+    <critical severity="A" low_range="86" high_range="90" result="You have unbalanced him with a combination grapple and sweep. He's fully on the defensive. +6H,3*@ "/>
+    <critical severity="A" low_range="91" high_range="95" result="Now you're getting serious. That blow to his neck leaves muscles in spasm. He falls down. +7H,2*@,(-20) "/>
+    <critical severity="A" low_range="96" high_range="99" result="Your strike to his head gives him whiplash. He's down and unconscious now. +8H,(-30) "/>
+    <critical severity="A" low_range="100" high_range="100" result="That innocent little tap to his head stuns him for a moment after which he passes out altogether. +5H "/>
+    <critical severity="B" low_range="1" high_range="5" result="He completely frustrates your probing attack. This isn't working the way you planned. +0H "/>
+    <critical severity="B" low_range="6" high_range="10" result="You almost seem reluctant to cause him any serious injury. Are you serious yet? +1H "/>
+    <critical severity="B" low_range="11" high_range="15" result="His collarbone is sensitive but you still have to use some force to disable him. +1H "/>
+    <critical severity="B" low_range="16" high_range="20" result="You bruised him as he parried that ugly little kicking strike to his groin. Close one. +2H,1x "/>
+    <critical severity="B" low_range="21" high_range="35" result="You missed his head but struck his shoulder and still unbalanced him. If only you had… +2H,2(-20) "/>
+    <critical severity="B" low_range="36" high_range="45" result="You whack his shield hand with the flat of your weapon. He hurts and you have initiative. +3H,(-5) "/>
+    <critical severity="B" low_range="46" high_range="50" result="He is struggling to fend off your attacks to his vital abdominal organs. It's working for now. +3H,1*,2x "/>
+    <critical severity="B" low_range="51" high_range="55" result="A little bruise to his arm shouldn't have stunned him like that. He needs to suck it up. +3H,1* "/>
+    <critical severity="B" low_range="56" high_range="60" result="You meant to strike him but find pushing him works as well. He is in urgent need of balance. +3H,1x,4(-10) "/>
+    <critical severity="B" low_range="61" high_range="65" result="Your blow to his ribs doubles him over in real pain. He didn't know you could do that. +6H,1*,4(-30) "/>
+    <critical severity="B" low_range="66" high_range="66" result="You grab and twist his weapon arm disarming him. He knows how much trouble he's in. +12H,2*@,(-20) "/>
+    <critical severity="B" low_range="67" high_range="70" result="He's thrown backward and goes onto one knee to stay upright at all. +5H,4*@,4(-40) "/>
+    <critical severity="B" low_range="71" high_range="75" result="You bruise his calf trying to sweep his legs out from under him. That's a bone bruise. +5H,1*,(-30) "/>
+    <critical severity="B" low_range="76" high_range="80" result="He senses a killing blow coming and desperately evades the worst of it, injuring his shield arm. +6H,2*@,7(-10) "/>
+    <critical severity="B" low_range="81" high_range="85" result="Your strike to his ribs unbalances him but he takes you down with him. You're on top. +6H,3*,1(+10) "/>
+    <critical severity="B" low_range="86" high_range="90" result="That was easier than you expected. Your blow to his neck knocks him unconscious. +8H,(-30) "/>
+    <critical severity="B" low_range="91" high_range="95" result="Ruthlessly, you drive your knuckles into his temple. He falls and passes out in 2 rounds. +10H,6*,(-30) "/>
+    <critical severity="B" low_range="96" high_range="99" result="Unexpectedly, you fracture his skull. He's out now and dies 2 hrs. later from the swelling. +12H,2*@,(-50) "/>
+    <critical severity="B" low_range="100" high_range="100" result="You know he has a spine because you just struck it disabling him. He's unconscious now. +15H,(-60) "/>
+    <critical severity="C" low_range="1" high_range="5" result="Mercy is as mercy does, but now is not the time for it. You do him no harm. Maybe next time. +0H "/>
+    <critical severity="C" low_range="6" high_range="10" result="Don't be so gentle. He won't break so easily. You can go ahead and really hit him. +1H "/>
+    <critical severity="C" low_range="11" high_range="15" result="That blow to his chest wouldn't disable anyone capable of taking a blow at all. +2H "/>
+    <critical severity="C" low_range="16" high_range="20" result="Nicely placed blow under his ribcage at his side. He is unbalanced but will recover quickly. +4H,1x "/>
+    <critical severity="C" low_range="21" high_range="35" result="Solid strike to his chest rocks him, but he grabs you for balance and holds on. +3H,1* "/>
+    <critical severity="C" low_range="36" high_range="45" result="He looses himself from your entangling grasp but you give him a forceful shove. +5H,3*,3(-10) "/>
+    <critical severity="C" low_range="46" high_range="50" result="Another blow to the kidneys would be good about now. He's already reeling away from you. +5H,1*@ "/>
+    <critical severity="C" low_range="51" high_range="55" result="Attacking his exposed forward leg you see the pain in his eyes. The bruise goes deep. +4H,1*@,(-10) "/>
+    <critical severity="C" low_range="56" high_range="60" result="Your assault to his torso disorients him and you watch him stumble to balance himself again. +4H,4*x(-10) "/>
+    <critical severity="C" low_range="61" high_range="65" result="You twist his arm till he drops his weapon. He slips free but is still weaponless. Helpless? +1H "/>
+    <critical severity="C" low_range="66" high_range="66" result="Forcing him to his knees you slam his head into the ground. You can kill him now or whatever. +12H,10*@,6(-80) "/>
+    <critical severity="C" low_range="67" high_range="70" result="That sound was his ribcage breaking. It didn't look good, but it really worked nicely. +5H,2*,(-20) "/>
+    <critical severity="C" low_range="71" high_range="75" result="Attending to the basics you pretty much destroy his foot. He can't stand on it anymore. +5H,1*@,(-20) "/>
+    <critical severity="C" low_range="76" high_range="80" result="Having knocked him to the ground with a fractured arm you pummel his head. +6H,3*,6(-30) "/>
+    <critical severity="C" low_range="81" high_range="85" result="His broken ribcage causes him to drop his weapon and his plans for attacking you. +6H,6* "/>
+    <critical severity="C" low_range="86" high_range="90" result="Your blow to his rear slams him off his feet onto the ground headfirst. He's out. +10H,6*,1(+20) "/>
+    <critical severity="C" low_range="91" high_range="95" result="Dazed by your blow he drops his weapon and falls trying to recover it. He is also unconscious. "/>
+    <critical severity="C" low_range="96" high_range="99" result="He loses consciousness from the whiplashing blow to his head. He is prone and unconscious. +10H,5!,(-40) "/>
+    <critical severity="C" low_range="100" high_range="100" result="You break his ribs, his arm and his head. He's in a coma for 2 weeks if you let him live at all. +20H "/>
+    <critical severity="D" low_range="1" high_range="5" result="Your foe absorbs your blow almost without noticing it. You weren't ready. +1H "/>
+    <critical severity="D" low_range="6" high_range="10" result="You make solid contact with his face even if you don't rearrange it more than just a little bit. +2H "/>
+    <critical severity="D" low_range="11" high_range="15" result="He proves he can take a little punch like that one. It's not like he's a child you're fighting. +3H "/>
+    <critical severity="D" low_range="16" high_range="20" result="A blow to his ribs sends him reeling away, but he recovers and is on guard now. +3H,1x,4(-10) "/>
+    <critical severity="D" low_range="21" high_range="35" result="You are not too proud to trip him and grind his shin with your boot. Hey, it works. +6H,2* "/>
+    <critical severity="D" low_range="36" high_range="45" result="You learned this one in a barroom. Stepping on his foot you push him down. Initiative yours. +3H,2(-25) "/>
+    <critical severity="D" low_range="46" high_range="50" result="Reverse blow to the kidneys rocks him, but he turns to face your next assault. +3H,1*@ "/>
+    <critical severity="D" low_range="51" high_range="55" result="He holds his chest in his hands after your blow. He lives. You had hoped for more. +5H,1*@ "/>
+    <critical severity="D" low_range="56" high_range="60" result="Destroying his stance with a blow to his thigh, you knock him to the ground, but he gets up. +5H,2* "/>
+    <critical severity="D" low_range="61" high_range="65" result="Stepping within his swing you strike his weapon arm and disarm him with precision. +5H,2*@,1(+20) "/>
+    <critical severity="D" low_range="66" high_range="66" result="His head rushes forward and impacts with your weapon fist. He falls down and out for 6 hrs. +15H,6* "/>
+    <critical severity="D" low_range="67" high_range="70" result="You break his arm. Bone sticks out. He can barely stay on his feet as he fights the pain. +6H,2*@,(-35) "/>
+    <critical severity="D" low_range="71" high_range="75" result="Attending to basics you kick his legs out from under him. A leg fractures on impact. +10H,1*@,(-55) "/>
+    <critical severity="D" low_range="76" high_range="80" result="His broken weapon arm disorients him and he falls breaking a rib. Where will it end? +7H,3*,(-25) "/>
+    <critical severity="D" low_range="81" high_range="85" result="Ribs fractured, he falls and fractures his ankle. He passes out from the pain. Oh, the pain! +7H,2*@,(-50) "/>
+    <critical severity="D" low_range="86" high_range="90" result="Reverse strike to his back knocks him to the ground disarming him. He passes out for 5 rounds. +12H,(-10) "/>
+    <critical severity="D" low_range="91" high_range="95" result="Holding him with one hand you pound his face with the other till he is unconscious for 15 rounds. +15H,(-20) "/>
+    <critical severity="D" low_range="96" high_range="99" result="You wince at the sound of his head bouncing off the ground. He's in a coma for 1 month. +17H "/>
+    <critical severity="D" low_range="100" high_range="100" result="Getting back to basics you pummel his head till he falls to the ground, resting nicely. +25H "/>
+    <critical severity="E" low_range="1" high_range="5" result="The results of your nerve pinch surprises you. He falls into unconsciousness. +3H "/>
+    <critical severity="E" low_range="6" high_range="10" result="If you continue hitting him in the face you might eventually accomplish something. +3H "/>
+    <critical severity="E" low_range="11" high_range="15" result="Your dazzling assault looks great but leaves him standing only slightly bruised. +3H "/>
+    <critical severity="E" low_range="16" high_range="20" result="That was a cheap shot to his ribs but still nicely executed. He'll be feeling it for some time. +3H,4(-25) "/>
+    <critical severity="E" low_range="21" high_range="35" result="You strike and break some of his ribs. The pain convinces him it really happened. +3H,1*,(-10) "/>
+    <critical severity="E" low_range="36" high_range="45" result="Your knee strike is too tentative to do much damage but it does surprise him. +6H,2* "/>
+    <critical severity="E" low_range="46" high_range="50" result="The pain in his side brings down his guard. He's stunned and suddenly uncertain. +7H,1*@ "/>
+    <critical severity="E" low_range="51" high_range="55" result="Solid blow to his chest puts him flat on his back. He's recovering but slowly. +8H,1*@,3(-10) "/>
+    <critical severity="E" low_range="56" high_range="60" result="Penetrating blow to his stomach forces him 10 feet backwards, but he's on his feet. +8H,3*,1@ "/>
+    <critical severity="E" low_range="61" high_range="65" result="You crush a nerve in his neck. You are amazed as he falls unconscious before you , for 3 hrs. +10H,2*@,(-20) "/>
+    <critical severity="E" low_range="66" high_range="66" result="You bounce his head back and forth. If he was still conscious he would be in pain. +24H,(-20) "/>
+    <critical severity="E" low_range="67" high_range="70" result="He can't take the pain. His fractured shoulder causes him to drop his defenses for a moment. +9H,2*@,(-30) "/>
+    <critical severity="E" low_range="71" high_range="75" result="Your attack to his thigh spasms the muscles and bruises his bone. It's worse than it looks. +9H,3*@,(-40) "/>
+    <critical severity="E" low_range="76" high_range="80" result="Forgetting him, you attack his weapon arm. He's disarmed (you have it) and fallen. +10H,4*@ "/>
+    <critical severity="E" low_range="81" high_range="85" result="Ribs cracked, he falls and breaks a leg. Only then do you kick him in the face. Why not? +10H,6*@,(-50) "/>
+    <critical severity="E" low_range="86" high_range="90" result="A blast to his face knocks him down. He passes out frothing at the mouth. Yuck! +15H,1!,(-30) "/>
+    <critical severity="E" low_range="91" high_range="95" result="You knock him to the ground headfirst. He passes out before you kick him in the head. +17H "/>
+    <critical severity="E" low_range="96" high_range="99" result="Tiring of the slow pace you snap his neck which fells him and kills him in 15 rounds. +25H "/>
+    <critical severity="E" low_range="100" high_range="100" result="With practiced ease you strike his head. He drops unconscious to the ground for 10 hours. 1(+20) "/>
+  </table>
+  <table name="Tiny Critical Table" code="T">
+    <critical severity="A" low_range="1" high_range="5" result="You are trying to hurt him, not cuddle him. +0H "/>
+    <critical severity="A" low_range="6" high_range="10" result="Rolling on the ground and waving your paws in the air isn't going to do much damage. +0H "/>
+    <critical severity="A" low_range="11" high_range="15" result="Surely you will hurt him eventually. +0H "/>
+    <critical severity="A" low_range="16" high_range="20" result="At this point even a little hit is worth noting, and that was a little one. He's only annoyed. +1H "/>
+    <critical severity="A" low_range="21" high_range="35" result="From little hits great wounds grow. Keep it up and it will amount to something. Persevere +1H "/>
+    <critical severity="A" low_range="36" high_range="45" result="Whap. That was a little hit with a little something extra on it. +2H "/>
+    <critical severity="A" low_range="46" high_range="50" result="Your attack miscarries a bit and you lose a nail, a claw or whatever. More precision is necessary. +4H,2(-5) "/>
+    <critical severity="A" low_range="51" high_range="55" result="Leaping airborne attack. What a pity he scratches so easily. +3H "/>
+    <critical severity="A" low_range="56" high_range="60" result="That strike tore right through his clothes and pricked him in the thigh. Hey, there's blood. +1H,1! "/>
+    <critical severity="A" low_range="61" high_range="65" result="It's just a cut to the forearm but there's blood flowing at last. Tastes good too. +2H,2! "/>
+    <critical severity="A" low_range="66" high_range="66" result="His stomach is bleeding as he leaps away from you. He even unbalanced himself. +4H,2*@,2! "/>
+    <critical severity="A" low_range="67" high_range="70" result="His tunic is torn at the shoulder, and there's even some blood. This could add up. +3H,1x,1! "/>
+    <critical severity="A" low_range="71" high_range="75" result="You strike his leg throwing his timing off. The initiative is yours. Armor: +4H None: +1H,2! "/>
+    <critical severity="A" low_range="76" high_range="80" result="He shoulders you aside but you snag his arm and draw some blood. The big bully. +3H,1*,1! "/>
+    <critical severity="A" low_range="81" high_range="85" result="He can't believe you cut his face. He stumbles back allowing you to setup your next attack. +4H,1*,2! "/>
+    <critical severity="A" low_range="86" high_range="90" result="Precision cut to his elbow makes your foe begin to take you seriously. +6H,2* "/>
+    <critical severity="A" low_range="91" high_range="95" result="It was some reach, but you struck his head. If he has no helm his face and left ear is slashed. +3H,2*,(-30) "/>
+    <critical severity="A" low_range="96" high_range="99" result="Knowing precision is everything you slash his nose unless he has a guard on it. 9*,3! "/>
+    <critical severity="A" low_range="100" high_range="100" result="Superb. You strike at his eyes, destroying one unless he has a visored helm. +15H,3*@,(-75) "/>
+    <critical severity="B" low_range="1" high_range="5" result="Sigh. Didn't your mother teach you not the play with your food? +0H "/>
+    <critical severity="B" low_range="6" high_range="10" result="Dazzling display of airborne gymnastics on your part, but he wasn't there when you landed. +0H "/>
+    <critical severity="B" low_range="11" high_range="15" result="Missed him by that much. Remember what “Tiny” means. +0H "/>
+    <critical severity="B" low_range="16" high_range="20" result="You lunged at his throat with determination but he brushed it aside with his arm. +1H "/>
+    <critical severity="B" low_range="21" high_range="35" result="You get in close but the big bully kicks you away from him before you could kill him. +2H "/>
+    <critical severity="B" low_range="36" high_range="45" result="That would have disemboweled a smaller foe. You are used to frustrations like this. +3H "/>
+    <critical severity="B" low_range="46" high_range="50" result="Your slash to his side cuts him but fails to penetrate deeply. He slides away. Just lucky. +3H "/>
+    <critical severity="B" low_range="51" high_range="55" result="You draw blood with a flick of an immaculately groomed claw. That'll teach him. +3H,1! "/>
+    <critical severity="B" low_range="56" high_range="60" result="You scratch his arm, but fail to penetrate the skin. He looks at you and shakes his head. +6H "/>
+    <critical severity="B" low_range="61" high_range="65" result="Your attack leaves his forearm bleeding. That will leave a scar if you fail to kill him. +3H,2! "/>
+    <critical severity="B" low_range="66" high_range="66" result="A sneaky strike to his calf gets worse as he tries to twist away from the attack. +5H,2*,(-20) "/>
+    <critical severity="B" low_range="67" high_range="70" result="Nice scratch draws blood and makes horrible sound grating against his armor. +4H,1*,1! "/>
+    <critical severity="B" low_range="71" high_range="75" result="You aren't proud so you whack his shin. He doesn't think that was fair at all. Armor: +6H None: +3H,2x,2! "/>
+    <critical severity="B" low_range="76" high_range="80" result="Your attack to his arm was right on target. You're proud of your tiny self. +5H,2!,(-15) "/>
+    <critical severity="B" low_range="81" high_range="85" result="Throwing caution to the winds, you launch yourself at his face. Armor: +3H,1x None: 3*,3! "/>
+    <critical severity="B" low_range="86" high_range="90" result="He thinks your wound to his neck is mortal, and staggers around clutching his throat. +5H,3*,2x "/>
+    <critical severity="B" low_range="91" high_range="95" result="You trick him by switching your attack to his blocking and now bleeding arm. +5H,3*@,2 ! "/>
+    <critical severity="B" low_range="96" high_range="99" result="The blood flowing from his forehead is blinding him. He's going to be open to your attack. 3*@,3!,(-40) "/>
+    <critical severity="B" low_range="100" high_range="100" result="He wildly evades your attack to his throat but falls backwards. You follow up to his leg. 6*@,3!,(-50) "/>
+    <critical severity="C" low_range="1" high_range="5" result="That was soooo cute. Keep it up. Maybe he'll take you home and adopt you. +0H "/>
+    <critical severity="C" low_range="6" high_range="10" result="“Look! It's the Winged Victory of Samothrace!” +0H "/>
+    <critical severity="C" low_range="11" high_range="15" result="You make a flurry of strikes to his torso that shred his tunic but not his skin. +1H "/>
+    <critical severity="C" low_range="16" high_range="20" result="You thought you had him but end up only with air. He nimbly steps away from you. +1H "/>
+    <critical severity="C" low_range="21" high_range="35" result="Your strike to his waist might have been really good if his equipment hadn't shielded him. +2H "/>
+    <critical severity="C" low_range="36" high_range="45" result="He breaks free of you but cuts himself doing it. You smile and he winces sheepishly. +2H,1! "/>
+    <critical severity="C" low_range="46" high_range="50" result="You nimbly strike him in the side but don't break the skin. He takes a close look at you. +4H "/>
+    <critical severity="C" low_range="51" high_range="55" result="That little prick to his solar plexus is going to be a bleeder. Nicely done. He's surprised. +4H,2! "/>
+    <critical severity="C" low_range="56" high_range="60" result="Getting with the rhythm of the combat you feint at his throat and cut his thigh. More blood. +4H,1*,2! "/>
+    <critical severity="C" low_range="61" high_range="65" result="He blocks you with his arm. All the little cuts are adding up to something. +3H,2x,2! "/>
+    <critical severity="C" low_range="66" high_range="66" result="You are all over him like a cheap tunic. He drops his weapon and leaps back 10 feet. +4H,1*,1(+10) "/>
+    <critical severity="C" low_range="67" high_range="70" result="You're getting used to targeting his vulnerable limbs. He should keep his hands to himself. +5H,1*,2!,1(-20) "/>
+    <critical severity="C" low_range="71" high_range="75" result="That bloody little slice to his thigh gives you the initiative next round. “Power to the small!” 2*,2!,(-20) "/>
+    <critical severity="C" low_range="76" high_range="80" result="That cut through the things that make his arm work, but he is not disarmed , yet. +5H,2*,2!,(-25) "/>
+    <critical severity="C" low_range="81" high_range="85" result="That knocked his helm off if he had one.. It is now crumpled and moist. Helmet: +3H,1* None: +2H,*,3!,(-40) "/>
+    <critical severity="C" low_range="86" high_range="90" result="You spin him around and dance circles around him. +6H,2*@ "/>
+    <critical severity="C" low_range="91" high_range="95" result="Your strike to his cheek disorients him. He recoils wondering how that came so close. +3H,2*@,2!,(-20) "/>
+    <critical severity="C" low_range="96" high_range="99" result="He's down and crawling away from you. Having an Achilles tendon severed will do that. +5H,6*@,(-75) "/>
+    <critical severity="C" low_range="100" high_range="100" result="If he has a helm he's out for 1-10 days. Without one he's dead forever. +25H,1! "/>
+    <critical severity="D" low_range="1" high_range="5" result="Tiny blows need better precision targeting than ordinary attacks. Remember that. +0H "/>
+    <critical severity="D" low_range="6" high_range="10" result="You miss him but tear through a bit of his clothing. Do you know what that material cost? +1H "/>
+    <critical severity="D" low_range="11" high_range="15" result="Your strike to his throat severs anything hanging around his neck, but only grazes him. +1H "/>
+    <critical severity="D" low_range="16" high_range="20" result="You miss his throat and only thump his chest. Wait till you get your teeth into him. +2H "/>
+    <critical severity="D" low_range="21" high_range="35" result="That was but a scratch to his back. Are you trying to tickle him to death? +3H "/>
+    <critical severity="D" low_range="36" high_range="45" result="You strike his leg and without armor he will be hurt and bloodied. W/o greaves: +5H,1! "/>
+    <critical severity="D" low_range="46" high_range="50" result="You puncture his side. You're surprised and so is he. You love it when a plan comes together. +3H,1! "/>
+    <critical severity="D" low_range="51" high_range="55" result="Oooh. If he has no armor you have torn open his stomach. W/o armor: +5H,3! "/>
+    <critical severity="D" low_range="56" high_range="60" result="He's bleeding and unbalanced. He didn't expect that blow behind his knee. +6H,1*,2! "/>
+    <critical severity="D" low_range="61" high_range="65" result="Your try to grip and hold him in a vulnerable position fails, but it keeps him occupied. +5H,2x,2!,1(+10) "/>
+    <critical severity="D" low_range="66" high_range="66" result="Callously you destroy 1 of his eyes and blind the other for 2 days. Helm: +4H W/o helm: +7H,6@ "/>
+    <critical severity="D" low_range="67" high_range="70" result="The blood from his slashed throat sprays all over his face and disorients him. +6H,1*@,2! "/>
+    <critical severity="D" low_range="71" high_range="75" result="You strike his lower leg and he stumbles back to avoid your “tiny” attack. Armor: +3H,1* None: 2*,1@ "/>
+    <critical severity="D" low_range="76" high_range="80" result="Holding onto his arm, you slice it into little shreds. You animal! +5H,3*,2!,(-25) "/>
+    <critical severity="D" low_range="81" high_range="85" result="That strike was solidly to his face. Damage depends on facial armor. Armor: +5H None: 3*,3!,(-40) "/>
+    <critical severity="D" low_range="86" high_range="90" result="Striking at his grip on his weapon you make him release it. You have his attention. +5H,1* "/>
+    <critical severity="D" low_range="91" high_range="95" result="His thumb on his weapon hand is pulped. He drops his weapon and curses you. 2*@,(-50) "/>
+    <critical severity="D" low_range="96" high_range="99" result="With a visored helm he is blind for a week. Without one, he loses 1 eye and is blind in the other. (-100) "/>
+    <critical severity="D" low_range="100" high_range="100" result="You leap to the top of the food chain and blind him forever. He's at your mercy. +10H,6*@,2!,(-95) "/>
+    <critical severity="E" low_range="1" high_range="5" result="Your titanic effort yields but a tiny result. Soon he will fall to “the power of the small.” +1H "/>
+    <critical severity="E" low_range="6" high_range="10" result="You strike accurately but with little force and do little damage. +2H "/>
+    <critical severity="E" low_range="11" high_range="15" result="Your claws are stuck in his clothing. In a frenzy you try to extricate your small self. +2H "/>
+    <critical severity="E" low_range="16" high_range="20" result="You did little to hurt him, but you did taste his blood. It's giving you ideas. +2H,1! "/>
+    <critical severity="E" low_range="21" high_range="35" result="That scratch on his leg is a bit of a bleeder. It whets your appetite for more, much more +2H,1! "/>
+    <critical severity="E" low_range="36" high_range="45" result="He stares at his slashed thigh as though this is the first time he has seen his own blood. +3H,1! "/>
+    <critical severity="E" low_range="46" high_range="50" result="You strike him in the back. More surprised than harmed he moves away from you. +5H,1x,1! "/>
+    <critical severity="E" low_range="51" high_range="55" result="You have tangled him up in his own shield. He won't be able to use it for 1 round. +6H,1! "/>
+    <critical severity="E" low_range="56" high_range="60" result="Tasty. You enjoy ripping open his thigh. You “smile” as you see the look on his face. +7H,1*,3! "/>
+    <critical severity="E" low_range="61" high_range="65" result="Your attack slips past his shield to slice open his shield arm. Nasty bleeder he has there. +6H,2*,3! "/>
+    <critical severity="E" low_range="66" high_range="66" result="You leave him writhing on the ground. 1 eye is destroyed and 1 blind (2 days). -20 appearance. +15H,24*,(-95) "/>
+    <critical severity="E" low_range="67" high_range="70" result="The torn tendons in his arm make him reel away from you in pain. That will teach the big jerk. +7H,2*@,(-20) "/>
+    <critical severity="E" low_range="71" high_range="75" result="He tries to stop the flow of blood from his leg wound. He only bloodies his hands. +5H,3*,4! "/>
+    <critical severity="E" low_range="76" high_range="80" result="He's paying more attention to that bleeding arm wound than he is to you. 2*@,3! "/>
+    <critical severity="E" low_range="81" high_range="85" result="Unless he has a metal gauntlet on his hand, that severed some fingers. It will keep him occupied anyway. +8H,9*,3! "/>
+    <critical severity="E" low_range="86" high_range="90" result="You slip behind him slashing away at his back. There is blood everywhere now. +4H,3*,1@,3!,(-40) "/>
+    <critical severity="E" low_range="91" high_range="95" result="Your leap at him startles him and makes him fall to the ground. He's disarmed and out. +9H "/>
+    <critical severity="E" low_range="96" high_range="99" result="You bite his foot, tripping him. His head breaks as it hits the ground. He dies in 9 rounds. "/>
+    <critical severity="E" low_range="100" high_range="100" result="It's so easy you should have done it earlier. You sever the artery in his neck. Dies in 6 rounds. 20! "/>
+  </table>
+</criticals>

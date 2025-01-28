@@ -1,10 +1,12 @@
 package com.ilsian.rmweb;
 
+import java.io.FileInputStream;
 import java.sql.*;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
+
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import java.util.Vector;
@@ -35,6 +37,24 @@ public class CombatEngineSQLite implements CombatLookup {
 		cdb.close();
 	}
 
+	public static void createCombatDatabase() throws Exception
+	{
+		CombatEngineSQLite cdb = new CombatEngineSQLite();
+		
+		Class.forName("org.sqlite.JDBC");
+		cdb.iConnection = DriverManager.getConnection("jdbc:sqlite:combat.db");
+		System.err.println("Creating weapon table");
+		cdb.populateWeaponTable();
+		System.err.println("Creating critical table");
+		cdb.populateCriticalTable();
+		System.err.println("Adding android metadata");
+		Statement s = cdb.iConnection.createStatement();
+		s.executeUpdate("CREATE TABLE android_metadata (locale TEXT DEFAULT 'en_US')");
+		s.executeUpdate("INSERT INTO android_metadata VALUES ('en_US')");
+		s.close();
+		cdb.iConnection.close();
+	}
+	
 	public void open() throws Exception
 	{
 		Class.forName("org.sqlite.JDBC");
@@ -76,6 +96,8 @@ public class CombatEngineSQLite implements CombatLookup {
 					iPsList.setInt(1,++iCurrWeapon);
 					iPsList.setString(2,h.getValue("name"));
 					iPsList.setInt(3, Integer.parseInt(h.getValue("fumblehigh")));
+					iPsList.setBoolean(4, h.getValue("ranked").equalsIgnoreCase("yes"));
+					iPsList.setString(5, h.getValue("onfumble"));
 					iPsList.executeUpdate();
 					System.err.println("Added weapon[" + iCurrWeapon + "]=" + h.getValue("name"));
 				}
@@ -84,7 +106,6 @@ public class CombatEngineSQLite implements CombatLookup {
 					// just buffer to use with damage lines
 					iLowRange = Integer.parseInt(h.getValue("low"));
 					iHighRange = Integer.parseInt(h.getValue("high"));
-					System.err.println("-- Range: " + iLowRange + "-" + iHighRange);
 				}
 				else if (tag.equals("damage"))
 				{
@@ -94,14 +115,19 @@ public class CombatEngineSQLite implements CombatLookup {
 					iPsData.setInt(3, iLowRange);
 					iPsData.setInt(4, iHighRange);
 					iPsData.setInt(5, Integer.parseInt(h.getValue("at")));
-					iPsData.setInt(6, Integer.parseInt(h.getValue("damage")));
+					final String dm = h.getValue("damage");
+					if (dm.equalsIgnoreCase("F")) {
+						// this is a fumble, use -1 damage
+						iPsData.setInt(6, -1);
+					} else {
+						iPsData.setInt(6, Integer.parseInt(h.getValue("damage")));
+					}
 					String crit = h.getValue("critical");
 					if (crit != null)
 						iPsData.setString(7, crit);
 					else
 						iPsData.setString(7, "");
 					iPsData.addBatch();
-					//iPsData.executeUpdate();
 				}
 			} catch (SQLException sqe) {
 				System.err.println("SQE EXC on '" + tag + "': " + sqe);
@@ -113,9 +139,7 @@ public class CombatEngineSQLite implements CombatLookup {
 			try {
 				if (tag.equals("range"))
 				{
-					System.err.print("Exec Batch...");
 					iPsData.executeBatch();
-					System.err.println("Done.");
 				}
 			} catch (SQLException sqe){
 				sqe.printStackTrace();
@@ -174,16 +198,17 @@ public class CombatEngineSQLite implements CombatLookup {
 	{
 		try {
 		Statement st = iConnection.createStatement();
-		st.executeUpdate("create table weaponlisttable ( _id int primary key, name text, fumble int, ranked bool default false, rank1 int, rank2 int, rank3 int, rank4 int )");
+		st.executeUpdate("create table weaponlisttable ( _id int primary key, name text, fumble int, ranked bool default false, onfumble text )");
 		st.executeUpdate("create table weapondatatable ( _id int primary key, weapon_id int, low_range int, high_range int, at int, damage int, critical text)");		
-		PreparedStatement ps_list = iConnection.prepareStatement("INSERT INTO weaponlisttable (_id, name, fumble) values (?,?,?)");
+		PreparedStatement ps_list = iConnection.prepareStatement("INSERT INTO weaponlisttable (_id, name, fumble, ranked, onfumble) values (?,?,?,?,?)");
 		PreparedStatement ps_dat = iConnection.prepareStatement("INSERT INTO weapondatatable (_id, weapon_id, low_range, high_range, at, damage, critical) values (?,?,?,?,?,?,?)");
 
 		TableHandler handler = new TableHandler(ps_list, ps_dat);
     	SAXParserFactory factory = SAXParserFactory.newInstance();
     	SAXParser saxParser = factory.newSAXParser();
-    	saxParser.parse(getClass().getResourceAsStream("/com/ilsian/battlemat/db/weapons.xml"), handler);
-    	
+    	saxParser.parse(new FileInputStream("table/weapon_tables_v1.xml"), handler);
+    	saxParser.parse(new FileInputStream("table/weapon_tables_v2.xml"), handler);
+
     	ps_list.close();
     	ps_dat.close();
     	st.close();
@@ -205,7 +230,8 @@ public class CombatEngineSQLite implements CombatLookup {
 		CriticalHandler handler = new CriticalHandler(ps_list, ps_dat);
     	SAXParserFactory factory = SAXParserFactory.newInstance();
     	SAXParser saxParser = factory.newSAXParser();
-    	saxParser.parse(getClass().getResourceAsStream("/com/ilsian/battlemat/db/crittables.xml"), handler);
+    	saxParser.parse(new FileInputStream("table/crit_tables_v1.xml"), handler);
+    	saxParser.parse(new FileInputStream("table/crit_tables_v2.xml"), handler);
 
     	ps_list.close();
     	ps_dat.close();

@@ -207,10 +207,13 @@ public class RMServlet extends AppServlet {
 			}
 			
 			long now = System.currentTimeMillis();
+			// Clears the event history log - note TODO: This doesn't archive ANYTHING yet
 			SimpleEventList.getInstance().archiveAndClear(now);
+			// Clears all active entities back to unharmed and round count back to pre-round 1
 			if (mActiveList != null)
 				mActiveList.resetRounds();
 			
+			// Delete all pending wounds and would tracking records
 			mCombatHandler.getWoundDB().reset();
 			
 			response.setStatus(HttpServletResponse.SC_OK);

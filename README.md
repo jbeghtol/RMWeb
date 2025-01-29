@@ -10,6 +10,8 @@ integration like Role20 or the like, which don't offer clean support.
 The tables were scraped, hand cut/pasted through group-sourced labor, and the contents of those tables are likely
 only fair-use if you own Arms Law and Spell Law.
 
+<img src="media/players.png"/><img src="media/combat.png"/>
+
 ## How To Run
 
 The release content is a runnable JAR file, meaning download and double click to run.  It does create data in

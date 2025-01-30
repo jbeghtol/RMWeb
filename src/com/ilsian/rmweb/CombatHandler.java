@@ -1,5 +1,6 @@
 package com.ilsian.rmweb;
 
+import java.io.File;
 import java.io.PrintWriter;
 import java.util.HashMap;
 
@@ -100,7 +101,7 @@ public class CombatHandler {
 	}
 	
 	public class WoundDB implements ActionHandler {
-		HashMap<Integer,PendingWound> pendingWounds_ = new HashMap();
+		HashMap<Integer,PendingWound> pendingWounds_ = new HashMap<Integer, PendingWound>();
 		int nextWound_ = 0;
 		
 		public int submit(PendingWound p) {
@@ -116,7 +117,7 @@ public class CombatHandler {
 			}
 		}
 		
-		public void reset() {
+		public void reset(File cp) {
 			synchronized(this) {
 				pendingWounds_.clear();
 			}

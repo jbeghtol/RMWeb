@@ -1,8 +1,14 @@
 package com.ilsian.rmweb;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -22,6 +28,9 @@ import com.ilsian.tomcat.WebLib;
 
 public class ActiveEntities extends HashMap<String, ActiveEntity> implements ActionHandler
 {
+	private static final long serialVersionUID = 1L;
+	static Logger logger = Logger.getLogger("com.ilsian.rmweb.ActiveEntities");
+	
 	long changedTime = System.currentTimeMillis();
 	int currentRound = 1;
 	int currentStage = 0;
@@ -385,17 +394,54 @@ public class ActiveEntities extends HashMap<String, ActiveEntity> implements Act
 		});
 	}
 	
-	public void resetRounds() {
+    public void saveToFile(String filePath) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filePath))) {
+            oos.writeObject(this);
+            logger.info("Saved ActiveEntities to " + filePath);
+        } catch (IOException ioe) {
+        	logger.warning("Failed to save ActiveEntities to " + filePath + ":" + ioe);
+        }
+    }
+    
+    public void restoreCheckpoint(File cp) {
 		ModelSync.modelUpdate(ModelSync.Model.ENTITIES, () -> {
-			currentStage = 0;
-			currentRound = 1;
-			lastSkillCheck = "Result";
-			for (ActiveEntity entry:this.values()) {
-				entry.mLastInit = -1;
-				entry.mLastInitExplain = "";
-				entry.mLastResult = 0;
-				entry.mLastResultExplain = "Reset";
-				entry.mEffects = new EffectRecord();
+	    	if (cp != null) {
+	    		String serialPath = cp + File.separator + "active.ser";
+		        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(serialPath))) {
+		        	ActiveEntities savedEntities = (ActiveEntities) ois.readObject();
+		        	
+		        	// keep our list object the same, just copy what we need from the saved version
+					currentStage = savedEntities.currentStage;
+					currentRound = savedEntities.currentRound;
+					lastSkillCheck = savedEntities.lastSkillCheck;
+					
+					this.clear();
+					this.putAll(savedEntities);
+		        } catch (Exception ioe) {
+		        	logger.warning("Failed to load ActiveEntities from " + serialPath + ":" + ioe);
+		        }
+	    	}
+	    	return true;
+		});
+    }
+    
+	public void archive(File cp, boolean clear) {
+		ModelSync.modelUpdate(ModelSync.Model.ENTITIES, () -> {
+			if (cp != null) {
+				String serialPath = cp + File.separator + "active.ser";
+				saveToFile(serialPath);
+			}
+			if (clear) {
+				currentStage = 0;
+				currentRound = 1;
+				lastSkillCheck = "Result";
+				for (ActiveEntity entry:this.values()) {
+					entry.mLastInit = -1;
+					entry.mLastInitExplain = "";
+					entry.mLastResult = 0;
+					entry.mLastResultExplain = "Reset";
+					entry.mEffects = new EffectRecord();
+				}
 			}
 			return true;
 		});

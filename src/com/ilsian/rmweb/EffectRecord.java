@@ -1,5 +1,6 @@
 package com.ilsian.rmweb;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import javax.servlet.http.HttpServletRequest;
@@ -11,8 +12,9 @@ import org.json.JSONObject;
 import com.ilsian.tomcat.WebLib;
 
 
-public class EffectRecord {
-	
+public class EffectRecord implements Serializable {
+	private static final long serialVersionUID = 1L;
+
 	static final String DISPLAY_STUN = Global.EMOJI_CRITS?"&#x1F635":"<img class=\"mod\" src=\"/res/stunned.png\" />";
 	static final String DISPLAY_NO_PARRY = Global.EMOJI_CRITS?"&#x1F6AB":"<img class=\"mod\" src=\"/res/noparry.png\" />";
 	static final String DISPLAY_BLOOD = Global.EMOJI_CRITS?"&#x1FA78":"<img class=\"mod\" src=\"/res/blood.png\" />";
@@ -139,7 +141,9 @@ public class EffectRecord {
 				damage_,bleeding_,stun_,noParry_,mustParry_, bonus==0?"0":String.format("+%d (%d)", bonus, bonusDur),  penalty==0?"0":String.format("%d (%d)", penalty, penaltyDur));
 	}
 	
-	static class TimedModifier {
+	static class TimedModifier implements Serializable {
+		private static final long serialVersionUID = 1L;
+
 		public int duration_ = 0;
 		public int value_ = 0;
 		TimedModifier(int v, int d) {

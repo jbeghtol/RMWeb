@@ -124,6 +124,28 @@ function coming_soon()
 	});	
 }
 
+function popup_note(title, content)
+{
+    $.confirm({ 
+        escapeKey: 'conf',
+        title: title,
+        content: content,
+        columnClass: 'medium',
+        type: 'blue',
+        animation: 'opacity',
+        animationSpeed: 300,
+        buttons: {
+            conf: {
+                text: 'OK',
+                keys: ['enter'],
+                action: function(){
+                    // nothing
+                }
+            }
+        }
+    }); 
+}
+
 function auto_reload()
 {
 	window.location.reload(true);
@@ -311,6 +333,75 @@ function prompt_quickroll(callback)
            }
         });
  
+}
+
+function prompt_string(title, callback)
+{
+    currQuickroll = $.confirm({
+        rmcallback: callback,
+        title: title,
+        escapeKey: 'cancel',
+        content: '<div class="form-group"><input autofocus type="text" id="input-row" class="form-control" onkeydown="screenEnter(this, event)"></div>',
+        columnClass: 'small',
+        type: 'blue',
+        animation: 'opacity',
+        animationSpeed: 100,
+        buttons: {
+                ok: {
+                   text: 'Save',
+                   keys: ['enter'],
+                   action: function () {
+                       var skVal = this.$content.find('input#input-row').val().trim();
+                       if (!skVal) skVal = 0;
+                       callback(skVal);
+                   }
+               },
+               cancel: function () {
+                  // do nothing.
+               }
+           }
+        });
+ 
+}
+
+
+function prompt_checkpoint(data, callback)
+{
+    const checkpoints = data.checkpoints;
+    if (!checkpoints || checkpoints.length == 0) {
+        popup_note("No Checkpoints", "There are no checkpoints to restore.");
+        return;
+    }
+    var content = '<div class="form-group"><select autofocus id="input-row" class="form-control" onkeydown="screenEnter(this, event)">'
+    for (const checkpoint of checkpoints) {
+        content += '<option value="' + checkpoint.time + '">' + checkpoint.note + " (" + checkpoint.date  + ')</option>'
+    }
+    content += '</select></div>'
+            
+    currQuickroll = $.confirm({
+        rmcallback: callback,
+        title: 'Select CheckPoint to Restore',
+        escapeKey: 'cancel',
+        content: content,
+        columnClass: 'small',
+        type: 'blue',
+        animation: 'opacity',
+        animationSpeed: 100,
+        buttons: {
+                ok: {
+                   text: 'Restore',
+                   keys: ['enter'],
+                   action: function () {
+                       var skVal = this.$content.find('select#input-row').val().trim();
+                       if (!skVal) skVal = 0;
+                       callback(skVal);
+                   }
+               },
+               cancel: function () {
+                  // do nothing.
+               }
+           }
+        });
 }
 
 function rm_sync_entities(signalId) {

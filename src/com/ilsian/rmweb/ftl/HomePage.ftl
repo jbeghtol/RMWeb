@@ -186,19 +186,11 @@ function refreshView()
                logts = data.log.mod_ts;
                if (data.log.events) {
                    if (data.log.events.length>0) {
-                       if (data.log.events[0].event == "System reset") {
+                       if (data.log.events[0].event == "System reset" || data.log.events[0].event == "System restored") {
                            setElementHtml("rmlog", "");
                        }
                    }
-                   /*
-                   for (var i=0;i<data.log.events.length; i++) {
-                       var logline = "<div class=\"rmevent\"><div class=\"" + data.log.events[i].type 
-                           + "\">" + data.log.events[i].header 
-                           + "<span style=\"float:right;\"><i class=\"glyphicon glyphicon-user\"></i>&nbsp;" + data.log.events[i].user
-                           + "&nbsp;</span><span style=\"float:right;\">" + (data.log.events[i].dbopt?data.log.events[i].dbopt:'') + "</span></div><div class=\"eventresultbox\">" + data.log.events[i].event + "</div></div>";
-                       $( "#rmlog" ).append(logline);
-                   }
-                   */
+
                    // use a template, much nicer
                    $('#rmlog').loadTemplate( $('#tmplLogEvent'), data.log.events, { append: true } );
                    
@@ -375,6 +367,32 @@ function request_archive()
     rm_confirm_dialog("Confirm Clean", "Reset to round 1 and clear log?", function() {
        $.ajax({type: "POST", url: "gui?action=cleanslate"})
     });
+}
+
+function create_checkpoint(note) {
+    
+}
+
+function create_checkpoint()
+{
+    prompt_string('Note', function(note) {
+       $.ajax({type: "POST", url: "gui?action=checkpoint&note=" + encodeURIComponent(note)})
+    });
+}
+
+
+function restore_archive()
+{
+    $.ajax({type: "POST", url: "gui?action=checkpointQuery"})
+        .done(function(data, textStatus, jqXHR) {
+            prompt_checkpoint(data, function(time) {
+                $.ajax({type: "POST", url: "gui?action=loadslate&time=" + time})
+            });
+        })
+
+//    rm_confirm_dialog("Confirm Restore", "Restore last checkpoint?", function() {
+//       $.ajax({type: "POST", url: "gui?action=loadslate"})
+//    });
 }
 
 function updateInitiativePhase(uid, phase)
@@ -722,6 +740,8 @@ $(document).ready(callbackInit);
     <ul class="dropdown-menu">
       <#if rm.permit gte 3>
       <li><a onclick="request_archive()" href="#">Clean Slate</a></li>
+      <li><a onclick="create_checkpoint()" href="#">Save Checkpoint</a></li>
+      <li><a onclick="restore_archive()" href="#">Restore Checkpoint</a></li>
       <li><a href="gui?ftl=EditGlobals" href="#">Settings</a></li>
       </#if>
       <li><a href="/gui?action=logout">Sign Out</a></li>

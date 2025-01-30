@@ -3,6 +3,7 @@ package com.ilsian.rmweb;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.sql.*;
@@ -37,20 +38,23 @@ public class EntityEngineSQLite {
 		return instance_;
 	}
 	
-	public static class Weapon {
+	public static class Weapon implements Serializable {
+		private static final long serialVersionUID = 1L;
 		public int mWeaponId;
 		public String mWeaponName;
 		public int mSkill;
 		public int mMaxRank = 4;
 	}
 	
-	public static class Skill {
+	public static class Skill implements Serializable {
+		private static final long serialVersionUID = 1L;
 		public int mTotal;
 		public String mDisplayName;
 		public String mOwner; // not always set
 	}
 	
-	public static class ActiveEntity {
+	public static class ActiveEntity implements Serializable {
+		private static final long serialVersionUID = 1L;
 		public int mUid;
 		public String mName;
 		public String mTag;

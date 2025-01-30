@@ -4,8 +4,13 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Scanner;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
@@ -198,6 +203,119 @@ public class RMServlet extends AppServlet {
 		}
 	};
 	
+	File makeCheckpointDir(String note) {
+		long now = System.currentTimeMillis();
+		File f = new File("checkpoints", String.format("checkpoint_%d", now));
+		f.mkdirs();
+		
+	    // Write note to file
+	    File noteFile = new File(f, "note.txt");
+	    try (PrintWriter writer = new PrintWriter(noteFile)) {
+	        writer.println(note);
+	    } catch (IOException e) {
+	    	logger.warning("Failed to save note to checkpoint dir: " + e);
+	    }
+	    
+		return f;
+	}
+	
+	static class CheckPoint {
+		public String mNote;
+		public long mTimestamp;
+		public CheckPoint(String note, long ts) {
+			mNote = note; mTimestamp = ts;
+		}
+	}
+	
+	ArrayList<CheckPoint> getCheckpoints() {
+		File rootDir = new File("checkpoints");
+		ArrayList<CheckPoint> cp = new ArrayList<CheckPoint>();
+		
+	    File[] files = rootDir.listFiles();
+	    if (files != null) {
+	        for (File file : files) {
+	            if (file.isDirectory() && file.getName().startsWith("checkpoint_")) {
+	                String timestampStr = file.getName().substring(11); // 11 is the length of "checkpoint_"
+	                try {
+	                    long timestamp = Long.parseLong(timestampStr);
+                        File noteFile = new File(file, "note.txt");
+                        Scanner scanner = new Scanner(noteFile);
+                        scanner.useDelimiter("\\Z"); // Read entire file
+	                    cp.add(new CheckPoint(scanner.next(), timestamp));
+	                    scanner.close();
+	                } catch (Exception e) {
+	                    logger.warning("Ignoring checkpoint candidate " + file + ", Exception: " + e);
+	                }
+	            }
+	        }
+	    }
+	    Collections.sort(cp, new Comparator<CheckPoint>() {
+	        @Override
+	        public int compare(CheckPoint o1, CheckPoint o2) {
+	            return Long.compare(o2.mTimestamp, o1.mTimestamp);
+	        }
+	    });
+	    return cp;
+	}
+	
+	File findLastCheckpointDir() {
+		File rootDir = new File("checkpoints");
+	    File mostRecentCheckpointDir = null;
+	    long mostRecentTimestamp = 0;
+
+	    File[] files = rootDir.listFiles();
+	    if (files != null) {
+	        for (File file : files) {
+	            if (file.isDirectory() && file.getName().startsWith("checkpoint_")) {
+	                String timestampStr = file.getName().substring(11); // 11 is the length of "checkpoint_"
+	                try {
+	                    long timestamp = Long.parseLong(timestampStr);
+	                    if (timestamp > mostRecentTimestamp) {
+	                        mostRecentTimestamp = timestamp;
+	                        mostRecentCheckpointDir = file;
+	                    }
+	                } catch (NumberFormatException e) {
+	                    // ignore directories with non-numeric timestamps
+	                }
+	            }
+	        }
+	    }
+
+	    return mostRecentCheckpointDir;
+	}
+	
+	ActionHandler checkpointQueryHandler = new ActionHandler() {
+		@Override
+		public void handleAction(String action, UserInfo user, HttpServletRequest request, HttpServletResponse response)
+				throws ServletException, IOException {
+
+				ArrayList<CheckPoint> checkPoints = getCheckpoints();
+				
+				// Serialize output based on request
+				try {
+					JSONObject outData = new JSONObject();
+					
+					for (CheckPoint cp:checkPoints) {
+						JSONObject cpData = new JSONObject();
+						cpData.put("note", cp.mNote);
+						cpData.put("time", cp.mTimestamp);
+						cpData.put("date", new Date(cp.mTimestamp).toString());
+						outData.append("checkpoints", cpData);
+					}
+					
+		            response.setContentType("application/json");
+		            response.setStatus(HttpServletResponse.SC_OK);
+		            ServletOutputStream p = response.getOutputStream();
+		            p.print(outData.toString());
+		            p.flush();	
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+				}
+		}
+	};
+	
 	ActionHandler cleanSlateHandler = new ActionHandler() {
 		@Override
 		public void handleAction(String action, UserInfo user, HttpServletRequest request, HttpServletResponse response) {
@@ -206,15 +324,61 @@ public class RMServlet extends AppServlet {
 				return;
 			}
 			
-			long now = System.currentTimeMillis();
+			File cp = makeCheckpointDir("Clean Slate");
+			
 			// Clears the event history log - note TODO: This doesn't archive ANYTHING yet
-			SimpleEventList.getInstance().archiveAndClear(now);
+			SimpleEventList.getInstance().archive(cp, true);
 			// Clears all active entities back to unharmed and round count back to pre-round 1
 			if (mActiveList != null)
-				mActiveList.resetRounds();
+				mActiveList.archive(cp, true);
 			
 			// Delete all pending wounds and would tracking records
-			mCombatHandler.getWoundDB().reset();
+			mCombatHandler.getWoundDB().reset(cp);
+			
+			response.setStatus(HttpServletResponse.SC_OK);
+		}
+	};
+	
+	ActionHandler checkpointHandler = new ActionHandler() {
+		@Override
+		public void handleAction(String action, UserInfo user, HttpServletRequest request, HttpServletResponse response) {
+			if (user.mLevel < RMUserSecurity.kLoginGM) {
+				response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+				return;
+			}
+			String note = WebLib.getStringParam(request, "note", "User Save");
+			File cp = makeCheckpointDir(note);
+			SimpleEventList.getInstance().archive(cp, false);
+			if (mActiveList != null)
+				mActiveList.archive(cp, false);
+			
+			SimpleEventList.getInstance().postEvent(new SimpleEvent("Checkpoint saved: " + note, "Notice", "rmsystem", "system"));
+			response.setStatus(HttpServletResponse.SC_OK);
+		}
+	};
+		
+	ActionHandler loadSlateHandler = new ActionHandler() {
+		@Override
+		public void handleAction(String action, UserInfo user, HttpServletRequest request, HttpServletResponse response) {
+			if (user.mLevel < RMUserSecurity.kLoginGM) {
+				response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+				return;
+			}
+			
+			String ts = WebLib.getStringParam(request, "time", null);
+			File cp = ts == null?findLastCheckpointDir():new File("checkpoints", "checkpoint_" + ts);
+			if (cp != null) {
+				logger.info("Loading checkpoint from " + cp);
+				
+				// Clears the event history log - note TODO: This doesn't archive ANYTHING yet
+				SimpleEventList.restoreCheckpoint(cp);
+				// Clears all active entities back to unharmed and round count back to pre-round 1
+				if (mActiveList != null)
+					mActiveList.restoreCheckpoint(cp);
+				
+				// Resets pending wounds, we don't track through restore
+				mCombatHandler.getWoundDB().reset(cp);
+			}
 			
 			response.setStatus(HttpServletResponse.SC_OK);
 		}
@@ -361,6 +525,9 @@ public class RMServlet extends AppServlet {
 		addPostHandler("syncentities", mActiveList);
 		
 		addPostHandler("cleanslate", cleanSlateHandler);
+		addPostHandler("loadslate", loadSlateHandler);
+		addPostHandler("checkpoint", checkpointHandler);
+		addPostHandler("checkpointQuery", checkpointQueryHandler);
 		
 		addPostHandler("upload", mFileUploadHandler);
 		

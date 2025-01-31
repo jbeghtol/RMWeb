@@ -384,6 +384,29 @@ public class RMServlet extends AppServlet {
 		}
 	};
 	
+	ActionHandler terminatorHandler = new ActionHandler() {
+		@Override
+		public void handleAction(String action, UserInfo user, HttpServletRequest request, HttpServletResponse response) {
+			if (user.mLevel < RMUserSecurity.kLoginAdmin) {
+				response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+				return;
+			}
+			
+			new Thread() {
+				public void run() {
+					logger.info("Terminating RMWeb in 1s...");
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException ignore) {
+					}
+					logger.info("Exiting.");
+					System.exit(0);
+				}
+			}.start();
+			response.setStatus(HttpServletResponse.SC_OK);
+		}
+	};
+	
 	/**
 	 * Method to handle file uploads from the user
 	 */
@@ -528,6 +551,7 @@ public class RMServlet extends AppServlet {
 		addPostHandler("loadslate", loadSlateHandler);
 		addPostHandler("checkpoint", checkpointHandler);
 		addPostHandler("checkpointQuery", checkpointQueryHandler);
+		addPostHandler("terminate", terminatorHandler);
 		
 		addPostHandler("upload", mFileUploadHandler);
 		

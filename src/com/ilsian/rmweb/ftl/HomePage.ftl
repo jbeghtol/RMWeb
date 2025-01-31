@@ -369,8 +369,14 @@ function request_archive()
     });
 }
 
-function create_checkpoint(note) {
-    
+function terminate_rmweb()
+{
+    rm_confirm_dialog("Confirm Shutdown", "Exit RMWeb process?", function() {
+       $.ajax({type: "POST", url: "gui?action=terminate"})
+        .done(function(data, textStatus, jqXHR) {
+            popup_note('Stopped', 'RMWeb has been stopped.');
+        });
+    });
 }
 
 function create_checkpoint()
@@ -389,10 +395,6 @@ function restore_archive()
                 $.ajax({type: "POST", url: "gui?action=loadslate&time=" + time})
             });
         })
-
-//    rm_confirm_dialog("Confirm Restore", "Restore last checkpoint?", function() {
-//       $.ajax({type: "POST", url: "gui?action=loadslate"})
-//    });
 }
 
 function updateInitiativePhase(uid, phase)
@@ -743,6 +745,7 @@ $(document).ready(callbackInit);
       <li><a onclick="create_checkpoint()" href="#">Save Checkpoint</a></li>
       <li><a onclick="restore_archive()" href="#">Restore Checkpoint</a></li>
       <li><a href="gui?ftl=EditGlobals" href="#">Settings</a></li>
+      <li><a onclick="terminate_rmweb()" href="#">Shutdown RMWeb</a></li>
       </#if>
       <li><a href="/gui?action=logout">Sign Out</a></li>
     </ul>
